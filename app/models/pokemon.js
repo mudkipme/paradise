@@ -7,7 +7,7 @@ var Species = require('./species');
 var Nature = require('./nature');
 
 /**
- * 性别值
+ * Gender values
  */
 var Gender = { female: 1, male: 2, genderless: 3 };
 
@@ -85,7 +85,7 @@ PokemonSchema.virtual('stats').get(function(){
     stats[type] = (
       me.individual[type] + 2 * base[type]
       + me.effort[type] / 4
-    ) * level / 100 + 5;
+    ) * me.level / 100 + 5;
     if (me.nature.decreasedStat == type) {
       stats[type] = stats[type] * 0.9;
     }
@@ -211,7 +211,7 @@ PokemonSchema.methods.initData = function(callback){
     },
     function(species, next){
       me._species = species;
-      Nature.get(me.natureId, next);
+      Nature(me.natureId, next);
     },
     function(nature, next){
       me._nature = nature;
@@ -282,6 +282,18 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
 
     callback(null, pokemon);
   });
+};
+
+PokemonSchema.statics.initCollection = function(collection, callback){
+  var actions = [];
+  _.each(collection, function(pokemon){
+    actions.push(function(next){
+      pokemon.initData(function(){
+        next();
+      });
+    });
+  });
+  async.series(actions, callback);
 };
 
 var Pokemon = mongoose.model('Pokemon', PokemonSchema);

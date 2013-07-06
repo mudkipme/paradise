@@ -1,6 +1,6 @@
 var sqlite3 = require('sqlite3').verbose();
 var mysql = require('mysql');
-var base = new sqlite3.Database('./data/base.sqlite3');
+var base = new sqlite3.Database(__dirname + '/database/base.sqlite3');
 var config = require('../config.json');
 
 var connection = mysql.createConnection({

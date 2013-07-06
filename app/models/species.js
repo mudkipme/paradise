@@ -67,7 +67,7 @@ Species.get = function(nationalNumber, form, callback) {
       var index = 0;
       species.types = [];
       (function getType(){
-        Type.get(rows[index].type_id, function(err, type){
+        Type(rows[index].type_id, function(err, type){
           if (err) return next(err);
           species.types[rows[index].slot - 1] = type;
 
@@ -157,11 +157,17 @@ Species.prototype.experience = function(n){
 };
 
 /**
- * 计算神奇宝贝的最大经验值
- * @return {Number} 神奇宝贝在等级100时的经验值
+ * Caculate the maximum experience of one Species
  */
 Species.prototype.maxExperience = function(){
   return this.experience(100);
+};
+
+/**
+ * Get all Pokémon's names
+ */
+Species.allNames = function(cb){
+  db.all('SELECT id AS number, identifier AS name FROM pokemon_species', cb);
 };
 
 module.exports = Species;

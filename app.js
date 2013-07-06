@@ -31,6 +31,7 @@ app.configure(function(){
   app.use(express.session());
   I18n.expressBind(app, {
     locales: ['zh-hans', 'zh-hant', 'en']
+    ,directory: __dirname + '/app/locales'
     ,extension: '.json'
   });
   app.use(app.router);

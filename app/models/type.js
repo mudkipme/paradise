@@ -1,24 +1,29 @@
 var db = require('../common').baseData;
 
-var Type = function(){};
-
 // Cached type data
-Type.cache = {};
+var typeCache = {};
 
 // Get type data from base database
-Type.get = function(id, callback){
-  if (Type.cache[id])
-    return callback(null, Type.cache[id]);
+var Type = function(id, callback){
+  if (typeCache[id]) return callback(null, typeCache[id]);
 
-  var type = new Type();
   db.get("SELECT * FROM types WHERE id = ?", [id], function(err, row){
     if (err) return callback(err);
     if (!row) return callback(new Error('UNKNOWN_TYPE'));
-    
-    type._id = row.id;
-    type._damageTo = {};
-    type._damageBy = {};
-    type.name = row.name;
+
+    var type = {
+      id: row.id,
+      name: row.identifier
+    };
+
+    var damageBy = {}, damageTo = {};
+
+    type.damageBy = function(attackType){
+      return damageBy[attackType.id];
+    };
+    type.damateTo = function(targetType){
+      return damateTo[targetType.id];
+    }
 
     db.each(
       'SELECT * FROM type_efficacy WHERE damage_type_id = ? OR target_type_id = ?'
@@ -26,35 +31,17 @@ Type.get = function(id, callback){
       ,function(err, row){
         if (err) return callback(err);
         if (id == row.damage_type_id) {
-          type._damageTo[row.target_type_id] = row.damage_factor;
+          damageTo[row.target_type_id] = row.damage_factor;
         }
         if (id == row.target_type_id) {
-          type._damageBy[row.damage_type_id] = row.damage_factor;
+          damageBy[row.damage_type_id] = row.damage_factor;
         }
       }
       ,function(){
-        Type.cache[id] = type;
+        typeCache[id] = type;
         callback(null, type);
       });
   });
 };
-
-/**
- * 计算被攻击命中的属性相性
- * @param  {Type} type   攻击方的技能的类型
- * @return {Number}    属性相性数值
- */
-Type.prototype.damageBy = function(type) {
-  return this._damageBy[type._id];
-};
-
-/**
- * 计算攻击命中对手的属性相性
- * @param  {Type} type   防御方的神奇宝贝的类型
- * @return {Number}    属性相性数值
- */
-Type.prototype.damageTo = function(type) {
-  return this._damageTo[type._id];
-}
 
 module.exports = Type;

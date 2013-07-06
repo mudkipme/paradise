@@ -4,12 +4,21 @@ var mongoose = require('mongoose'),
   _ = require('underscore'),
   Schema = mongoose.Schema,
   config = require('../../config.json'),
-  Species = require('./species');
+  Species = require('./species'),
+  Pokemon = require('./pokemon');
 
+// Pokémon Storage System
 var StorageSchema = new Schema({
   name:    String,
   pokemon: [{ type: Schema.Types.ObjectId, ref: 'Pokemon' }]
-})
+});
+
+/**
+ * Init Pokémon data in this storage
+ */
+StorageSchema.methods.initStorage = function(callback){
+  Pokemon.initCollection(this.pokemon, callback);
+};
 
 var TrainerSchema = new Schema({
   name:             String,
@@ -42,31 +51,45 @@ var TrainerSchema = new Schema({
   lastLogin:        Date,
   todayLuck:        Number,
   battlePoint:      { type: Number, default: 0 }
+}, {
+  toJSON: { virtuals: true }
 });
 
-/*
-  Get and set the status of Pokédex
-  trainer.pokedexCaught, trainer.pokedexSeen
-  trainer.setPokedexCaught, trainer.setPokedexSeen
- */
-['Caught', 'Seen'].forEach(function(dexType){
+TrainerSchema.methods.setPokedexSeen = function(speciesNumber){
+  if (!this._pokedexSeen) {
+    this._pokedexSeen = new BitArray(Species.max, this.pokedexSeenHex);
+  }
+  this._pokedexSeen.set(speciesNumber, true);
+  this.pokedexSeenHex = this._pokedexSeen.toHexString();
+  this.pokedexSeenNum = this._pokedexSeen.count();
+};
+
+TrainerSchema.methods.setPokedexCaught = function(speciesNumber){
+  if (!this._pokedexCaught) {
+    this._pokedexCaught = new BitArray(Species.max, this.pokedexCaughtHex);
+  }
+  this._pokedexCaught.set(speciesNumber, true);
+  this.pokedexCaughtHex = this._pokedexCaught.toHexString();
+  this.pokedexCaughtNum = this._pokedexCaught.count();
+};
+
+TrainerSchema.methods.getPokedex = function(callback){
   var me = this;
-  TrainerSchema.virtual('pokedex' + dexType).get(function(){
-    if (!me['_' + dexType]) {
-      me['_' + dexType] = new BitArray(Species.max);
-    }
-    return me['_' + dexType];
+  if (!me._pokedexSeen) {
+    me._pokedexSeen = new BitArray(Species.max, me.pokedexSeenHex);
+  }
+  if (!me._pokedexCaught) {
+    me._pokedexCaught = new BitArray(Species.max, me.pokedexCaughtHex);
+  }
+  Species.allNames(function(err, result){
+    if (err) return callback(err);
+    _.each(result, function(dex){
+      dex.seen = me._pokedexSeen.get(dex.number);
+      dex.caught = me._pokedexCaught.get(dex.number);
+    });
+    callback(null, result);
   });
-
-  TrainerSchema.methods['setPokedex' + dexType] = function(speciesNumber){
-    if (!me['_' + dexType]) {
-      me['_' + dexType] = new BitArray(Species.max);
-    }
-    me['_' + dexType].set(speciesNumber, true);
-    me['pokedex' + dexType + 'Hex'] = me['_' + dexType].toHexString();
-    me['pokedex' + dexType + 'Num'] = me['_' + dexType].count();
-  };
-});
+};
 
 /**
  * Find an empty slot in storage
@@ -126,13 +149,8 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
     if (!slot) {
       callback(new Error('ERR_TRAINER_NO_STORAGE_SLOT'));
     }
-    me._storage[slot.boxId] = me._storage[slot.boxId] || {};
-    me._storage[slot.boxId][slot.position] = pokemon;
-    me.storage.push({
-      boxId: slot.boxId,
-      position: slot.pokemon,
-      pokemon: pokemon
-    });
+    me.storage[slot.boxId] = me.storage[slot.boxId] || {name: "", pokemon: []};
+    me.storage[slot.boxId].pokemon[slot.position] = pokemon;
   }
 
   pokemon.initData(function(err, pokemon){
@@ -159,6 +177,15 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
     });
   });
 };
+
+/**
+ * Init Pokémon data in party
+ */
+TrainerSchema.methods.initParty = function(callback){
+  Pokemon.initCollection(this.party, callback);
+};
+
+TrainerSchema.index({ name: 1 });
 
 var Trainer = mongoose.model('Trainer', TrainerSchema);
 module.exports = Trainer;
