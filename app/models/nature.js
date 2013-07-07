@@ -15,6 +15,7 @@ var Nature = function(id, callback) {
     , [id]
     , function(err, row){
       if (err) return callback(err);
+      if (!row) return callback(new Error('NATURE_NOT_FOUND'));
 
       var nature = {
         id: row.id

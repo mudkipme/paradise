@@ -5,15 +5,18 @@
 
 // dependencies
 var async = require('async');
+var _ = require('underscore');
 var Trainer = require('../models/trainer');
 var Pokemon = require('../models/pokemon');
 var Item = require('../models/item');
 
 // Get trainer's information
 exports.get = function(req, res) {
+  if (!req.params.name && req.trainer) return res.json(req.trainer);
+
   Trainer.findOne({ name: req.params.name })
   .populate('party')
-  .exec(function(err, trainer){
+  .exec(function(err, trainer) {
     if (err) return res.json(500, { error: err.message });
     if (trainer) {
       trainer.initParty(function(err){
@@ -29,7 +32,7 @@ exports.get = function(req, res) {
 // Get trainer's pokedex
 exports.pokedex = function(req, res) {
   Trainer.findOne({ name: req.params.name })
-  .exec(function(err, trainer){
+  .exec(function(err, trainer) {
     if (err) return res.json(500, { error: err.message });
     if (trainer) {
       trainer.getPokedex(function(err, pokedex){
@@ -51,24 +54,119 @@ exports.post = function(req, res) {
 
   async.series({
     // Receive the Pokemon from lab
-    pokemon: function(next){
+    pokemon: function(next) {
       Pokemon.createPokemon({
         speciesNumber: parseInt(req.body.speciesNumber)
       }, next);
     },
     // Get a Poké Ball
-    pokeBall: function(next){
+    pokeBall: function(next) {
       Item('poke-ball', next);
     },
     // Get the starter town
-    location: function(next){
+    location: function(next) {
       next(null, { name: 'pallet-town' });
     }
   }, function(err, ret){
     if (err) return res.json(500, { error: err.message });
     trainer.catchPokemon(ret.pokemon, ret.pokeBall, ret.location, function(err){
       if (err) return res.json(500, { error: err.message });
-      res.json( trainer );
+      res.json(trainer);
+    });
+  });
+};
+
+// Get one's Pokémon list
+exports.pokemon = function(req, res) {
+  var skip = req.query.skip || 0;
+  var limit = req.query.limit || 100;
+  if (limit > 100) {
+    limit == 100;
+  }
+
+  Trainer.findOne({ name: req.params.name })
+  .exec(function(err, trainer){
+    if (err) return res.json(500, { error: err.message });
+    if (!trainer) return res.json(404, { error: 'TRAINER_NOT_FOUND' });
+
+    var condition = { trainer: trainer };
+    if (req.query.tradable == 'yes') {
+      condition.tradable = true;
+    }
+
+    Pokemon.find(condition)
+    .skip(skip).limit(limit)
+    .exec(function(err, pokemon){
+      Pokemon.initCollection(pokemon, function(err){
+        if (err) return res.json(500, { error: err.message });
+        res.json(pokemon);
+      });
+    })
+  });
+};
+
+// Get my bag
+exports.bag = function(req, res) {
+  var actions = [], bag = [];
+
+  _.each(req.trainer.bag, function(element){
+    actions.push(function(cb){
+      Item(element.itemId, function(err, item){
+        bag.push({
+          item: item
+          ,number: element.number
+        });
+        cb(err);
+      });
+    });
+  });
+
+  async.series(actions, function(err){
+    if (err) return res.json(500, { error: err.message });
+    res.json(bag);
+  });
+};
+
+// Set whether accept battle
+exports.acceptBattle = function(req, res) {
+  var acceptBattle = req.body.acceptBattle;
+  if (acceptBattle === true || acceptBattle == 'true') {
+    req.trainer.acceptBattle = true;
+  }
+  if (acceptBattle === false || acceptBattle == 'false') {
+    req.trainer.acceptBattle = false;
+  }
+  req.trainer.save(function(err){
+    if (err) return res.json(500, { error: err.message });
+    res.json(req.trainer.acceptBattle);
+  });
+};
+
+// Set the real world information
+exports.realWorld = function(req, res) {
+  if (!req.body.latitude || !req.body.longitude)
+    return res.json(400, { error: 'ILLEGAL_REQUEST_DATA' });
+
+  req.trainer.setLocation(req.body.latitude, req.body.longitude, function(err){
+    if (err) return res.json(500, { error: err.message });
+    res.json(req.trainer.realWorld);
+  });
+};
+
+// Move Pokémon in party
+exports.move = function(req, res) {
+  var origin = _.map(req.trainer.party, function(pokemon){
+    return pokemon._id.toString();
+  });
+  if (_.difference(origin, req.body.order).length > 0)
+    return res.json(400, { error: 'ILLEGAL_REQUEST_DATA' });
+
+  req.trainer.party = req.body.order;
+  req.trainer.save(function(err){
+    if (err) return res.json(500, { error: err.message });
+    req.trainer.populate('party', function(err){
+      if (err) return res.json(500, { error: err.message });
+      return res.json(req.trainer.party);
     });
   });
 };

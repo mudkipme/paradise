@@ -5,6 +5,7 @@ var Schema = mongoose.Schema;
 var config = require('../../config.json');
 var Species = require('./species');
 var Nature = require('./nature');
+var Item = require('./item');
 
 /**
  * Gender values
@@ -49,19 +50,18 @@ var PokemonSchema = new Schema({
   birthDate:       { type: Date, default: Date.now },
   mother:          { type: Schema.Types.ObjectId, ref: 'Pokemon' },
   father:          { type: Schema.Types.ObjectId, ref: 'Pokemon' },
-  tradable:        { type: Boolean, default: config.app.acceptTrade }
+  tradable:        { type: Boolean, default: config.app.acceptTrade },
+  pokemonCenter:   Date
 }, {
   toJSON: {
     virtuals: true
   }
 });
 
-PokemonSchema.virtual('species').get(function(){
-  return this._species;
-});
-
-PokemonSchema.virtual('nature').get(function(){
-  return this._nature;
+_.each(['species', 'nature', 'pokeBall', 'holdItem'], function(key){
+  PokemonSchema.virtual(key).get(function(){
+    return this['_' + key];
+  });
 });
 
 /**
@@ -101,15 +101,16 @@ PokemonSchema.virtual('stats').get(function(){
 /**
  * 神奇宝贝升级时的操作
  */
-PokemonSchema.methods.onLevelUp = function(callback){
-
+PokemonSchema.methods.onLevelUp = function(callback) {
+  // Gain happiness
+  // Evolution
 };
 
 /**
  * 获得经验值
  * @param  {Number}   exp      经验值数字
  */
-PokemonSchema.methods.gainExperience = function(exp, callback){
+PokemonSchema.methods.gainExperience = function(exp, callback) {
   if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
 
   this.initData(function(err, me){
@@ -147,17 +148,17 @@ PokemonSchema.methods.gainExperience = function(exp, callback){
 };
 
 /**
- * 神奇宝贝升级
+ * Level up this Pokémon
  */
-PokemonSchema.methods.levelUp = function(callback){
+PokemonSchema.methods.levelUp = function(callback) {
   if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
 
-  this.initData(function(err, me){
+  this.initData(function(err, me) {
     if (err) return callback(err);
     if (me.level >= 100) return callback(new Error('ERR_POKEMON_MAX_EXP'));
     me.experience = me.species.experience(level + 1);
     me.level += 1;
-    me.onLevelUp(function(err){
+    me.onLevelUp(function(err) {
       if (err) return callback(err);
       me.save(callback);
     });
@@ -165,9 +166,9 @@ PokemonSchema.methods.levelUp = function(callback){
 };
 
 /**
- * 神奇宝贝获得亲密度
+ * Gain happiness
  */
-PokemonSchema.methods.gainHappiness = function(happiness, callback){
+PokemonSchema.methods.gainHappiness = function(happiness, callback) {
   if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
   if (this.happiness >= 255) return callback(null);
 
@@ -178,17 +179,17 @@ PokemonSchema.methods.gainHappiness = function(happiness, callback){
 };
 
 /**
- * 神奇宝贝获得努力值
+ * Gain effort values
  */
-PokemonSchema.methods.gainEffort = function(effort, callback){
+PokemonSchema.methods.gainEffort = function(effort, callback) {
   if (!_.isObject(effort)) return callback(new Error('ERR_INVALID_PARAM'));
 
   var me = this,
-    currentEffort = _.reduce(this.effort, function(memo, num){
+    currentEffort = _.reduce(this.effort, function(memo, num) {
       return memo + num;
     });
 
-  this.effort.forEach(function(value, key){
+  this.effort.forEach(function(value, key) {
     var e = effort[key] || 0;
     me.effort[key] = Math.min( me.effort[key] + e, 255 );
     currentEffort += me.effort[key] - value;
@@ -202,7 +203,26 @@ PokemonSchema.methods.gainEffort = function(effort, callback){
   this.save(callback);
 }
 
-PokemonSchema.methods.initData = function(callback){
+/**
+ * Set hold item
+ */
+PokemonSchema.methods.setHoldItem = function(item, callback) {
+  if (item) {
+    if (!item.holdable) return callback(new Error('ITEM_NOT_HOLDABLE'));
+    this._item = item;
+    this.holdItemId = item.id;
+  } else {
+    this._item = null;
+    this.holdItemId = null;
+  }
+
+  this.save(callback);
+};
+
+/**
+ * Init data of this Pokémon
+ */
+PokemonSchema.methods.initData = function(callback) {
   var me = this;
   if (me._inited) return callback(null, me);
   async.waterfall([
@@ -216,16 +236,32 @@ PokemonSchema.methods.initData = function(callback){
     function(nature, next){
       me._nature = nature;
       next();
+    },
+    function(next){
+      me.populate('originalTrainer', 'name', next);
+    },
+    function(trainer, next){
+      Item(me.pokeBallId, next);
+    },
+    function(item, next){
+      me._pokeBall = item;
+      if (!me.holdItemId) return next();
+
+      Item(me.holdItemId, function(err, item){
+        if (err) return next(err);
+        me._holdItem = item;
+        next();
+      });
     }
-  ], function(err){
+  ], function(err) {
     if (err) return callback(err);
     me._inited = true;
     callback(null, me);
   });
 };
 
-PokemonSchema.statics.createPokemon = function(opts, callback){
-  Species.get(opts.speciesNumber, opts.formIdentifier, function(err, species){
+PokemonSchema.statics.createPokemon = function(opts, callback) {
+  Species.get(opts.speciesNumber, opts.formIdentifier, function(err, species) {
     if (err) return callback(err);
 
     var gender, natureId, level = opts.level || 5,
@@ -249,10 +285,11 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
 
     // 个体值和努力值
     var individual = {}, effort = {};
-    ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'].forEach(function(key){
-      individual[key] = Math.floor(Math.random() * 32);
-      effort[key] = 0;
-    });
+    _.each(['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'],
+      function(key) {
+        individual[key] = Math.floor(Math.random() * 32);
+        effort[key] = 0;
+      });
     _.extend(individual, opts.individual);
     _.extend(effort, opts.effort);
 
@@ -284,11 +321,11 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
   });
 };
 
-PokemonSchema.statics.initCollection = function(collection, callback){
+PokemonSchema.statics.initCollection = function(collection, callback) {
   var actions = [];
-  _.each(collection, function(pokemon){
-    actions.push(function(next){
-      pokemon.initData(function(){
+  _.each(collection, function(pokemon) {
+    actions.push(function(next) {
+      pokemon.initData(function() {
         next();
       });
     });

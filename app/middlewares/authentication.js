@@ -6,7 +6,7 @@ var Trainer = require('../models/trainer.js');
 /**
  * Login to the forum
  */
-exports.login = function(req, res, next){
+exports.login = function(req, res, next) {
   Member.getLogin(req, function(err, member){
     if (err) {
       if (err.message == 'NOT_LOGINED' && !req.path.match(/^\/api/)) {
@@ -22,7 +22,7 @@ exports.login = function(req, res, next){
 /**
  * Get trainer data
  */
-exports.trainer = function(req, res, next){
+exports.trainer = function(req, res, next) {
   if (!req.member) return next();
 
   Trainer
@@ -30,17 +30,20 @@ exports.trainer = function(req, res, next){
   .populate('party')
   .exec(function(err, trainer){
     if (err) return res.json(500, { error: err.message });
-    if (trainer) {
+    if (!trainer) return next();
+
+    trainer.initParty(function(err){
+      if (err) return res.json(500, { error: err.message });
       req.trainer = trainer;
-    }
-    next();
+      next();
+    });
   });
 };
 
 /**
  * Set the correct locale
  */
-exports.locale = function(req, res, next){
+exports.locale = function(req, res, next) {
   var locale = config.app.defaultLanguage;
   if (req.trainer && req.trainer.language) {
     locale = req.trainer.language;
@@ -54,4 +57,15 @@ exports.locale = function(req, res, next){
   }
   req.i18n.setLocale(locale);
   next();
+};
+
+/**
+ * Limit request 
+ */
+exports.isSelf = function(req, res, next) {
+  if (req.trainer && req.params.name == req.trainer.name) {
+    next();
+  } else {
+    res.json(403, { error: 'PERMISSION_DENIED' });
+  }
 };

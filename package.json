@@ -15,7 +15,7 @@
     "underscore": "*",
     "bit-array": "*",
     "geode": "*",
-    "moment": "*",
+    "time": "*",
     "i18n-2": "*"
   }
 }

@@ -4,10 +4,11 @@ var Type = require('./type');
 
 var Species = function(){};
 
-// 神奇宝贝种族信息数据缓存，格式为 Species.cache[全国图鉴编号][型态标识]
+// Cached Pokémon species data.
+// Species.cache[nationalNumber][formIdentifier]
 Species.cache = {};
 
-// 神奇宝贝种族总数，考虑到XY兼容，设定为较大值
+// Total number of Pokémon species. Bigger for compatibility.
 Species.max = 1024;
 
 /**
@@ -23,7 +24,7 @@ Species.get = function(nationalNumber, form, callback) {
 
   async.waterfall([
     // 从 base 库中读取元数据
-    function(next){
+    function(next) {
       var sql = 'SELECT * FROM pokemon_forms JOIN pokemon'
         + ' ON pokemon_forms.pokemon_id = pokemon.id LEFT JOIN pokemon_species'
         + ' ON pokemon.species_id = pokemon_species.id WHERE species_id = ?';
@@ -37,7 +38,7 @@ Species.get = function(nationalNumber, form, callback) {
 
       db.get(sql, params, next);
     }
-    ,function(row, next){
+    ,function(row, next) {
       if (!row) return next(new Error('MissingNo.'));
 
       rawData = row;
@@ -57,11 +58,11 @@ Species.get = function(nationalNumber, form, callback) {
       next();
     }
     // 读取属性数据
-    ,function(next){
+    ,function(next) {
       db.all('SELECT slot, type_id FROM pokemon_types WHERE pokemon_id = ?',
         [rawData.pokemon_id], next);
     }
-    ,function(rows, next){
+    ,function(rows, next) {
       if (!rows.length) return next(new Error('UNKNOWN_TYPE'));
 
       var index = 0;
@@ -113,7 +114,7 @@ Species.get = function(nationalNumber, form, callback) {
  * @param  {Number} n 需要计算的等级
  * @return {Number}   在该等级的经验值
  */
-Species.prototype.experience = function(n){
+Species.prototype.experience = function(n) {
   switch (this.growthRate) {
     // slow-then-very-fast
     case 5:
@@ -159,7 +160,7 @@ Species.prototype.experience = function(n){
 /**
  * Caculate the maximum experience of one Species
  */
-Species.prototype.maxExperience = function(){
+Species.prototype.maxExperience = function() {
   return this.experience(100);
 };
 
