@@ -1,4 +1,5 @@
 var async = require('async');
+var i18n = require("i18next");
 var Member = require('../models/member.js');
 var config = require('../../config.json');
 var Trainer = require('../models/trainer.js');
@@ -55,8 +56,8 @@ exports.locale = function(req, res, next) {
     if (hasHans && !hasHant) locale = 'zh-hans';
     if (!hasHans && hasHant) locale = 'zh-hant';
   }
-  req.i18n.setLocale(locale);
-  next();
+  req.language = locale;
+  i18n.handle(req, res, next);
 };
 
 /**

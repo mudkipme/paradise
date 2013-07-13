@@ -29,7 +29,7 @@ exports.get = function(req, res) {
   });
 };
 
-// Get trainer's pokedex
+// Get trainer's Pokédex
 exports.pokedex = function(req, res) {
   Trainer.findOne({ name: req.params.name })
   .exec(function(err, trainer) {

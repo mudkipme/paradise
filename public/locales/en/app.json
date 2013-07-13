@@ -1,0 +1,21 @@
+{
+  "app": {
+    "pokemon-zone": "Pokémon Zone",
+    "pokemon-paradise": "Pokémon Paradise",
+    "forum": "Forums",
+    "main-page": "Main Page",
+    "wiki": "Wiki",
+    "incompatible-browser": "Your browser is incompatible with Pokémon Paradise, please use one of these browsers below:"
+  },
+  "menu": {
+    "party": "Party"
+    ,"pokemon-world": "World"
+    ,"pokedex": "Pokédex"
+    ,"poke-mart": "Poké Mart"
+    ,"day-care": "Day Care"
+    ,"amity-square": "Square"
+    ,"storage": "Storage"
+    ,"bag": "Bag"
+    ,"battle-tower": "Battle"
+  }
+}

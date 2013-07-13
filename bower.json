@@ -1,0 +1,13 @@
+{
+  "name": "paradise",
+  "version": "0.1",
+  "dependencies": {
+    "requirejs": "*",
+    "requirejs-text": "*",
+    "jquery": "*",
+    "backbone-amd": "*",
+    "underscore-amd": "*",
+    "bootstrap": "2.*.*",
+    "i18next": "*"
+  }
+}

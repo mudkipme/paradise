@@ -11,11 +11,21 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var mongoose = require('mongoose');
-var requirejs = require('requirejs');
-var I18n = require('i18n-2');
+var i18n = require("i18next");
 var config = require('./config.json');
 
 var app = express();
+
+i18n.init({
+  resGetPath: 'public/locales/__lng__/__ns__.json'
+  ,fallbackLng: false
+  ,load: 'current'
+  ,lowerCaseLng: true
+  ,ns: {
+    namespaces: ['app', 'pokemon'],
+    defaultNs: 'app'
+  }
+});
 
 // configurations
 app.configure(function(){
@@ -29,11 +39,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.cookieParser(config.app.cookieSecret));
   app.use(express.session());
-  I18n.expressBind(app, {
-    locales: ['zh-hans', 'zh-hant', 'en']
-    ,directory: __dirname + '/app/locales'
-    ,extension: '.json'
-  });
+  i18n.registerAppHelper(app);
   app.use(app.router);
 });
 
@@ -44,31 +50,8 @@ app.configure('development', function(){
 });
 
 app.configure('production', function(){
-  requirejs.optimize({
-    appDir: 'public/'
-    ,baseUrl: 'javascripts'
-    ,dir: 'public_build'
-    ,paths: {
-      text: 'libs/text'
-      ,i18n: 'libs/i18n'
-      ,jquery: 'empty:'
-      ,underscore: 'empty:'
-      ,backbone: 'empty:'
-      ,bootstrap: 'empty:'
-      ,kinetic: 'libs/kinetic-v4.5.4'
-      ,color: 'libs/color-0.4.4'
-      ,templates: '../templates'
-    }
-    ,modules: [{
-        name: 'main'
-      }
-    ]
-  }, function() {
-    console.log('Javascripts optimized.');
-  });
-
-  app.use(require('less-middleware')({ src: __dirname + '/public_build', compress: true }));
-  app.use(express.static(__dirname + '/public_build'));
+  app.use(require('less-middleware')({ src: __dirname + '/dist', compress: true }));
+  app.use(express.static(path.join(__dirname, 'dist')));
 });
 
 require('./app/routes')(app);

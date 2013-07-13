@@ -2,8 +2,9 @@ define([
   'jquery',
   'underscore',
   'backbone',
+  'i18next',
   'views/home'
-], function($, _, Backbone, HomeView){
+], function($, _, Backbone, i18n, HomeView){
   var Router = Backbone.Router.extend({
     routes: {
       "": "home"
@@ -16,7 +17,18 @@ define([
 
   var initialize = function(){
     var router = new Router;
-    Backbone.history.start();
+    i18n.init({
+      lng: Paradise.locale,
+      fallbackLng: false,
+      load: 'current',
+      lowerCaseLng: true,
+      ns: {
+        namespaces: ['app', 'pokemon'],
+        defaultNs: 'app'
+      }
+    }, function(){
+      Backbone.history.start();
+    });
   };
 
   return {

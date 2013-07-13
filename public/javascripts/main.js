@@ -1,36 +1,24 @@
 requirejs.config({
   paths: {
     templates: "../templates",
-    text: "libs/text",
-    i18n: "libs/i18n",
-    jquery: "//code.jquery.com/jquery-2.0.2.min",
-    underscore: "//cdn.jsdelivr.net/underscorejs/1.4.4/underscore-min",
-    backbone: "//cdn.jsdelivr.net/backbonejs/1.0.0/backbone-min",
-    bootstrap: "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min",
-    kinetic: "libs/kinetic-v4.5.4",
-    color: "libs/color-0.4.4"
+    text: "../components/requirejs-text/text",
+    jquery: "../components/jquery/jquery",
+    underscore: "../components/underscore-amd/underscore",
+    backbone: "../components/backbone-amd/backbone",
+    i18next: "../components/i18next/release/i18next.amd.withJQuery-1.6.3",
+    'bootstrap-dropdown': "../components/bootstrap/js/bootstrap-dropdown"
   },
   shim: {
-    underscore: {
-      exports: "_"
-    },
-    backbone: {
-      deps: ["underscore", "jquery"],
-      exports: "Backbone"
-    },
-    bootstrap: {
+    'bootstrap-dropdown': {
       deps: ["jquery"],
-      exports: "$"
-    },
-    color: {
-      exports: "Color"
+      exports: "$.fn.dropdown"
     }
   }
 });
 
 require([
   'router',
-  'bootstrap'
+  'bootstrap-dropdown'
 ], function(Router){
   Router.initialize();
 });

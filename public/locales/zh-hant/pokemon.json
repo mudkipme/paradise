@@ -1,4 +1,4 @@
-define({
+{
   "bulbasaur": "妙蛙種子"
   ,"ivysaur": "妙蛙草"
   ,"venusaur": "妙蛙花"
@@ -648,4 +648,4 @@ define({
   ,"keldeo": "凱路迪歐"
   ,"meloetta": "美洛耶塔"
   ,"genesect": "蓋諾賽克特"
-});
+}

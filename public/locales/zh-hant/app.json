@@ -1,4 +1,12 @@
-define({
+{
+  "app": {
+    "pokemon-zone": "神奇寶貝部落格",
+    "pokemon-paradise": "神奇寶貝樂園",
+    "forum": "討論區",
+    "main-page": "主頁",
+    "wiki": "百科",
+    "incompatible-browser": "您的瀏覽器不支持神奇寶貝樂園，瀏覽器最低要求為："
+  },
   "menu": {
     "party": "我的隊伍"
     ,"pokemon-world": "神奇寶貝世界"
@@ -10,4 +18,4 @@ define({
     ,"bag": "我的背包"
     ,"battle-tower": "對戰塔"
   }
-});
+}

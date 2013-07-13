@@ -3,10 +3,9 @@ define([
   'underscore',
   'backbone',
   'kinetic',
-  'color',
+  'i18next',
   'text!templates/home.html',
-  'i18n!nls/messages'
-], function($, _, Backbone, Kinetic, Color, homeTemplate, messages){
+], function($, _, Backbone, Kinetic, i18n, homeTemplate){
 
   var HomeView = Backbone.View.extend({
     el: $('#paradise-app'),
@@ -19,7 +18,7 @@ define([
     },
 
     render: function(){
-      var data = { messages: messages };
+      var data = { t: i18n.t };
       this.$el.empty().append(_.template(homeTemplate, data));
 
       this.navList = this.$('.paradise-nav-text li');
@@ -301,8 +300,7 @@ define([
 
     mobileTouch: function(e){
       var item = $(e.target);
-      item.css('background-color', Color(item.data('color')).darken(0.5).rgbString())
-      .data('touching', 'yes');
+      item.data('touching', 'yes');
     },
 
     mobileTouchEnd: function(e){
