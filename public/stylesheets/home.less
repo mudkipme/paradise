@@ -1,8 +1,4 @@
-#paradise-app {
-  background-color: #d4f2f6;
-  border-radius: 5px;
-  position: relative;
-
+#home-view {
   .paradise-nav-wrap {
     position: relative;
     overflow: hidden;
@@ -55,32 +51,8 @@
   }
 }
 
-@media (max-width: 767px) {
-  #paradise-app {
-    background-color: transparent;
-    border-radius: 0;
-    
-    .paradise-nav-text {
-      margin: 0;
-      li {
-        border-radius: 5px;
-        display: block;
-        color: #FFF;
-        font-size: 18px;
-        line-height: 36px;
-        margin: 0 0 15px;
-        text-align: center;
-        box-sizing: border-box;
-        position: relative;
-      }
-    }
-    .bottom-icons {
-      width: 225px;
-      li {
-        &:not(:last-child) {
-          margin-right: 15px;
-        }
-      }
-    }
+@media (min-width: 768px) {
+  #home-view + #menu-view {
+    display: none;
   }
 }

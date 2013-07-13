@@ -5,11 +5,13 @@ var pokemon = require('./controllers/pokemon');
 var auth = require('./middlewares/authentication');
 var pm = require('./middlewares/pokemon-middleware');
 
+var defaults = [auth.login, auth.trainer, auth.locale];
 var isSelf = [auth.login, auth.trainer, auth.isSelf];
 var selfPokemon = [auth.login, auth.trainer, pm.selfPokemon];
 
 module.exports = function(app) {
-  app.get('/', [auth.login, auth.trainer, auth.locale], index.index);
+  app.get('/', defaults, index.index);
+  app.get('/party', defaults, index.index);
   app.get('/bbs', bbs.login);
 
   // Trainer actions

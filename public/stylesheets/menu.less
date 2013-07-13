@@ -1,0 +1,77 @@
+@menuColor: #0c5f9a;
+@subMenuColor: #33a7fa;
+
+#menu-view {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  ul {
+    list-style: none;
+    margin: 0;
+  }
+  li {
+    a {
+      display: block;
+      background: @menuColor;
+      line-height: 40px;
+      margin-bottom: 2px;
+      padding-left: 16px;
+      padding-right: 16px;
+      color: #fff;
+      font-size: 16px;
+      text-decoration: none;
+      cursor: pointer;
+
+      &:hover {
+        background: lighten(@menuColor, 10%);
+      }
+    }
+
+    &.selected {
+      a {
+        background: @subMenuColor;
+        cursor: default;
+      }
+    }
+  }
+
+  li.collapsible {
+    > a {
+      background-origin: content-box;
+      background-position: right 15px;
+      background-repeat: no-repeat;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAKCAYAAABWiWWfAAAAwUlEQVQokZXRPU6CQRRG4QkEKfhZiCRYa4ELwEIaE3YBDa5AEsMKtNAVGGsS1kCihZUJdi5BCshDMyTjhJ+P07133nsmkwnhCLjFF3rHuockTbz4zyuap4o6WNjND66LSKp4xDoT/GZ5jQmq+0RtfGRLfxiijEHMKZ+4SCUljLDMinO0sgvP4zxliXuUAqbZ4QpjnO15QQUPsZcyC3hLBt+4KvhJl7G/5T3gLoZnNIqIEmENT3G/vx3cnCLZIe2ivgEgMmsmjLieQwAAAABJRU5ErkJggg==);
+    }
+    li {
+      a {
+        background: transparent;
+        color: @gray;
+        &:hover {
+          background: lighten(@subMenuColor, 10%);
+          color: #fff;
+        }
+      }
+      &.selected {
+        a {
+          background: @subMenuColor;
+          color: #fff;
+          cursor: default;
+        }
+      }
+    }
+    &.collapsed {
+      > a {
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAKCAYAAABWiWWfAAAAv0lEQVQokaXRMU6CQRCG4Q1GKFAOAonWWugBsJDGxFtAAyeQxHACKeAExJqEM5BoYWWCnUeQQvJQsIZ1A/Envt3MfPMWMwFV3IR/gCZOAu5sGOL0QEkVT3H/PmBiyzsuC4ouYv6H54Cp33yjj/IeyTEeYi5lFlBCF8tsOEcjE9VjP2WJHkpp8AwvWfALHRyhHeuUV5zvu0MFj1hlS59ZvcIAlSLHvcLCbj5wXeRJqbCGUSYao3aQKJPe4g2tv7JrmZRrJpZg06EAAAAASUVORK5CYII=);
+      }
+      ul {
+        display: none;
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  #menu-view {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}

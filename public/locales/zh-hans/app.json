@@ -8,14 +8,18 @@
     "incompatible-browser": "您的浏览器不支持神奇宝贝乐园，浏览器最低要求为："
   },
   "menu": {
-    "party": "我的队伍"
+    "party": "神奇宝贝"
     ,"pokemon-world": "神奇宝贝世界"
     ,"pokedex": "神奇宝贝图鉴"
     ,"poke-mart": "友好商店"
     ,"day-care": "饲育屋"
-    ,"amity-square": "沟通广场"
+    ,"timeline": "沟通广场"
     ,"storage": "储存系统"
     ,"bag": "我的背包"
     ,"battle-tower": "对战塔"
+    ,"trade": "通信交换"
+    ,"rank": "排行榜"
+    ,"setting": "我的设置"
+    ,"help": "帮助"
   }
 }

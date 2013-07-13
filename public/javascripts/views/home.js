@@ -8,54 +8,30 @@ define([
 ], function($, _, Backbone, Kinetic, i18n, homeTemplate){
 
   var HomeView = Backbone.View.extend({
-    el: $('#paradise-app'),
+    id: 'home-view',
+    className: 'hidden-phone',
 
-    events: {
-      "touchstart .paradise-nav-text li": "mobileTouch",
-      "touchend .paradise-nav-text li":   "mobileTouchEnd",
-      "touchcancel .paradise-nav-text li":  "mobileTouchCancel",
-      "touchmove .paradise-nav-text li":  "mobileTouchCancel"
-    },
-
-    render: function(){
+    render: function(config){
       var data = { t: i18n.t };
-      this.$el.empty().append(_.template(homeTemplate, data));
+      this.$el.html(_.template(homeTemplate, data));
 
-      this.navList = this.$('.paradise-nav-text li');
-      this.navDesktop = this.$('#paradise-nav');
+      this.nav = this.$('#paradise-nav');
       this.bottomIcons = this.$('.bottom-icons');
 
-      this.desktopConfig = this.getDesktopConfig();
+      this.config = this.getConfig(config);
+      this.draw();
 
-      this.mobileConfig = { exitDuration: 0.5 };
-
-      this.drawMobile();
-      this.drawDesktop();
-      this.$el.css('min-height', this.$el.height() + 'px');
+      return this;
     },
 
-    destroy: function(){
-      var stage = this.desktopLayer.getStage();
+    remove: function(){
+      var stage = this.layer.getStage();
       stage && stage.destroy();
-      this.undelegateEvents();
-      this.$el.empty();
       $('body').css('cursor', '');
+      Backbone.View.prototype.remove.call(this);
     },
 
-    drawMobile: function(){
-      this.navList.each(function(i, li){
-        $(li).css('background-color', $(li).data('color'));
-        var textColor = $(li).data('text-color');
-        if (textColor) {
-          $(li).css({
-            'border': '1px solid ' + textColor,
-            'color': textColor
-          });
-        }
-      });
-    },
-
-    getDesktopConfig: function(opts){
+    getConfig: function(opts){
       var defaultOpts = {
         width: 810,
         height: 422,
@@ -72,11 +48,57 @@ define([
         stroke: 'rgba(255,255,255,0.5)',
         textColor: '#FFF',
         exitDuration: 0.5,
-        items: this.navList.map(function(i, li){
-          var data = $(li).data();
-          data.text = $(li).text();
-          return data;
-        })
+        items: [
+          {
+            href: '/world'
+            ,pos: 6
+            ,color: '#e84c3d'
+            ,text: i18n.t('menu.pokemon-world')
+          }
+          ,{
+            href: '/pokedex'
+            ,pos: 5
+            ,color: '#e77e23'
+            ,text: i18n.t('menu.pokedex')
+          }
+          ,{
+            href: '/pokemart'
+            ,pos: 4
+            ,color: '#f1c40f'
+            ,text: i18n.t('menu.poke-mart')
+          }
+          ,{
+            href: '/daycare'
+            ,pos: 3
+            ,color: '#fff'
+            ,textColor: '#96a6a6'
+            ,text: i18n.t('menu.day-care')
+          }
+          ,{
+            href: '/timeline'
+            ,pos: 7
+            ,color: '#2fcc71'
+            ,text: i18n.t('menu.timeline')
+          }
+          ,{
+            href: '/storage'
+            ,pos: 8
+            ,color: '#3598dc'
+            ,text: i18n.t('menu.storage')
+          }
+          ,{
+            href: '/bag'
+            ,pos: 1
+            ,color: '#9c59b8'
+            ,text: i18n.t('menu.bag')
+          }
+          ,{
+            href: '/battle'
+            ,pos: 2
+            ,color: '#96a6a6'
+            ,text: i18n.t('menu.battle-tower')
+          }
+        ]
       };
 
       return _.defaults(opts || {}, defaultOpts);
@@ -84,8 +106,8 @@ define([
 
     drawSector: function(data){
       var beginAngle, textX, textY, me = this,
-        opt = me.desktopConfig,
-        layer = me.desktopLayer;
+        opt = me.config,
+        layer = me.layer;
 
       // determine arc path
       switch (data.pos) {
@@ -190,26 +212,28 @@ define([
         }
         $('body').css('cursor', '');
       }).on('click tap', function(){
-        me.desktopScatter(group);
+        me.scatter(group, function(){
+          Backbone.history.navigate(data.href, {trigger: true});
+        });
       });
 
       layer.add(group);
     },
 
-    drawDesktop: function(){
-      var me = this, opt = me.desktopConfig;
+    draw: function(){
+      var me = this, opt = me.config;
 
       var stage = new Kinetic.Stage({
-        container: me.navDesktop.get(0),
+        container: me.nav.get(0),
         width: opt.width,
         height: opt.height
       });
 
       var layer = new Kinetic.Layer();
-      me.desktopLayer = layer;
+      me.layer = layer;
 
-      opt.items.each(function(i, item){
-        item.pos && me.drawSector(item);
+      _.each(opt.items, function(item){
+        me.drawSector(item);
       });
 
       if (opt.pattern) {
@@ -243,7 +267,9 @@ define([
             layer.draw();
             $('body').css('cursor', '');
           }).on('click tap', function(){
-            me.desktopScatter();
+            me.scatter(null, function(){
+              Backbone.history.navigate('/party', {trigger: true});
+            });
           });
           layer.add(image);
           stage.add(layer);
@@ -254,10 +280,10 @@ define([
       }
     },
 
-    desktopScatter: function(group, callback){
-      var me = this, opt = me.desktopConfig;
+    scatter: function(group, callback){
+      var me = this, opt = me.config;
 
-      _.each(me.desktopLayer.children, function(item){
+      _.each(me.layer.children, function(item){
         var angle, tween;
 
         if (item.nodeType == 'Group' && item != group) {
@@ -281,40 +307,7 @@ define([
         tween.play();
       });
 
-      me.bottomIcons.fadeOut(opt.exitDuration * 1000).promise().done(function(){
-        me.destroy();
-        callback && callback();
-      });
-    },
-
-    mobileSlide: function(item, callback){
-      var me = this, opt = me.mobileConfig;
-      me.navList.not(item).animate({'left': '-120%'}, opt.exitDuration * 1000);
-      item.add(me.bottomIcons).fadeOut(opt.exitDuration * 1000);
-
-      me.navList.add(me.bottomIcons).promise().done(function(){
-        me.destroy();
-        callback && callback();
-      });
-    },
-
-    mobileTouch: function(e){
-      var item = $(e.target);
-      item.data('touching', 'yes');
-    },
-
-    mobileTouchEnd: function(e){
-      var item = $(e.target);
-      item.css('background-color', item.data('color'));
-      if (item.data('touching')) {
-        this.mobileSlide(item);
-      }
-    },
-
-    mobileTouchCancel: function(e){
-      var item = $(e.target);
-      item.css('background-color', item.data('color'))
-      .data('touching', '');
+      me.bottomIcons.fadeOut(opt.exitDuration * 1000).promise().done(callback);
     }
   });
   return HomeView;

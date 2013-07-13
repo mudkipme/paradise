@@ -1,6 +1,5 @@
 node_modules
 public/components
-public/stylesheets/app.css
 dist
 config.json
 *.css
