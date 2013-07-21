@@ -1,12 +1,12 @@
 {
   "name": "paradise",
-  "version": "0.1",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "node app"
   },
   "dependencies": {
-    "express": "3.1.0",
+    "express": "*",
     "mongoose": "3.6.*",
     "async": "*",
     "ejs": "*",

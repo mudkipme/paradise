@@ -31,9 +31,9 @@ module.exports = function(app) {
   app.post('/api/pokemon/:pokemonId/release', selfPokemon, pokemon.release);
   app.post('/api/pokemon/:pokemonId/deposit', selfPokemon, pokemon.deposit);
   app.post('/api/pokemon/:pokemonId/withdraw', selfPokemon, pokemon.withdraw);
-  app.put('/api/pokemon/:pokemonId/nickname', selfPokemon, pokemon.nickname);
-  app.put('/api/pokemon/:pokemonId/tradable', selfPokemon, pokemon.tradable);
-  app.put('/api/pokemon/:pokemonId/hold-item', selfPokemon, pokemon.holdItem);
+  app.put('/api/pokemon/:pokemonId', selfPokemon, pokemon.put);
+  app.patch('/api/pokemon/:pokemonId', selfPokemon, pokemon.put);
+  app.post('/api/pokemon/:pokemonId/hold-item', selfPokemon, pokemon.holdItem);
   app.post('/api/pokemon/:pokemonId/hold-item/take'
     , selfPokemon, pokemon.takeHoldItem);
 };

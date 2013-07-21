@@ -1,24 +1,28 @@
 requirejs.config({
   paths: {
-    templates: "../templates",
-    text: "../components/requirejs-text/text",
-    jquery: "../components/jquery/jquery",
-    underscore: "../components/underscore-amd/underscore",
-    backbone: "../components/backbone-amd/backbone",
-    i18next: "../components/i18next/release/i18next.amd.withJQuery-1.6.3",
-    'bootstrap-dropdown': "../components/bootstrap/js/bootstrap-dropdown"
+    templates: '../templates',
+    text: '../components/requirejs-text/text',
+    jquery: '../components/jquery/jquery',
+    'juqery-transit': '../components/jquery.transit/jquery.transit',
+    underscore: '../components/underscore-amd/underscore',
+    backbone: '../components/backbone-amd/backbone',
+    i18next: '../components/i18next/release/i18next.amd.withJQuery-1.6.3',
+    moment: '../components/moment/moment',
+    'moment-lang': '../components/moment/min/lang',
+    'bootstrap-dropdown': '../components/bootstrap/js/bootstrap-dropdown',
+    'bootstrap-collapse': '../components/bootstrap/js/bootstrap-collapse',
+    'bootstrap-tooltip': '../components/bootstrap/js/bootstrap-tooltip',
+    'bootstrap-switch': '../components/bootstrap-switch/static/js/bootstrap-switch'
   },
   shim: {
-    'bootstrap-dropdown': {
-      deps: ["jquery"],
-      exports: "$.fn.dropdown"
-    }
+    'juqery-transit': { deps: ['jquery'] },
+    'bootstrap-dropdown': { deps: ['jquery'] },
+    'bootstrap-collapse': { deps: ['jquery'] },
+    'bootstrap-tooltip': { deps: ['jquery'] },
+    'bootstrap-switch': { deps: ['jquery'] }
   }
 });
 
-require([
-  'router',
-  'bootstrap-dropdown'
-], function(Router){
-  Router.initialize();
+require(['app'], function(app){
+  app.initialize();
 });

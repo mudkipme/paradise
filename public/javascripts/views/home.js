@@ -12,8 +12,7 @@ define([
     className: 'hidden-phone',
 
     render: function(config){
-      var data = { t: i18n.t };
-      this.$el.html(_.template(homeTemplate, data));
+      this.$el.html(_.template(homeTemplate, {}));
 
       this.nav = this.$('#paradise-nav');
       this.bottomIcons = this.$('.bottom-icons');
@@ -258,7 +257,7 @@ define([
           image.on('mouseenter touchstart', function(){
             layer.clear();
             this.setFilter(Kinetic.Filters.Brighten);
-            this.setFilterBrightness(-50);
+            this.setFilterBrightness(50);
             layer.draw();
             $('body').css('cursor', 'pointer');
           }).on('mouseleave touchend touchmove', function(){

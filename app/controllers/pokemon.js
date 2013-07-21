@@ -86,29 +86,17 @@ exports.withdraw = function(req, res) {
   });
 };
 
-// Set a nickname to a Pokémon
-exports.nickname = function(req, res) {
-  if (!req.body.nickname)
-    return res.json(400, { error: 'ILLEGAL_REQUEST_DATA' });
-  req.pokemon.nickname = req.body.nickname.substr(0, 12);
-  req.pokemon.save(function(err){
-    if (err) return res.json(500, { error: err.message });
-    res.send(req.pokemon.nickname);
-  });
-};
-
-// Set whether this Pokémon is tradable
-exports.tradable = function(req, res) {
-  var tradable = req.body.tradable;
-  if (tradable === true || tradable == 'true') {
-    req.pokemon.tradable = true;
+// Set nickname or tradable status
+exports.put = function(req, res) {
+  if (req.body.nickname) {
+    req.pokemon.nickname = req.body.nickname.substr(0, 12);
   }
-  if (acceptBattle === false || acceptBattle == 'false') {
-    req.pokemon.tradable = false;
+  if (typeof req.body.tradable !== 'undefined') {
+    req.pokemon.tradable = Boolean(req.body.tradable);
   }
   req.pokemon.save(function(err){
     if (err) return res.json(500, { error: err.message });
-    res.json(req.pokemon.tradable);
+    res.send(req.pokemon);
   });
 };
 

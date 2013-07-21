@@ -65,7 +65,7 @@ _.each(['species', 'nature', 'pokeBall', 'holdItem'], function(key){
 });
 
 /**
- * 计算神奇宝贝的能力值
+ * Pokémon Stats
  */
 PokemonSchema.virtual('stats').get(function(){
   if (!this._inited || this.isEgg) return false;
@@ -96,6 +96,23 @@ PokemonSchema.virtual('stats').get(function(){
   });
 
   return stats;
+});
+
+// Experience of the current level of this Pokémon
+PokemonSchema.virtual('expCurrentLevel').get(function(){
+  if (!this._inited || this.isEgg) return false;
+  return this.species.experience(this.level);
+});
+
+
+// Experience of the next level of this Pokémon
+PokemonSchema.virtual('expNextLevel').get(function(){
+  if (!this._inited || this.isEgg) return false;
+  if (this.level == 100) {
+    return this.experience;
+  } else {
+    return this.species.experience(this.level + 1);
+  }
 });
 
 /**
@@ -225,36 +242,32 @@ PokemonSchema.methods.setHoldItem = function(item, callback) {
 PokemonSchema.methods.initData = function(callback) {
   var me = this;
   if (me._inited) return callback(null, me);
-  async.waterfall([
-    function(next){
-      Species.get(me.speciesNumber, me.formIdentifier, next);
-    },
-    function(species, next){
-      me._species = species;
-      Nature(me.natureId, next);
-    },
-    function(nature, next){
-      me._nature = nature;
-      next();
-    },
-    function(next){
-      me.populate('originalTrainer', 'name', next);
-    },
-    function(trainer, next){
-      Item(me.pokeBallId, next);
-    },
-    function(item, next){
-      me._pokeBall = item;
-      if (!me.holdItemId) return next();
 
-      Item(me.holdItemId, function(err, item){
-        if (err) return next(err);
-        me._holdItem = item;
-        next();
-      });
+  async.series({
+    species: function(next){
+      Species.get(me.speciesNumber, me.formIdentifier, next);
     }
-  ], function(err) {
+    ,nature: function(next){
+      Nature(me.natureId, next);
+    }
+    ,originalTrainer: function(next){
+      if (!me.originalTrainer) return next();
+      me.populate('originalTrainer', 'name', next);
+    }
+    ,pokeBall: function(next){
+      if (!me.pokeBallId) return next();
+      Item(me.pokeBallId, next); 
+    }
+    ,holdItem: function(next){
+      if (!me.holdItemId) return next();
+      Item(me.holdItemId, next);
+    }
+  }, function(err, results){
     if (err) return callback(err);
+    me._species = results.species;
+    me._nature = results.nature;
+    me._pokeBall = results.pokeBall;
+    me._holdItem = results.holdItem;
     me._inited = true;
     callback(null, me);
   });

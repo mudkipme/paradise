@@ -54,6 +54,7 @@ Species.get = function(nationalNumber, form, callback) {
       species.weight = row.weight;
       species.baseHappiness = row.base_happiness;
       species.baseExperience = row.base_experience;
+      species.hasGenderDifferences = row.has_gender_differences;
 
       next();
     }

@@ -102,7 +102,7 @@ TrainerSchema.methods.storageSlot = function() {
 
   for (var i = me.currentStorage; i < me.currentStorage + me.maxStorage; i++) {
     if (!me.storage[i % me.maxStorage]) {
-      me.storage[i % me.maxStorage] = { name: '', pokemon: [] };
+      me.storage.set(i % me.maxStorage, { name: '', pokemon: [] });
     }
     var pokemon = me.storage[i % me.maxStorage].pokemon;
     for (var index = 0; index < 30; index++) {
@@ -154,8 +154,8 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
   } else {
     slot = me.storageSlot();
     if (!slot) return callback(new Error('ERR_NO_STORAGE_SLOT'));
-    me.storage[slot.boxId] = me.storage[slot.boxId] || {name: "", pokemon: []};
-    me.storage[slot.boxId].pokemon[slot.position] = pokemon;
+
+    me.storage[slot.boxId].pokemon.set(slot.position, pokemon);
   }
 
   pokemon.initData(function(err, pokemon){
@@ -169,6 +169,7 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
     pokemon.meetDate = new Date();
     pokemon.meetLevel = pokemon.level;
     pokemon.meetPlaceIndex = location.name;
+
 
     pokemon.save(function(err){
       if (err) return callback(err);

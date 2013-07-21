@@ -2,6 +2,7 @@
   <li><a data-href="/party"><%= t('menu.party') %></a></li>
   <li><a data-href="/pokedex"><%= t('menu.pokedex') %></a></li>
   <li><a data-href="/bag"><%= t('menu.bag') %></a></li>
+  <li><a data-href="/trainer"><%= t('menu.trainer-card') %></a></li>
   <li><a data-href="/storage"><%= t('menu.storage') %></a></li>
   <li><a data-href="/world"><%= t('menu.pokemon-world') %></a></li>
   <li class="collapsible collapsed">
@@ -15,6 +16,13 @@
     </ul>
   </li>
   <li><a data-href="/rank"><%= t('menu.rank') %></a></li>
-  <li><a data-href="/setting"><%= t('menu.setting') %></a></li>
+  <li class="collapsible collapsed">
+    <a><%= t('menu.setting') %></a>
+    <ul>
+      <li><a data-href="/migrate"><%= t('menu.poke-transfer') %></a></li>
+      <li><a data-href="/setting"><%= t('menu.trainer-setting') %></a></li>
+      <li><a data-href="/record"><%= t('menu.record') %></a></li>
+    </ul>
+  </li>
   <li><a data-href="/help"><%= t('menu.help') %></a></li>
 </ul>

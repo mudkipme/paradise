@@ -35,7 +35,7 @@ exports.trainer = function(req, res, next) {
 
     trainer.initParty(function(err){
       if (err) return res.json(500, { error: err.message });
-      req.trainer = trainer;
+      res.locals.me = req.trainer = trainer;
       next();
     });
   });
@@ -56,7 +56,7 @@ exports.locale = function(req, res, next) {
     if (hasHans && !hasHant) locale = 'zh-hans';
     if (!hasHans && hasHant) locale = 'zh-hant';
   }
-  req.language = locale;
+  req.cookies.i18next = locale;
   i18n.handle(req, res, next);
 };
 

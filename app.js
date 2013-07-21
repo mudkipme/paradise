@@ -21,6 +21,8 @@ i18n.init({
   ,fallbackLng: false
   ,load: 'current'
   ,lowerCaseLng: true
+  ,detectLngFromHeaders: false
+  ,detectLngFromPath: false
   ,ns: {
     namespaces: ['app', 'pokemon'],
     defaultNs: 'app'
@@ -28,31 +30,30 @@ i18n.init({
 });
 
 // configurations
-app.configure(function(){
-  app.set('port', process.env.PORT || config.app.port);
-  app.set('views', __dirname + '/app/views');
-  app.set('view engine', 'ejs');
-  app.use(express.compress());
-  app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.cookieParser(config.app.cookieSecret));
-  app.use(express.session());
-  i18n.registerAppHelper(app);
-  app.use(app.router);
-});
+app.set('port', process.env.PORT || config.app.port);
+app.set('views', __dirname + '/app/views');
+app.set('view engine', 'ejs');
+app.set('img base', config.app.imgBase);
+app.use(express.compress());
+app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.cookieParser(config.app.cookieSecret));
+app.use(express.session());
+i18n.registerAppHelper(app);
+app.use(app.router);
 
-app.configure('development', function(){
+if ('development' == app.get('env')) {
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(express.errorHandler());
-});
+}
 
-app.configure('production', function(){
+if ('production' == app.get('env')) {
   app.use(require('less-middleware')({ src: __dirname + '/dist', compress: true }));
   app.use(express.static(path.join(__dirname, 'dist')));
-});
+}
 
 require('./app/routes')(app);
 
