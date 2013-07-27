@@ -8,7 +8,7 @@ define([
 
   var MenuView = Backbone.View.extend({
     id: 'menu-view'
-    ,className: 'span3'
+    ,className: 'col-lg-3 col-sm-3 col-pull-9'
 
     ,events: {
       'click a[data-href]': 'navigate'

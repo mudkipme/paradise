@@ -8,8 +8,8 @@ define([
   ,'views/menu'
   ,'moment-lang/zh-cn'
   ,'moment-lang/zh-tw'
-  ,'bootstrap-dropdown'
-  ,'bootstrap-collapse'
+  ,'bootstrap/dropdown'
+  ,'bootstrap/collapse'
 ], function($, _, Backbone, Router, i18n, moment, MenuView){
 
   var initialize = function(){

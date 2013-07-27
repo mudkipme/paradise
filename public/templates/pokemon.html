@@ -20,7 +20,7 @@
     </p>
   </div>
   <div class="experience-bar">
-    EXP<div class="progress progress-info"><div class="bar" style="width: <%= (pokemon.experience - pokemon.expCurrentLevel) / (pokemon.expNextLevel - pokemon.expCurrentLevel) * 100 %>%"></div></div>
+    EXP<div class="progress"><div class="progress-bar progress-bar-info" style="width: <%= (pokemon.experience - pokemon.expCurrentLevel) / (pokemon.expNextLevel - pokemon.expCurrentLevel) * 100 %>%"></div></div>
   </div>
   <div class="left-info">
     <p class="alt"><%= t('stat.hp') %>: <%= pokemon.stats.hp %> / <%= pokemon.stats['max-hp'] %></p>
@@ -58,10 +58,10 @@
   <!-- Disposit, release or send to Pokémon Center -->
   <div class="actions">
     <% if (pokemon.lostHp) { %>
-      <p><button class="btn btn-success btn-mini btn-send-pc"> - <%= t('action.send-pokemon-center') %> - </button></p>
+      <p><button class="btn btn-success btn-small btn-send-pc"> - <%= t('action.send-pokemon-center') %> - </button></p>
     <% } %>
-    <p><button class="btn btn-info btn-mini btn-deposit"> - <%= t('action.deposit') %> - </button></p>
-    <p><button class="btn btn-danger btn-mini btn-release"> - <%= t('action.release') %> - </button></p>
+    <p><button class="btn btn-primary btn-small btn-deposit"> - <%= t('action.deposit') %> - </button></p>
+    <p><button class="btn btn-danger btn-small btn-release"> - <%= t('action.release') %> - </button></p>
   </div>
 
   <!-- Shiny star and held item -->
@@ -93,13 +93,13 @@
   <span>
 </div>
 <div class="hp">
-  HP<div class="progress"><div class="bar <%
+  HP<div class="progress"><div class="progress-bar <%
   if (pokemon.stats.hp / pokemon.stats['max-hp'] <= 0.2) {
-    %>bar-danger<%
+    %>progress-bar-danger<%
   } else if (pokemon.stats.hp / pokemon.stats['max-hp'] <= 0.5) {
-    %>bar-warning<%
+    %>progress-bar-warning<%
   } else {
-    %>bar-success<%
+    %>progress-bar-success<%
   } %>" style="width: <%= pokemon.stats.hp / pokemon.stats['max-hp'] * 100 %>%"></div></div>
 </div>
 

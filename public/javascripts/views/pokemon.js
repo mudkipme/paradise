@@ -6,7 +6,7 @@ define([
   ,'moment'
   ,'models/pokemon'
   ,'text!templates/pokemon.html'
-  ,'bootstrap-tooltip'
+  ,'bootstrap/tooltip'
   ,'bootstrap-switch'
 ], function($, _, Backbone, i18n, moment, Pokemon, pokemonTemplate){
 

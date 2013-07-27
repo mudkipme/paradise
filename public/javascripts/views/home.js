@@ -9,7 +9,7 @@ define([
 
   var HomeView = Backbone.View.extend({
     id: 'home-view',
-    className: 'hidden-phone',
+    className: 'hidden-sm',
 
     render: function(config){
       this.$el.html(_.template(homeTemplate, {}));

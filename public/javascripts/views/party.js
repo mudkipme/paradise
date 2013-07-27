@@ -9,7 +9,7 @@ define([
 
   var PartyView = Backbone.View.extend({
     id: 'party-view'
-    ,className: 'span9 pull-right'
+    ,className: 'col-lg-9 col-sm-9 col-push-3'
 
     ,initialize: function(name){
       this.model = new Trainer({name: name || Paradise.trainerName});

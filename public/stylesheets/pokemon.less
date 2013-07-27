@@ -1,10 +1,10 @@
 .text-shadow {
-  color: @white;
+  color: #fff;
   text-shadow: rgba(0, 0, 0, 0.75) 1px 1px;
 }
 
 .text-blur {
-  color: @white;
+  color: #fff;
   text-shadow: 0 0 5px #333;
 }
 
@@ -146,13 +146,13 @@
       }
     }
     .alt {
-      color: @green;
+      color: #46a546;
     }
     .increase {
-      color: @red;
+      color: #9d261d;
     }
     .decrease {
-      color: @blue;
+      color: #049cdb;
     }
     .experience-bar {
       .progress {
@@ -160,10 +160,14 @@
       }
     }
     .meet-place {
-      color: @red;
+      color: #9d261d;
     }
     .actions {
       text-align: center;
+      .btn {
+        .scale(0.875);
+        padding: 2px 6px;
+      }
     }
     .poke-ball {
       position: absolute;
@@ -181,7 +185,7 @@
   }
 }
 
-@media (max-width: 394px) {
+@media (max-width: 384px) {
   .pokemon-view {
     .hp {
       .progress {

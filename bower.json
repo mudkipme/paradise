@@ -4,13 +4,16 @@
   "dependencies": {
     "requirejs": "*",
     "requirejs-text": "*",
-    "jquery": "*",
+    "jquery": "2.*.*",
     "jquery.transit": "*",
     "backbone-amd": "*",
     "underscore-amd": "*",
-    "bootstrap": "2.*.*",
-    "bootstrap-switch": "43d4ba83a4a0a3e80dc84051b30519fb20a37010",
+    "bootstrap": "3.*.*",
+    "bootstrap-switch": "*",
     "moment": "*",
     "i18next": "*"
+  },
+  "resolutions": {
+    "jquery": "2.*.*"
   }
 }
