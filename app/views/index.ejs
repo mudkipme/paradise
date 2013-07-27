@@ -8,7 +8,7 @@
     <link href="stylesheets/app.css" rel="stylesheet" />
     <link rel="apple-touch-icon-precomposed" href="http://static.52poke.com/apple-icon.png" />
     <script>
-      var Paradise = {
+      var PARADISE = {
         locale: '<%= i18n.lng() %>'
         ,trainerName: '<%= me.name %>'
         ,imgBase: '<%= settings["img base"] %>'
@@ -50,7 +50,10 @@
           <li><a href="http://www.google.com/intl/en/chrome/browser/mobile/">Chrome for Mobile</a></li>
         </ul>
       </div>
-      <div class="row" id="paradise-app"></div>
+      <section class="row" id="paradise-app">
+        <main class="col-lg-9 col-sm-9 col-push-3"></main>
+        <aside class="col-lg-3 col-sm-3 col-pull-9"></aside>
+      </section>
       <hr />
       <footer>
         <p>

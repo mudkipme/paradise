@@ -6,12 +6,13 @@
     "requirejs-text": "*",
     "jquery": "2.*.*",
     "jquery.transit": "*",
-    "backbone-amd": "*",
-    "underscore-amd": "*",
+    "backbone": "*",
+    "underscore": "*",
     "bootstrap": "3.*.*",
     "bootstrap-switch": "*",
     "moment": "*",
-    "i18next": "*"
+    "i18next": "*",
+    "backbone.marionette": "*"
   },
   "resolutions": {
     "jquery": "2.*.*"

@@ -24,7 +24,7 @@ define([
     ,render: function(){
       var data = {
         pokemon: this.model.toJSON()
-        ,imgBase: Paradise.imgBase
+        ,imgBase: PARADISE.imgBase
         ,spriteUrl: this.spriteUrl()
         ,Gender: Gender
       };
@@ -36,7 +36,7 @@ define([
     }
 
     ,spriteUrl: function(){
-      var url = Paradise.imgBase + '/pokemon/';
+      var url = PARADISE.imgBase + '/pokemon/';
       if (this.model.get('isShiny')) {
         url += 'shiny/';
       }

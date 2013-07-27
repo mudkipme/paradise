@@ -1,139 +1,109 @@
 define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'kinetic',
-  'i18next',
-  'text!templates/home.html',
-], function($, _, Backbone, Kinetic, i18n, homeTemplate){
+  'jquery'
+  ,'underscore'
+  ,'backbone'
+  ,'marionette'
+  ,'kinetic'
+  ,'i18next'
+  ,'text!templates/home.html'
+], function($, _, Backbone, Marionette, Kinetic, i18n, homeTemplate){
 
-  var HomeView = Backbone.View.extend({
-    id: 'home-view',
-    className: 'hidden-sm',
+  var HomeView = Marionette.ItemView.extend({
+    id: 'home-view'
+    ,className: 'hidden-sm'
 
-    render: function(config){
-      this.$el.html(_.template(homeTemplate, {}));
+    ,ui: {
+      nav: '#paradise-nav'
+      ,bottomIcons: '.bottom-icons'
+    }
 
-      this.nav = this.$('#paradise-nav');
-      this.bottomIcons = this.$('.bottom-icons');
+    ,template: _.template(homeTemplate)
 
-      this.config = this.getConfig(config);
-      this.draw();
+    ,config: {
+      width: 810,
+      height: 422,
+      centerRadius: 110,
+      centerImage: './images/home/pokeball.png',
+      pattern: './images/home/pattern.png',
+      smallAngle: 0.0641754962,
+      bigAngle: 0.2904520721,
+      textWidth: 140,
+      textDistance: 190,
+      fontFamily: '"Hiragino Sans GB", "Helvetica Neue", "Microsoft YaHei", "Microsoft JhengHei", sans-serif',
+      fontSize: 18,
+      fontStyle: 'bold',
+      stroke: 'rgba(255,255,255,0.5)',
+      textColor: '#FFF',
+      exitDuration: 0.5,
+      items: [
+        {
+          href: '/bag'
+          ,color: '#9c59b8'
+          ,text: 'menu.bag'
+        }
+        ,{
+          href: '/battle'
+          ,color: '#96a6a6'
+          ,text: 'menu.battle-tower'
+        }
+        ,{
+          href: '/daycare'
+          ,color: '#fff'
+          ,textColor: '#96a6a6'
+          ,text: 'menu.day-care'
+        }
+        ,{
+          href: '/pokemart'
+          ,color: '#f1c40f'
+          ,text: 'menu.poke-mart'
+        }
+        ,{
+          href: '/pokedex'
+          ,color: '#e77e23'
+          ,text: 'menu.pokedex'
+        }
+        ,{
+          href: '/world'
+          ,color: '#e84c3d'
+          ,text: 'menu.pokemon-world'
+        }
+        ,{
+          href: '/timeline'
+          ,color: '#2fcc71'
+          ,text: 'menu.timeline'
+        }
+        ,{
+          href: '/storage'
+          ,color: '#3598dc'
+          ,text: 'menu.storage'
+        }
+      ]
+    }
 
-      return this;
-    },
-
-    remove: function(){
+    ,onClose: function(){
       var stage = this.layer.getStage();
       stage && stage.destroy();
       $('body').css('cursor', '');
-      Backbone.View.prototype.remove.call(this);
-    },
+    }
 
-    getConfig: function(opts){
-      var defaultOpts = {
-        width: 810,
-        height: 422,
-        centerRadius: 110,
-        centerImage: './images/home/pokeball.png',
-        pattern: './images/home/pattern.png',
-        smallAngle: 0.0641754962,
-        bigAngle: 0.2904520721,
-        textWidth: 140,
-        textDistance: 190,
-        fontFamily: '"Hiragino Sans GB", "Helvetica Neue", "Microsoft YaHei", "Microsoft JhengHei", sans-serif',
-        fontSize: 18,
-        fontStyle: 'bold',
-        stroke: 'rgba(255,255,255,0.5)',
-        textColor: '#FFF',
-        exitDuration: 0.5,
-        items: [
-          {
-            href: '/world'
-            ,pos: 6
-            ,color: '#e84c3d'
-            ,text: i18n.t('menu.pokemon-world')
-          }
-          ,{
-            href: '/pokedex'
-            ,pos: 5
-            ,color: '#e77e23'
-            ,text: i18n.t('menu.pokedex')
-          }
-          ,{
-            href: '/pokemart'
-            ,pos: 4
-            ,color: '#f1c40f'
-            ,text: i18n.t('menu.poke-mart')
-          }
-          ,{
-            href: '/daycare'
-            ,pos: 3
-            ,color: '#fff'
-            ,textColor: '#96a6a6'
-            ,text: i18n.t('menu.day-care')
-          }
-          ,{
-            href: '/timeline'
-            ,pos: 7
-            ,color: '#2fcc71'
-            ,text: i18n.t('menu.timeline')
-          }
-          ,{
-            href: '/storage'
-            ,pos: 8
-            ,color: '#3598dc'
-            ,text: i18n.t('menu.storage')
-          }
-          ,{
-            href: '/bag'
-            ,pos: 1
-            ,color: '#9c59b8'
-            ,text: i18n.t('menu.bag')
-          }
-          ,{
-            href: '/battle'
-            ,pos: 2
-            ,color: '#96a6a6'
-            ,text: i18n.t('menu.battle-tower')
-          }
-        ]
-      };
-
-      return _.defaults(opts || {}, defaultOpts);
-    },
-
-    drawSector: function(data){
+    ,drawSector: function(data, pos){
       var beginAngle, textX, textY, me = this,
         opt = me.config,
         layer = me.layer;
 
       // determine arc path
-      switch (data.pos) {
-        case 1:
-          beginAngle = opt.smallAngle / 2 + opt.bigAngle;
-          break;
-        case 2:
-          beginAngle = opt.smallAngle * 1.5 + opt.bigAngle * 2;
-          break;
-        case 3:
-          beginAngle = Math.PI - opt.smallAngle * 1.5 - opt.bigAngle;
-          break;
-        case 4:
-          beginAngle = Math.PI - opt.smallAngle / 2;
-          break;
-        case 5:
-          beginAngle = opt.smallAngle / 2 + opt.bigAngle - Math.PI;
-          break;
-        case 6:
-          beginAngle = opt.smallAngle * 1.5 + opt.bigAngle * 2 - Math.PI;
-          break;
-        case 7:
-          beginAngle = - opt.smallAngle * 1.5 - opt.bigAngle;
-          break;
-        case 8:
-          beginAngle = - opt.smallAngle / 2;
-      }
+      var angles = [
+        opt.smallAngle / 2 + opt.bigAngle,
+        opt.smallAngle * 1.5 + opt.bigAngle * 2,
+        Math.PI - opt.smallAngle * 1.5 - opt.bigAngle,
+        Math.PI - opt.smallAngle / 2,
+        opt.smallAngle / 2 + opt.bigAngle - Math.PI,
+        opt.smallAngle * 1.5 + opt.bigAngle * 2 - Math.PI,
+        - opt.smallAngle * 1.5 - opt.bigAngle,
+        - opt.smallAngle / 2
+      ]; 
+      
+      beginAngle = angles[pos];
 
       // determine text position
       textX = Math.abs(beginAngle) < Math.PI / 2 ? opt.textDistance : - opt.textDistance - opt.textWidth;
@@ -167,7 +137,7 @@ define([
         fontFamily: data.fontFamily || opt.fontFamily,
         fontSize: data.fontSize || opt.fontSize,
         fontStyle: data.fontStyle || opt.fontStyle,
-        text: data.text
+        text: i18n.t(data.text)
       });
 
       group.add(shape);
@@ -217,13 +187,13 @@ define([
       });
 
       layer.add(group);
-    },
+    }
 
-    draw: function(){
+    ,onRender: function(){
       var me = this, opt = me.config;
 
       var stage = new Kinetic.Stage({
-        container: me.nav.get(0),
+        container: me.ui.nav.get(0),
         width: opt.width,
         height: opt.height
       });
@@ -231,8 +201,8 @@ define([
       var layer = new Kinetic.Layer();
       me.layer = layer;
 
-      _.each(opt.items, function(item){
-        me.drawSector(item);
+      _.each(opt.items, function(item, i){
+        me.drawSector(item, i);
       });
 
       if (opt.pattern) {
@@ -277,9 +247,9 @@ define([
       } else {
         stage.add(layer);
       }
-    },
+    }
 
-    scatter: function(group, callback){
+    ,scatter: function(group, callback){
       var me = this, opt = me.config;
 
       _.each(me.layer.children, function(item){
@@ -306,7 +276,7 @@ define([
         tween.play();
       });
 
-      me.bottomIcons.fadeOut(opt.exitDuration * 1000).promise().done(callback);
+      me.ui.bottomIcons.fadeOut(opt.exitDuration * 1000).promise().done(callback);
     }
   });
   return HomeView;

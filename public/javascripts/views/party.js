@@ -9,10 +9,9 @@ define([
 
   var PartyView = Backbone.View.extend({
     id: 'party-view'
-    ,className: 'col-lg-9 col-sm-9 col-push-3'
 
     ,initialize: function(name){
-      this.model = new Trainer({name: name || Paradise.trainerName});
+      this.model = new Trainer({name: name || PARADISE.trainerName});
       this.listenTo(this.model, 'change', this.addAll);
     }
 

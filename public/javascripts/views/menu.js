@@ -2,22 +2,20 @@ define([
   'jquery'
   ,'underscore'
   ,'backbone'
+  ,'marionette'
   ,'i18next'
   ,'text!templates/menu.html'
-], function($, _, Backbone, i18n, menuTemplate){
+], function($, _, Backbone, Marionette, i18n, menuTemplate){
 
-  var MenuView = Backbone.View.extend({
+  var MenuView = Marionette.ItemView.extend({
     id: 'menu-view'
-    ,className: 'col-lg-3 col-sm-3 col-pull-9'
+
+    ,template: _.template(menuTemplate)
+    ,templateHelpers: { t: i18n.t }
 
     ,events: {
       'click a[data-href]': 'navigate'
       ,'click .collapsible a': 'collapse'
-    }
-
-    ,render: function(){
-      this.$el.html(_.template(menuTemplate, {}));
-      return this;
     }
 
     ,navigate: function(e){
