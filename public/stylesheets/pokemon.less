@@ -11,7 +11,6 @@
 .pokemon-view {
   width: 355px;
   max-width: 100%;
-  overflow: hidden;
   padding-top: 5px;
   cursor: pointer;
   position: relative;
@@ -187,6 +186,8 @@
 
 @media (max-width: 384px) {
   .pokemon-view {
+    overflow: hidden;
+
     .hp {
       .progress {
         width: 54px;
@@ -199,6 +200,10 @@
         .progress {
           width: 236px;
         }
+      }
+
+      .poke-ball {
+        right: 57px;
       }
     }
   }

@@ -71,7 +71,7 @@
 <div class="pokemon-bottom"></div>
 
 <!-- Sprite and name -->
-<img class="sprite" src="<%= spriteUrl %>" alt="<%- pokemon.nickname || t('pokemon:'+pokemon.species.name) %>" />
+<img class="sprite" src="<%= spriteUrl() %>" alt="<%- pokemon.nickname || t('pokemon:'+pokemon.species.name) %>" />
 <div class="name"><%- pokemon.nickname || t('pokemon:'+pokemon.species.name) %></div>
 
 <!-- Level and type on the left -->
@@ -109,3 +109,6 @@
   } else if (pokemon.happiness < 200) { %>smile<%
   } else if (pokemon.happiness < 255) { %>happy<%
   } else { %>full<% } %>"></div>
+
+<!-- Connector between Pokémon in party -->
+<div class="party-connector"></div>

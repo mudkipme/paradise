@@ -18,6 +18,10 @@ define([
       ,'click .collapsible a': 'collapse'
     }
 
+    ,initialize: function(){
+      this.listenTo(Backbone.history, 'route', this.update);
+    }
+
     ,navigate: function(e){
       Backbone.history.navigate($(e.target).data('href'), {trigger: true});
     }
@@ -28,7 +32,7 @@ define([
       li.toggleClass('collapsed');
     }
 
-    ,update: function(route){
+    ,update: function(router, route){
       this.$('.selected').removeClass('selected');
       this.$('a[data-href="/' + route + '"]')
       .parent()
@@ -37,5 +41,6 @@ define([
       .removeClass('collapsed');
     }
   });
+  
   return MenuView;
 });

@@ -1,33 +1,31 @@
 define([
   'marionette'
-  ,'app'
   ,'views/menu'
   ,'views/home'
   ,'views/party'
-], function(Marionette, App, MenuView, HomeView, PartyView){
+], function(Marionette, MenuView, HomeView, PartyView){
   return Marionette.Controller.extend({
     // Display menu view
-    initialize: function(){
-      var menu = new MenuView;
-      App.menuRegion.show(menu);
-      App.vent.bind('route', function(route){
-        menu.update(route);
-      });
+    initialize: function(options){
+      this.menuRegion = options.menuRegion;
+      this.mainRegion = options.mainRegion;
+
+      this.menuRegion.show(new MenuView);
     }
 
     ,home: function(){
-      var homeView = new HomeView;
-      homeView.on('render', function(){
-        App.mainRegion.expand();  
+      var homeView = new HomeView, me = this;
+      homeView.on('before:render', function(){
+        me.mainRegion.expand();  
       });
       homeView.on('close', function(){
-        App.mainRegion.collapse();  
+        me.mainRegion.collapse();  
       });
-      App.mainRegion.show(homeView);
+      me.mainRegion.show(homeView);
     }
 
     ,party: function(){
-      App.mainRegion.show(new PartyView);
+      this.mainRegion.show(new PartyView);
     }
   });
 });

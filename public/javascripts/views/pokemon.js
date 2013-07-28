@@ -1,55 +1,86 @@
 define([
   'jquery'
   ,'underscore'
-  ,'backbone'
+  ,'marionette'
   ,'i18next'
-  ,'moment'
   ,'models/pokemon'
   ,'text!templates/pokemon.html'
   ,'bootstrap/tooltip'
-  ,'bootstrap-switch'
-], function($, _, Backbone, i18n, moment, Pokemon, pokemonTemplate){
+  ,'bootstrap/switch'
+], function($, _, Marionette, i18n, Pokemon, pokemonTemplate){
 
   var Gender = { female: 1, male: 2, genderless: 3 };
 
-  var PokemonView = Backbone.View.extend({
+  var PokemonView = Marionette.ItemView.extend({
     className: 'pokemon-view'
-    ,urlRoot: '/api/pokemon'
     ,model: Pokemon
+
+    ,ui: {
+      content: '.content'
+    }
 
     ,events: {
       'click': 'toggle'
     }
 
-    ,render: function(){
-      var data = {
-        pokemon: this.model.toJSON()
-        ,imgBase: PARADISE.imgBase
-        ,spriteUrl: this.spriteUrl()
-        ,Gender: Gender
-      };
+    ,collapsed: true
 
-      this.$el.html(_.template(pokemonTemplate, data));
-      this.$('.switch').bootstrapSwitch();
-      this.$('[title]').tooltip();
-      return this;
+    ,modelEvents: {
+
     }
 
-    ,spriteUrl: function(){
-      var url = PARADISE.imgBase + '/pokemon/';
-      if (this.model.get('isShiny')) {
-        url += 'shiny/';
+    ,template: _.template(pokemonTemplate)
+
+    ,templateHelpers: {
+      t: i18n.t
+      ,imgBase: PARADISE.imgBase
+      ,Gender: Gender
+
+      // Generate the sprite url of Pokémon
+      ,spriteUrl: function(){
+        var url = PARADISE.imgBase + '/pokemon/';
+        var pokemon = this.pokemon;
+
+        if (pokemon.isShiny) {
+          url += 'shiny/';
+        }
+        if (pokemon.species.hasGenderDifferences && pokemon.gender == Gender.female) {
+          url += 'female/';
+        }
+        url += pokemon.species.number;
+        if (pokemon.formIdentifier) {
+          url += '-' + pokemon.formIdentifier;
+        }
+        return url + '.png';
       }
-      if (this.model.get('species').hasGenderDifferences
-        && this.model.get('gender') == Gender.female) {
-        url += 'female/';
+    }
+
+    // Wrap model data to avoid undefined error
+    ,serializeData: function(){
+      return {
+        pokemon: this.model.toJSON()
       }
-      url += this.model.get('species').number;
-      if (this.model.get('formIdentifier')) {
-        url += '-' + this.model.get('formIdentifier');
+    }
+
+    ,onRender: function(){
+      this.$('.switch').bootstrapSwitch();
+      this.$('[title]').tooltip();
+    }
+
+    ,collapse: function(){
+      if (!this.collapsed) {
+        this.trigger('before:collapse');
+        this.ui.content.slideUp();
+        this.collapsed = true;
       }
-      url += '.png';
-      return url;
+    }
+
+    ,expand: function(){
+      if (this.collapsed) {
+        this.trigger('before:expand');
+        this.ui.content.slideDown();
+        this.collapsed = false;
+      }
     }
 
     ,toggle: function(e){
@@ -58,8 +89,13 @@ define([
         || e.target.tagName.toUpperCase() == 'A') {
         return;
       }
-      this.$('.content').slideToggle();
+      if (this.collapsed) {
+        this.expand();
+      } else {
+        this.collapse();
+      }
     }
   });
+
   return PokemonView;
 });

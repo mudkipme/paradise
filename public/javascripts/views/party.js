@@ -1,35 +1,31 @@
 define([
   'jquery'
   ,'underscore'
-  ,'backbone'
+  ,'marionette'
   ,'models/trainer'
   ,'views/pokemon'
-  ,'text!templates/party.html'
-], function($, _, Backbone, Trainer, PokemonView, partyTemplate){
+], function($, _, Marionette, Trainer, PokemonView){
 
-  var PartyView = Backbone.View.extend({
+  var PartyView = Marionette.CollectionView.extend({
     id: 'party-view'
 
+    ,itemView: PokemonView
+
     ,initialize: function(name){
-      this.model = new Trainer({name: name || PARADISE.trainerName});
-      this.listenTo(this.model, 'change', this.addAll);
+      this.trainer = new Trainer({name: name || PARADISE.trainerName});
+      this.collection = this.trainer.party;
     }
 
-    ,render: function(){
-      this.$el.html(_.template(partyTemplate, {}));
-      this.addAll();
-      this.model.fetch();
-      return this;
+    ,onRender: function(){
+      this.trainer.fetch();
     }
 
-    ,addAll: function(){
-      var me = this;
-
-      this.model.party.each(function(pokemon){
-        var view = new PokemonView({model: pokemon});
-        me.$('.pokemon-list').append(view.render().el);
+    ,onItemviewBeforeExpand: function(itemView){
+      this.children.each(function(child){
+        child.collapse();
       });
     }
   });
+  
   return PartyView;
 });

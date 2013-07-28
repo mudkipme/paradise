@@ -3,11 +3,14 @@ define([
   ,'marionette'
   ,'i18next'
   ,'moment'
+  ,'vent'
+  ,'router'
+  ,'controller'
   ,'moment-lang/zh-cn'
   ,'moment-lang/zh-tw'
   ,'bootstrap/transition'
   ,'bootstrap/collapse'
-], function(Backbone, Marionette, i18n, moment){
+], function(Backbone, Marionette, i18n, moment, vent, Router, Controller){
 
   var App = new Marionette.Application();
 
@@ -26,7 +29,7 @@ define([
     ,mainRegion: MainRegion
   });
 
-  // load locales
+  // initialize locales
   App.addInitializer(function(options){
     i18n.init({
       lng: options.locale
@@ -38,12 +41,29 @@ define([
         ,defaultNs: 'app'
       }
     }, function(){
-      App.vent.trigger('locale:load');
+      vent.trigger('app:initialize');
     });
 
     var momentLngName = {'zh-hans': 'zh-cn', 'zh-hant': 'zh-tw'};
     moment.lang(momentLngName[options.locale] || options.locale);
-    window.t = i18n.t;
+  });
+
+  // initialize router and controller
+  vent.on('app:initialize', function(){
+    var controller = new Controller({
+        menuRegion: App.menuRegion
+        ,mainRegion: App.mainRegion
+      });
+
+    App.appRouter = new Router({
+      controller: controller
+    });
+    vent.trigger('app:initialize:after');
+  });
+
+  // Use custom initialize:after because it's asynchronous
+  vent.on('app:initialize:after', function(){
+    Backbone.history.start({pushState: true});
   });
 
   return App;
