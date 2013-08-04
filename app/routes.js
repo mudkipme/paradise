@@ -36,4 +36,6 @@ module.exports = function(app) {
   app.post('/api/pokemon/:pokemonId/hold-item', selfPokemon, pokemon.holdItem);
   app.post('/api/pokemon/:pokemonId/hold-item/take'
     , selfPokemon, pokemon.takeHoldItem);
+  app.post('/api/pokemon/:pokemonId/send-pokemon-center'
+    , selfPokemon, pokemon.sendPokemonCenter);
 };

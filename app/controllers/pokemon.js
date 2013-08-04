@@ -27,14 +27,14 @@ exports.release = function(req, res) {
   if (req.pokemon.pokemonCenter)
     return res.json(403, { error: 'CANNOT_RELEASE_PC' });
 
-  var pos = req.trainer.findPokémon(req.pokemon);
+  var pos = req.trainer.findPokemon(req.pokemon);
   if (!pos) return res.json(500, { error: 'FIND_POKEMON_ERROR' });
 
   if (pos.party) {
     if (!partyNum(req)) return res.json(403, { error: 'ONE_POKEMON_LEFT' });
     req.trainer.party.splice(pos.position, 1);
   } else {
-    req.trainer.storage[pos.boxId].pokemon[pos.position] = null;
+    req.trainer.storage[pos.boxId].pokemon.set(pos.position, null);
   }
 
   req.pokemon.trainer = null;
@@ -52,16 +52,16 @@ exports.deposit = function(req, res) {
   if (req.pokemon.pokemonCenter)
     return res.json(403, { error: 'CANNOT_DEPOSIT_PC' });
 
-  var pos = req.trainer.findPokémon(req.pokemon);
+  var pos = req.trainer.findPokemon(req.pokemon);
   var storage = req.trainer.storageSlot();
+  console.log(storage);
 
   if (!pos) return res.json(500, { error: 'FIND_POKEMON_ERROR' });
   if (!pos.party) return res.json(403, { error: 'POKEMON_NOT_IN_PARTY' });
-  if (!storage) return res.json(403, { error: 'ERR_NO_STORAGE_SLOT' });
   if (!partyNum(req)) return res.json(403, { error: 'ONE_POKEMON_LEFT' });
 
   req.trainer.party.splice(pos.position, 1);
-  req.trainer.storage[storage.boxId].pokemon[storage.position] = req.pokemon;
+  req.trainer.storage[storage.boxId].pokemon.set(storage.position, req.pokemon);
 
   req.trainer.save(function(err){
     if (err) return res.json(500, { error: err.message });
@@ -77,9 +77,10 @@ exports.withdraw = function(req, res) {
   var pos = req.trainer.findPokemon(req.pokemon);
 
   if (!pos) return res.json(500, { error: 'FIND_POKEMON_ERROR' });
+  if (pos.party) return res.json(403, { error: 'ALREADY_IN_PARTY' });
 
   req.trainer.party.push(req.pokemon);
-  req.trainer.storage[pos.boxId].pokemon[pos.position] = null;
+  req.trainer.storage[pos.boxId].pokemon.set(pos.position, null);
   req.trainer.save(function(err){
     if (err) return res.json(500, { error: err.message });
     res.send(204);
@@ -88,7 +89,7 @@ exports.withdraw = function(req, res) {
 
 // Set nickname or tradable status
 exports.put = function(req, res) {
-  if (req.body.nickname) {
+  if (typeof req.body.nickname === 'string') {
     req.pokemon.nickname = req.body.nickname.substr(0, 12);
   }
   if (typeof req.body.tradable !== 'undefined') {
@@ -128,7 +129,22 @@ exports.takeHoldItem = function(req, res) {
     if (err) return res.json(500, { error: err.message });
     req.pokemon.setHoldItem(null, function(err){
       if (err) return res.json(500, { error: err.message });
-      res.send(204);
+      res.json(req.pokemon);
     });
+  });
+};
+
+// Send pokemon to Pokémon Center
+exports.sendPokemonCenter = function(req, res) {
+  var stats = req.pokemon.stats;
+  if (stats.maxHp == stats.hp) return res.json(403, { error: 'HP_FULL' });
+  if (req.pokemon.pokemonCenter) return res.json(403, { error: 'ALREADY_IN_PC' });
+
+  var position = req.trainer.findPokemon(req.pokemon);
+  if (!position.party) return res.json(403, { error: 'POKEMON_NOT_IN_PARTY' });
+
+  req.pokemon.pokemonCenter = new Date();
+  req.pokemon.save(function(){
+    res.json(req.pokemon);
   });
 };

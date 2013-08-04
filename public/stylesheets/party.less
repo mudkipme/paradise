@@ -2,6 +2,26 @@
   max-width: 580px;
   margin: 0 auto;
 
+  /* Only one Pokémon */
+  .pokemon-view:first-child:last-child {
+    .btn-deposit, .btn-release {
+      display: none;
+    }
+  }
+
+  .drag-ring {
+    display: none;
+    box-sizing: border-box;
+    position: absolute;
+    width: 115px;
+    height: 117px;
+    top: 5px;
+    left: 120px;
+    border-radius: 57.5px;
+    border: 5px solid #000;
+    opacity: 0.5;
+  }
+
   .party-connector {
     display: none;
     z-index: -1;
@@ -27,6 +47,22 @@
       -ms-transform: scaleX(-1);
       transform: scaleX(-1);
       left: 118px;
+    }
+  }
+
+  .pokemon-view.dragging {
+    opacity: 0.5;
+  }
+
+  .pokemon-view.dragging, .pokemon-view.dragging + .pokemon-view {
+    .party-connector {
+      display: none !important;
+    }
+  }
+
+  .pokemon-view.dragover {
+    .drag-ring {
+      display: block;
     }
   }
 }

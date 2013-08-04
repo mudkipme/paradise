@@ -2,7 +2,7 @@
 <div class="content">
   <!-- Detailed information of Pokémon -->
   <div class="left-info">
-    <p>ID. <%= pokemon.id.substr(-6) %></p>
+    <p>ID. <span title="<%= pokemon.id %>"><%= pokemon.displayId %></span></p>
     <p><%= t('stat.nature') %>: <%= t('nature.'+pokemon.nature.name) %></p>
     <p><%= t('stat.experience') %>: <%= pokemon.experience %></p>
   </div>
@@ -23,7 +23,7 @@
     EXP<div class="progress"><div class="progress-bar progress-bar-info" style="width: <%= (pokemon.experience - pokemon.expCurrentLevel) / (pokemon.expNextLevel - pokemon.expCurrentLevel) * 100 %>%"></div></div>
   </div>
   <div class="left-info">
-    <p class="alt"><%= t('stat.hp') %>: <%= pokemon.stats.hp %> / <%= pokemon.stats['max-hp'] %></p>
+    <p class="alt"><%= t('stat.hp') %>: <%= pokemon.stats.hp %> / <%= pokemon.stats.maxHp %></p>
     <p class="<% if (pokemon.nature.increasedStat == 'attack') { %>increase<%
     } else if (pokemon.nature.decreasedStat == 'attack') { %>decrease<%
     } else { %>alt<% } %>"><%= t('stat.attack') %>: <%= pokemon.stats.attack %></p>
@@ -48,31 +48,41 @@
   <p class="meet-date">
     <%= t('stat.meet-date', {meetDate: moment(pokemon.meetDate).format('L'), meetPlace: t('location:' + pokemon.meetPlaceIndex), meetLevel: pokemon.meetLevel }) %>
   </p>
-  <div class="tradable">
-    <div class="switch switch-mini pull-right">
-      <input type="checkbox" <% if (pokemon.tradable) {%>checked=""<%}%> />
+  
+  <% if (!pokemon.pokemonCenterTime) { %>
+    <div class="tradable">
+      <div class="switch switch-mini pull-right">
+        <input type="checkbox" <% if (pokemon.tradable) {%>checked=""<%}%> />
+      </div>
+      <%= t('stat.tradable') %>
     </div>
-    <%= t('stat.tradable') %>
-  </div>
 
-  <!-- Disposit, release or send to Pokémon Center -->
-  <div class="actions">
-    <% if (pokemon.lostHp) { %>
-      <p><button class="btn btn-success btn-small btn-send-pc"> - <%= t('action.send-pokemon-center') %> - </button></p>
-    <% } %>
-    <p><button class="btn btn-primary btn-small btn-deposit"> - <%= t('action.deposit') %> - </button></p>
-    <p><button class="btn btn-danger btn-small btn-release"> - <%= t('action.release') %> - </button></p>
-  </div>
+    <!-- Disposit, release or send to Pokémon Center -->
+    <div class="actions">
+      <% if (pokemon.lostHp) { %>
+        <p><button class="btn btn-success btn-small btn-send-pc"> - <%= t('action.send-pokemon-center') %> - </button></p>
+      <% } %>
+      <p><button class="btn btn-primary btn-small btn-deposit"> - <%= t('action.deposit') %> - </button></p>
+      <p><button class="btn btn-danger btn-small btn-release"> - <%= t('action.release') %> - </button></p>
+    </div>
+  <% } else { %>
+    <p class="pokemon-center-time alt">
+      <%= t('stat.pokemon-center-time', {pokemonCenterTime: moment.duration(pokemon.pokemonCenterTime).humanize()}) %>
+    </p>
+  <% } %>
 
   <!-- Shiny star and held item -->
   <% if (pokemon.isShiny) {%><div class="shiny-star"></div><%}%>
-  <img class="poke-ball" src="<%= imgBase %>/items/<%= pokemon.pokeBall.name %>.png" alt="<%= t('item:'+pokemon.pokeBall.name) %>" title="<%= t('item:'+pokemon.pokeBall.name) %>" />
+  <img class="poke-ball" src="<%= imgBase %>/items/<%= pokemon.pokeBall.name %>.png" alt="<%= t('item:'+pokemon.pokeBall.name) %>" title="<%= t('item:'+pokemon.pokeBall.name) %>" draggable="false" />
 </div>
 <div class="pokemon-bottom"></div>
 
 <!-- Sprite and name -->
-<img class="sprite" src="<%= spriteUrl() %>" alt="<%- pokemon.nickname || t('pokemon:'+pokemon.species.name) %>" />
-<div class="name"><%- pokemon.nickname || t('pokemon:'+pokemon.species.name) %></div>
+<img class="sprite" src="<%= spriteUrl() %>" alt="<%- pokemon.nickname || t('pokemon:'+pokemon.species.name) %>" draggable="false" />
+<div class="name">
+  <span><%- pokemon.nickname || t('pokemon:'+pokemon.species.name) %></span>
+  <input class="form-control input-small" style="display:none" type="text" placeholder="<%- t('pokemon:'+pokemon.species.name) %>" value="<%- pokemon.nickname %>" />
+</div>
 
 <!-- Level and type on the left -->
 <div class="level">Lv. <%= pokemon.level %></div>
@@ -84,7 +94,7 @@
 
 <!-- Species name, gender and HP bar on the right -->
 <div class="species-name">
-  <%= t('pokemon:'+pokemon.species.name) %><%
+  <%- t('pokemon:'+pokemon.species.name) %><%
   if (pokemon.gender == Gender.female) {
     %><span class="female">♀</span><%
   } else if (pokemon.gender == Gender.male) {
@@ -94,13 +104,13 @@
 </div>
 <div class="hp">
   HP<div class="progress"><div class="progress-bar <%
-  if (pokemon.stats.hp / pokemon.stats['max-hp'] <= 0.2) {
+  if (pokemon.stats.hp / pokemon.stats.maxHp <= 0.2) {
     %>progress-bar-danger<%
-  } else if (pokemon.stats.hp / pokemon.stats['max-hp'] <= 0.5) {
+  } else if (pokemon.stats.hp / pokemon.stats.maxHp <= 0.5) {
     %>progress-bar-warning<%
   } else {
     %>progress-bar-success<%
-  } %>" style="width: <%= pokemon.stats.hp / pokemon.stats['max-hp'] * 100 %>%"></div></div>
+  } %>" style="width: <%= pokemon.stats.hp / pokemon.stats.maxHp * 100 %>%"></div></div>
 </div>
 
 <!-- Happiness on the top -->
@@ -112,3 +122,4 @@
 
 <!-- Connector between Pokémon in party -->
 <div class="party-connector"></div>
+<div class="drag-ring"><div>

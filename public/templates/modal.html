@@ -1,0 +1,19 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title"><%- t(options.title || 'modal.title') %></h4>
+    </div>
+    <div class="modal-body">
+      <p><%= t(options.content || 'modal.content') %></p>
+    </div>
+    <div class="modal-footer">
+      <% if (!options.type || options.type == 'alert') {%>
+        <button type="button" class="btn btn-primary" data-dismiss="modal"><%= t('modal.ok') %></button>
+      <% } else if (options.type == 'confirm') {%>
+        <button type="button" class="btn btn-default" data-dismiss="modal"><%= t('modal.cancel') %></button>
+        <button type="button" class="btn btn-accept btn-<%= options.btnType || '' %>" data-dismiss="modal"><%= t('modal.ok') %></button>
+      <% } %>
+    </div>
+  </div>
+</div>

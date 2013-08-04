@@ -3,7 +3,8 @@ define([
   ,'views/menu'
   ,'views/home'
   ,'views/party'
-], function(Marionette, MenuView, HomeView, PartyView){
+  ,'models/trainer'
+], function(Marionette, MenuView, HomeView, PartyView, Trainer){
   return Marionette.Controller.extend({
     // Display menu view
     initialize: function(options){
@@ -19,13 +20,15 @@ define([
         me.mainRegion.expand();  
       });
       homeView.on('close', function(){
-        me.mainRegion.collapse();  
+        me.mainRegion.collapse();
       });
       me.mainRegion.show(homeView);
     }
 
     ,party: function(){
-      this.mainRegion.show(new PartyView);
+      var trainer = new Trainer({name: PARADISE.trainerName});
+      this.mainRegion.show(new PartyView({collection: trainer.party}));
+      trainer.fetch();
     }
   });
 });

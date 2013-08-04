@@ -23,7 +23,8 @@ exports.pokemon = function(req, res, next, pokemonId){
  * Limit request 
  */
 exports.selfPokemon = function(req, res, next){
-  if (req.trainer && req.pokemon.trainer._id.equals(req.trainer._id)) {
+  if (req.trainer && req.pokemon.trainer
+    && req.pokemon.trainer._id.equals(req.trainer._id)) {
     next();
   } else {
     res.json(403, { error: 'PERMISSION_DENIED' });

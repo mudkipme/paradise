@@ -41,11 +41,13 @@
     ,"original-trainer": "初始训练家"
     ,"meet-date": "__meetDate__ <span class='meet-place'>__meetPlace__</span> 得到，等级 __meetLevel__"
     ,"tradable": "允许被请求交换"
+    ,"pokemon-center-time": "它正在神奇宝贝中心休息，还需__pokemonCenterTime__回复"
   }
   ,"action": {
     "send-pokemon-center": "送到神奇宝贝中心"
     ,"deposit": "放入寄存箱"
     ,"release": "放回野生"
+    ,"release-confirm": "你真的要将这只神奇宝贝放回野生吗？"
   }
   ,"type": {
     "normal": "一般"
@@ -93,5 +95,15 @@
     ,"sassy": "狂妄"
     ,"careful": "慎重"
     ,"quirky": "浮躁"
+  }
+  ,"error": {
+    "title": "发生错误"
+    ,"retry-please": "发生未知错误，请重试并向神奇宝贝部落格管理员反馈。"
+    ,"ONE_POKEMON_LEFT": "您的队伍中只有一只神奇宝贝。"
+  }
+  ,"modal": {
+    "title": "提示信息"
+    ,"ok": "确定"
+    ,"cancel": "取消"
   }
 }

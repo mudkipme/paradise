@@ -1,3 +1,4 @@
+var crypto = require('crypto');
 var mongoose = require('mongoose');
 var async = require('async');
 var _ = require('underscore');
@@ -65,23 +66,39 @@ _.each(['species', 'nature', 'pokeBall', 'holdItem'], function(key){
 });
 
 /**
+ * Shorter ID String
+ */
+PokemonSchema.virtual('displayId').get(function(){
+  var md5 = crypto.createHash('md5');
+  return md5.update(this.id.toString()).digest("hex").toString().substr(-6);
+});
+
+/**
  * Pokémon Stats
  */
 PokemonSchema.virtual('stats').get(function(){
   if (!this._inited || this.isEgg) return false;
 
   var me = this, base = me.species.base, stats = {};
+  var lostHp = me.lostHp;
 
-  stats['max-hp'] = Math.round((
+  stats.maxHp = Math.round((
     me.individual.hp + 2 * base.hp
     + me.effort.hp / 4 + 100
   ) * me.level / 100 + 10);
 
-  if (me.lostHp > stats['max-hp']) { me.lostHp = stats['max-hp']; }
+  if (me.pokemonCenter) {
+    lostHp -= Math.floor(
+      (Date.now() - me.pokemonCenter.getTime()) / 36e5
+      * config.app.pokemonCenterHP);
+  }
 
-  stats['hp'] = stats['max-hp'] - me.lostHp;
+  if (lostHp <= 0) { lostHp = 0; }
+  if (lostHp > stats.maxHp) { lostHp = stats.maxHp; }
+  stats.hp = stats.maxHp - lostHp;
 
-  ['attack', 'defense', 'special-attack', 'special-defense', 'speed'].forEach(function(type){
+  var sn = ['attack', 'defense', 'special-attack', 'special-defense', 'speed'];
+  _.each(sn, function(type){
     stats[type] = (
       me.individual[type] + 2 * base[type]
       + me.effort[type] / 4
@@ -96,6 +113,16 @@ PokemonSchema.virtual('stats').get(function(){
   });
 
   return stats;
+});
+
+PokemonSchema.virtual('pokemonCenterTime').get(function(){
+  if (!this.pokemonCenter) return 0;
+
+  var time = this.lostHp / config.app.pokemonCenterHP * 36e5
+    + this.pokemonCenter.getTime() - Date.now();
+
+  if (time < 0) return 0;
+  return Math.ceil(time);
 });
 
 // Experience of the current level of this Pokémon
@@ -261,6 +288,12 @@ PokemonSchema.methods.initData = function(callback) {
     ,holdItem: function(next){
       if (!me.holdItemId) return next();
       Item(me.holdItemId, next);
+    }
+    ,pokemonCenter: function(next){
+      if (!me.pokemonCenter || me.pokemonCenterTime) return next();
+      me.pokemonCenter = null;
+      me.lostHp = 0;
+      me.save(next);
     }
   }, function(err, results){
     if (err) return callback(err);

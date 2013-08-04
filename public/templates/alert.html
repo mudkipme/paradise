@@ -1,0 +1,2 @@
+<% if (options.close !== false) {%><button type="button" class="close" data-dismiss="alert">&times;</button><% } %>
+<strong><%- t(options.title || 'alert.title') || '' %></strong> <%= t(options.content || 'alert.content') %>

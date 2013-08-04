@@ -33,7 +33,6 @@ var TrainerSchema = new Schema({
   party:            [{ type: Schema.Types.ObjectId, ref: 'Pokemon' }],
   storage:          [ StorageSchema ],
   currentStorage:   { type: Number, default: 0 },
-  maxStorage:       { type: Number, default: 8 },
   bag: [{
     itemId:         Number,
     number:         Number
@@ -100,11 +99,10 @@ TrainerSchema.methods.getPokedex = function(callback) {
 TrainerSchema.methods.storageSlot = function() {
   var me = this, boxId = -1, position = -1;
 
-  for (var i = me.currentStorage; i < me.currentStorage + me.maxStorage; i++) {
-    if (!me.storage[i % me.maxStorage]) {
-      me.storage.set(i % me.maxStorage, { name: '', pokemon: [] });
-    }
-    var pokemon = me.storage[i % me.maxStorage].pokemon;
+  for (var i = 0; i < me.storage.length; i++) {
+    var currentBox = (me.currentStorage + i) % me.storage.length;
+
+    var pokemon = me.storage[currentBox].pokemon;
     for (var index = 0; index < 30; index++) {
       if (!pokemon[index]) {
         position = index;
@@ -113,12 +111,16 @@ TrainerSchema.methods.storageSlot = function() {
     }
 
     if (position != -1) {
-      boxId = i % me.maxStorage;
+      boxId = currentBox;
       break;
     }
   }
 
-  if (boxId == -1 || position == -1) return null;
+  if (boxId == -1) {
+    me.storage.push({name: '', pokemon: []});
+    boxId = me.storage.length;
+    position = 0;
+  }
 
   me.currentStorage = boxId;
   return {
@@ -153,8 +155,6 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
     me.party.push(pokemon);
   } else {
     slot = me.storageSlot();
-    if (!slot) return callback(new Error('ERR_NO_STORAGE_SLOT'));
-
     me.storage[slot.boxId].pokemon.set(slot.position, pokemon);
   }
 
@@ -214,7 +214,7 @@ TrainerSchema.methods.setLocation = function(latitude, longitude, callback) {
  * Get the position of given Pokémon
  * @param  {Pokemon} pokemon
  */
-TrainerSchema.methods.findPokémon = function(pokemon) {
+TrainerSchema.methods.findPokemon = function(pokemon) {
   var partyPopulated = this.populated('party');
   var result = null;
   _.each(this.party, function(pm, index){

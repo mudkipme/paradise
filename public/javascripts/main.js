@@ -3,7 +3,7 @@ requirejs.config({
     templates: '../templates'
     ,text: '../components/requirejs-text/text'
     ,jquery: '../components/jquery/jquery'
-    ,'juqery-transit': '../components/jquery.transit/jquery.transit'
+    ,'jquery.transit': '../components/jquery.transit/jquery.transit'
     ,underscore: '../components/underscore/underscore'
     ,backbone: '../components/backbone/backbone'
     ,marionette: '../components/backbone.marionette/lib/core/amd/backbone.marionette'
@@ -11,14 +11,15 @@ requirejs.config({
     ,'backbone.babysitter': '../components/backbone.babysitter/lib/amd/backbone.babysitter'
     ,i18next: '../components/i18next/release/i18next.amd.withJQuery-1.6.3'
     ,moment: '../components/moment/moment'
-    ,'moment-lang': '../components/moment/min/lang'
+    ,'moment/lang': '../components/moment/min/lang'
     ,bootstrap: '../components/bootstrap/js'
     ,'bootstrap/switch': '../components/bootstrap-switch/static/js/bootstrap-switch'
   }
   ,shim: {
     underscore: { exports: '_' }
     ,backbone: { exports: 'Backbone', deps: ['jquery', 'underscore'] }
-    ,'juqery-transit': { deps: ['jquery'] }
+    ,'juqery.transit': { deps: ['jquery'] }
+    ,'bootstrap/alert': { deps: ['jquery'] }
     ,'bootstrap/collapse': { deps: ['jquery'] }
     ,'bootstrap/tooltip': { deps: ['jquery'] }
     ,'bootstrap/transition': { deps: ['jquery'] }
@@ -26,6 +27,6 @@ requirejs.config({
   }
 });
 
-require(['app'], function(App){
-  App.start(PARADISE);
+require(['app', 'bootstrap/transition', 'bootstrap/collapse'], function(App){
+  App.start();
 });
