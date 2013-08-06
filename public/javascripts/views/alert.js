@@ -1,12 +1,11 @@
 define([
   'jquery'
   ,'underscore'
-  ,'backbone'
   ,'marionette'
   ,'i18next'
   ,'text!templates/alert.html'
   ,'bootstrap/alert'
-], function($, _, Backbone, Marionette, i18n, alertTemplate){
+], function($, _, Marionette, i18n, alertTemplate){
 
   var AlertView = Marionette.ItemView.extend({
     className: 'alert fade in'
@@ -14,8 +13,10 @@ define([
     ,template: _.template(alertTemplate)
     ,templateHelpers: { t: i18n.t }
 
-    ,initialize: function(options){
-      this.model = new Backbone.Model({options: options});
+    ,serializeData: function(){
+      return {
+        options: this.options
+      }
     }
 
     ,onRender: function(){

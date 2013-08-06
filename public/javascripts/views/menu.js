@@ -5,6 +5,7 @@ define([
   ,'marionette'
   ,'i18next'
   ,'text!templates/menu.html'
+  ,'bootstrap/collapse'
 ], function($, _, Backbone, Marionette, i18n, menuTemplate){
 
   var MenuView = Marionette.ItemView.extend({
@@ -14,8 +15,7 @@ define([
     ,templateHelpers: { t: i18n.t }
 
     ,events: {
-      'click a[data-href]': 'navigate'
-      ,'click .collapsible a': 'collapse'
+      'click a[href]': 'navigate'
     }
 
     ,initialize: function(){
@@ -23,22 +23,16 @@ define([
     }
 
     ,navigate: function(e){
-      Backbone.history.navigate($(e.target).data('href'), {trigger: true});
-    }
-
-    ,collapse: function(e){
-      var li = $(e.target).closest('li');
-      li.find('ul').slideToggle();
-      li.toggleClass('collapsed');
+      e.preventDefault();
+      Backbone.history.navigate(e.target.pathname, {trigger: true});
     }
 
     ,update: function(router, route){
       this.$('.selected').removeClass('selected');
-      this.$('a[data-href="/' + route + '"]')
-      .parent()
+      this.$('a[href="/' + route + '"]')
       .addClass('selected')
-      .closest('.collapsed')
-      .removeClass('collapsed');
+      .closest('.collapse')
+      .collapse('show');
     }
   });
   

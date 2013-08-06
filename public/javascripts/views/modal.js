@@ -1,12 +1,11 @@
 define([
   'jquery'
   ,'underscore'
-  ,'backbone'
   ,'marionette'
   ,'i18next'
   ,'text!templates/modal.html'
   ,'bootstrap/modal'
-], function($, _, Backbone, Marionette, i18n, modalTemplate){
+], function($, _, Marionette, i18n, modalTemplate){
 
   var ModalView = Marionette.ItemView.extend({
     className: 'modal fade'
@@ -18,8 +17,10 @@ define([
     ,template: _.template(modalTemplate)
     ,templateHelpers: { t: i18n.t }
 
-    ,initialize: function(){
-      this.model = new Backbone.Model({options: this.options});
+    ,serializeData: function(){
+      return {
+        options: this.options
+      }
     }
 
     ,onBeforeClose: function(){
