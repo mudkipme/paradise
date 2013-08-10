@@ -9,7 +9,8 @@ define([
 ], function($, _, Backbone, Marionette, i18n, menuTemplate){
 
   var MenuView = Marionette.ItemView.extend({
-    id: 'menu-view'
+    id: 'menu'
+    ,tagName: 'ul'
 
     ,template: _.template(menuTemplate)
     ,templateHelpers: { t: i18n.t }

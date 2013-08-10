@@ -8,9 +8,12 @@
     <link href="stylesheets/app.css" rel="stylesheet" />
     <link rel="apple-touch-icon-precomposed" href="http://static.52poke.com/apple-icon.png" />
     <script>
+      if (!("ontouchstart" in document.documentElement)) {
+        document.documentElement.className += " no-touch";
+      }
       var PARADISE = {
         locale: '<%= i18n.lng() %>'
-        ,trainerName: '<%= me.name %>'
+        ,trainerName: '<%- me.name %>'
         ,imgBase: '<%= settings["img base"] %>'
       };
     </script>

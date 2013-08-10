@@ -19,14 +19,15 @@ requirejs.config({
     underscore: { exports: '_' }
     ,backbone: { exports: 'Backbone', deps: ['jquery', 'underscore'] }
     ,'juqery.transit': { deps: ['jquery'] }
-    ,'bootstrap/alert': { deps: ['jquery'] }
-    ,'bootstrap/collapse': { deps: ['jquery'] }
-    ,'bootstrap/tooltip': { deps: ['jquery'] }
+    ,'bootstrap/alert': { deps: ['jquery', , 'bootstrap/transition'] }
+    ,'bootstrap/collapse': { deps: ['jquery', 'bootstrap/transition'] }
+    ,'bootstrap/modal': { deps: ['jquery', 'bootstrap/transition'] }
+    ,'bootstrap/tooltip': { deps: ['jquery', 'bootstrap/transition'] }
     ,'bootstrap/transition': { deps: ['jquery'] }
     ,'bootstrap/switch': { deps: ['jquery'] }
   }
 });
 
-require(['app', 'bootstrap/transition', 'bootstrap/collapse'], function(App){
+require(['app'], function(App){
   App.start();
 });

@@ -1,13 +1,17 @@
 @menuColor: #0c5f9a;
 @subMenuColor: #33a7fa;
 
-#menu-view {
-  ul {
+#menu {
+  &, & ul {
     list-style: none;
     margin: 0;
     padding-left: 0;
   }
+
   li {
+    border: none;
+    margin-bottom: 0;
+
     a {
       display: block;
       background: @menuColor;
@@ -20,8 +24,8 @@
       text-decoration: none;
       cursor: pointer;
 
-      &:hover {
-        background: lighten(@menuColor, 10%);
+      &:active {
+        background-color: lighten(@menuColor, 10%);
       }
 
       &.selected {
@@ -45,7 +49,7 @@
       a {
         background: transparent;
         color: @gray;
-        &:hover {
+        &:active {
           background: lighten(@subMenuColor, 10%);
           color: #fff;
         }
@@ -54,6 +58,19 @@
           color: #fff;
           cursor: default;
         }
+      }
+    }
+  }
+}
+
+.no-touch #menu {
+  li {
+    a:hover:not(.selected) {
+      background-color: lighten(@menuColor, 10%);
+    }
+    li {
+      a:hover:not(.selected) {
+        background: lighten(@subMenuColor, 10%);
       }
     }
   }

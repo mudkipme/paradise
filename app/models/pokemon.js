@@ -271,12 +271,8 @@ PokemonSchema.methods.initData = function(callback) {
   if (me._inited) return callback(null, me);
 
   async.series({
-    species: function(next){
-      Species.get(me.speciesNumber, me.formIdentifier, next);
-    }
-    ,nature: function(next){
-      Nature(me.natureId, next);
-    }
+    species: async.apply(Species, me.speciesNumber, me.formIdentifier)
+    ,nature: async.apply(Nature, me.natureId)
     ,originalTrainer: function(next){
       if (!me.originalTrainer) return next();
       me.populate('originalTrainer', 'name', next);
@@ -307,7 +303,7 @@ PokemonSchema.methods.initData = function(callback) {
 };
 
 PokemonSchema.statics.createPokemon = function(opts, callback) {
-  Species.get(opts.speciesNumber, opts.formIdentifier, function(err, species) {
+  Species(opts.speciesNumber, opts.formIdentifier, function(err, species) {
     if (err) return callback(err);
 
     var gender, natureId, level = opts.level || 5,

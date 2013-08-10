@@ -11,6 +11,7 @@ define([
   ,'views/modal'
   ,'moment/lang/zh-cn'
   ,'moment/lang/zh-tw'
+  ,'bootstrap/collapse'
 ], function($, Backbone, Marionette, i18n, moment, vent,
   Router, Controller, AlertView, ModalView){
 
@@ -85,6 +86,34 @@ define([
     moment.lang(momentLngName[PARADISE.locale] || PARADISE.locale);
   });
 
+  // Alert and Model support
+  vent.on('app:initialize', function(){
+    // Display an alert
+    vent.on('alert', function(options){
+      App.alertRegion.show(new AlertView(options));
+    });
+
+    // Display an alert
+    vent.on('modal', function(options){
+      App.modalRegion.show(new ModalView(options));
+    });
+  });
+
+  // Ajax Error Handler
+  vent.on('app:initialize', function(){
+    $(document).ajaxError(function(e, xhr){
+      var content = i18n.t('error.retry-please');
+      try {
+        content = i18n.t('error.' + JSON.parse(xhr.responseText).error);
+      } catch(e) {}
+      vent.trigger('alert', {
+        type: xhr.status == 500 ? 'danger' : ''
+        ,title: i18n.t('error.title')
+        ,content: content
+      });
+    });
+  });
+
   // initialize router and controller
   // Use custom initialize event because it's asynchronous
   vent.on('app:initialize', function(){
@@ -101,29 +130,6 @@ define([
   // After all initialize events
   vent.on('app:initialize', function(){
     Backbone.history.start({pushState: true});
-  });
-
-  // Display an alert
-  vent.on('alert', function(options){
-    App.alertRegion.show(new AlertView(options));
-  });
-
-  // Display an alert
-  vent.on('modal', function(options){
-    App.modalRegion.show(new ModalView(options));
-  });
-
-  // Ajax Error Handler
-  $(document).ajaxError(function(e, xhr){
-    var content = 'error.retry-please';
-    try {
-      content = 'error.' + JSON.parse(xhr.responseText).error;
-    } catch(e) {}
-    vent.trigger('alert', {
-      type: xhr.status == 500 ? 'danger' : ''
-      ,title: 'error.title'
-      ,content: content
-    });
   });
 
   return App;

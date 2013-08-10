@@ -158,8 +158,8 @@ define([
     ,release: function(){
       var me = this;
       vent.trigger('modal', {
-        title: 'action.release'
-        ,content: 'action.release-confirm'
+        title: i18n.t('action.release')
+        ,content: i18n.t('action.release-confirm')
         ,type: 'confirm'
         ,btnType: 'danger'
         ,accept: function(){

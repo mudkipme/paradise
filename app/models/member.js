@@ -17,7 +17,8 @@ var Member = function() {
 };
 
 Member.getMember = function(user, byId, callback) {
-  var key = byId ? 'userid' : 'username';
+  var key = (byId === true) ? 'userid' : 'username';
+  if (!callback) callback = byId;
   db.query(
     db._('SELECT * FROM {prefix}userlist WHERE ' + key + ' = ?')
     ,[user]
