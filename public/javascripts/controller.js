@@ -3,32 +3,36 @@ define([
   ,'views/menu'
   ,'views/home'
   ,'views/party'
+  ,'views/bag'
   ,'models/trainer'
-], function(Marionette, MenuView, HomeView, PartyView, Trainer){
+], function(Marionette, MenuView, HomeView, PartyView, BagView, Trainer){
   return Marionette.Controller.extend({
     // Display menu view
     initialize: function(options){
-      this.menuRegion = options.menuRegion;
-      this.mainRegion = options.mainRegion;
-
-      this.menuRegion.show(new MenuView);
+      this.App = options.App;
+      this.App.menuRegion.show(new MenuView);
+      this.trainer = new Trainer({ name: PARADISE.trainerName });
     }
 
     ,home: function(){
-      var homeView = new HomeView, me = this;
+      var App = this.App, homeView = new HomeView;
       homeView.on('before:render', function(){
-        me.mainRegion.expand();  
+        App.mainRegion.expand();
       });
       homeView.on('close', function(){
-        me.mainRegion.collapse();
+        App.mainRegion.collapse();
       });
-      me.mainRegion.show(homeView);
+      App.mainRegion.show(homeView);
     }
 
     ,party: function(){
-      var trainer = new Trainer({name: PARADISE.trainerName});
-      this.mainRegion.show(new PartyView({collection: trainer.party}));
-      trainer.fetch();
+      this.App.mainRegion.show(new PartyView({collection: this.trainer.party}));
+      this.trainer.fetch();
+    }
+
+    ,bag: function(){
+      this.App.mainRegion.show(new BagView({collection: this.trainer.pocket}));
+      this.trainer.pocket.fetch();
     }
   });
 });

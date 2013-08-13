@@ -68,7 +68,6 @@ var Item = function(identifier, cb) {
     if (err) return cb(err);
 
     itemCache[item.id] = itemCache[item.name] = item;
-    console.log(item);
     return cb(null, item);
   });
 };

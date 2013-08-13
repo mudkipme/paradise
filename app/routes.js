@@ -11,7 +11,7 @@ var selfPokemon = [auth.login, auth.trainer, pm.selfPokemon];
 
 module.exports = function(app) {
   app.get('/', defaults, index.index);
-  app.get('/party', defaults, index.index);
+  app.get(/^\/(party|pokedex|bag|trainer|storage|world|timeline|pokemart|daycare|trade|battle|rank|migrate|setting|record|help)$/, defaults, index.defaults);
   app.get('/bbs', bbs.login);
 
   // Trainer actions

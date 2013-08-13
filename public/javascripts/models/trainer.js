@@ -3,12 +3,15 @@ define([
   ,'underscore'
   ,'backbone'
   ,'collections/party'
-], function($, _, Backbone, Party){
+  ,'collections/pocket'
+], function($, _, Backbone, Party, Pocket){
 
   var Trainer = Backbone.Model.extend({
     initialize: function(){
       this.party = new Party(this.get('party'));
-      this.listenTo(this.party, 'move', this.move);
+      this.pocket = new Pocket({trainer: this});
+
+      this.listenTo(this.party, 'moveParty', this.move);
     }
 
     ,url: function(){
@@ -20,14 +23,14 @@ define([
       return response;
     }
 
-    ,move: function(){
-      var order = [], me = this;
-      me.party.each(function(pokemon){
+    ,moveParty: function(){
+      var order = [];
+      this.party.each(function(pokemon){
         order.push(pokemon.id);
       });
-      me.party.trigger('reset');
-      me.sync(null, me, {
-        url: me.url() + '/move'
+      this.party.trigger('reset');
+      this.sync(null, this, {
+        url: this.url() + '/move'
         ,type: 'POST'
         ,data: {order: order}
         ,processData: true

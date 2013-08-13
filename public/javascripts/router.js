@@ -5,6 +5,7 @@ define([
     appRoutes: {
       '': 'home'
       ,'party': 'party'
+      ,'bag': 'bag'
     }
   });
 });

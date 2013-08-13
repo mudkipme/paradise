@@ -2,6 +2,7 @@ define([
   'jquery'
   ,'backbone'
   ,'marionette'
+  ,'app-base'
   ,'i18next'
   ,'moment'
   ,'vent'
@@ -12,19 +13,19 @@ define([
   ,'moment/lang/zh-cn'
   ,'moment/lang/zh-tw'
   ,'bootstrap/collapse'
-], function($, Backbone, Marionette, i18n, moment, vent,
-  Router, Controller, AlertView, ModalView){
+], function($, Backbone, Marionette, AppBase, i18n, moment,
+  vent, Router, Controller, AlertView, ModalView){
 
-  var App = new Marionette.Application();
+  var App = new AppBase();
 
   // Main region, expand & collapse for home view
   var MainRegion = Marionette.Region.extend({
     el: '#paradise-app > main'
     ,expand: function(){
-      this.$el.removeClass('col-lg-9 col-sm-9 col-push-3');
+      this.$el.removeClass('col-lg-9 col-sm-9 col-lg-push-3 col-sm-push-3');
     }
     ,collapse: function(){
-      this.$el.addClass('col-lg-9 col-sm-9 col-push-3');
+      this.$el.addClass('col-lg-9 col-sm-9 col-lg-push-3 col-sm-push-3');
     }
   });
 
@@ -68,7 +69,7 @@ define([
   });
 
   // initialize locales
-  App.addInitializer(function(){
+  App.addAsyncInitializer(function(dfd){
     i18n.init({
       lng: PARADISE.locale
       ,fallbackLng: false
@@ -79,7 +80,7 @@ define([
         ,defaultNs: 'app'
       }
     }, function(){
-      vent.trigger('app:initialize');
+      dfd.resolve();
     });
 
     var momentLngName = {'zh-hans': 'zh-cn', 'zh-hant': 'zh-tw'};
@@ -87,7 +88,7 @@ define([
   });
 
   // Alert and Model support
-  vent.on('app:initialize', function(){
+  App.addInitializer(function(){
     // Display an alert
     vent.on('alert', function(options){
       App.alertRegion.show(new AlertView(options));
@@ -100,7 +101,7 @@ define([
   });
 
   // Ajax Error Handler
-  vent.on('app:initialize', function(){
+  App.addInitializer(function(){
     $(document).ajaxError(function(e, xhr){
       var content = i18n.t('error.retry-please');
       try {
@@ -115,12 +116,10 @@ define([
   });
 
   // initialize router and controller
-  // Use custom initialize event because it's asynchronous
-  vent.on('app:initialize', function(){
+  App.addInitializer(function(){
     var controller = new Controller({
-        menuRegion: App.menuRegion
-        ,mainRegion: App.mainRegion
-      });
+      App: App
+    });
 
     App.appRouter = new Router({
       controller: controller
@@ -128,7 +127,7 @@ define([
   });
 
   // After all initialize events
-  vent.on('app:initialize', function(){
+  App.on('initialize:after', function(){
     Backbone.history.start({pushState: true});
   });
 

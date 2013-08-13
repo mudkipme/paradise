@@ -11,7 +11,7 @@ var Pokemon = require('../models/pokemon');
 var Item = require('../models/item');
 
 // Get trainer's information
-exports.get = function(req, res) {
+exports.get = function(req, res){
   if (!req.params.name && req.trainer) return res.json(req.trainer);
 
   Trainer.findOne({ name: req.params.name })
@@ -30,7 +30,7 @@ exports.get = function(req, res) {
 };
 
 // Get trainer's Pokédex
-exports.pokedex = function(req, res) {
+exports.pokedex = function(req, res){
   Trainer.findOne({ name: req.params.name })
   .exec(function(err, trainer) {
     if (err) return res.json(500, { error: err.message });
@@ -46,7 +46,7 @@ exports.pokedex = function(req, res) {
 };
 
 // Start one's own Pokémon journey
-exports.post = function(req, res) {
+exports.post = function(req, res){
   if (!req.member) return res.json(403, { error: 'ERR_NOT_LOGINED' });
   if (req.trainer) return res.json(403, { error: 'ERR_ALREADY_CREATED' });
   
@@ -54,17 +54,17 @@ exports.post = function(req, res) {
 
   async.series({
     // Receive the Pokemon from lab
-    pokemon: function(next) {
+    pokemon: function(next){
       Pokemon.createPokemon({
         speciesNumber: parseInt(req.body.speciesNumber)
       }, next);
     },
     // Get a Poké Ball
-    pokeBall: function(next) {
+    pokeBall: function(next){
       Item('poke-ball', next);
     },
     // Get the starter town
-    location: function(next) {
+    location: function(next){
       next(null, { name: 'pallet-town' });
     }
   }, function(err, ret){
@@ -77,7 +77,7 @@ exports.post = function(req, res) {
 };
 
 // Get one's Pokémon list
-exports.pokemon = function(req, res) {
+exports.pokemon = function(req, res){
   var skip = req.query.skip || 0;
   var limit = req.query.limit || 100;
   if (limit > 100) {
@@ -106,29 +106,21 @@ exports.pokemon = function(req, res) {
 };
 
 // Get my bag
-exports.bag = function(req, res) {
-  var actions = [], bag = [];
-
-  _.each(req.trainer.bag, function(element){
-    actions.push(function(cb){
-      Item(element.itemId, function(err, item){
-        bag.push({
-          item: item
-          ,number: element.number
-        });
-        cb(err);
-      });
-    });
-  });
-
-  async.series(actions, function(err){
+exports.bag = function(req, res){
+  async.mapSeries(_.pluck(req.trainer.bag, 'itemId'), Item, function(err, result){
     if (err) return res.json(500, { error: err.message });
-    res.json(bag);
+
+    res.json(_.map(result, function(item, index){
+      return {
+        item: item
+        ,number: req.trainer.bag[index].number
+      };
+    }));
   });
 };
 
 // Set whether accept battle
-exports.acceptBattle = function(req, res) {
+exports.acceptBattle = function(req, res){
   var acceptBattle = req.body.acceptBattle;
   if (acceptBattle === true || acceptBattle == 'true') {
     req.trainer.acceptBattle = true;
@@ -143,7 +135,7 @@ exports.acceptBattle = function(req, res) {
 };
 
 // Set the real world information
-exports.realWorld = function(req, res) {
+exports.realWorld = function(req, res){
   if (!req.body.latitude || !req.body.longitude)
     return res.json(400, { error: 'ILLEGAL_REQUEST_DATA' });
 
@@ -154,7 +146,7 @@ exports.realWorld = function(req, res) {
 };
 
 // Move Pokémon in party
-exports.move = function(req, res) {
+exports.move = function(req, res){
   var origin = _.map(req.trainer.party, function(pokemon){
     return pokemon._id.toString();
   });

@@ -19,8 +19,10 @@ var StorageSchema = new Schema({
 /**
  * Init Pokémon data in this storage
  */
-StorageSchema.methods.initStorage = function(callback) {
-  Pokemon.initCollection(this.pokemon, callback);
+StorageSchema.methods.initStorage = function(callback){
+  async.eachSeries(this.pokemon, function(pokemon, next){
+    pokemon.initData(next);
+  }, callback);
 };
 
 var TrainerSchema = new Schema({
@@ -39,7 +41,7 @@ var TrainerSchema = new Schema({
   }],
   currentLocation:  String,
   wildPokemon:      { type: Schema.Types.ObjectId, ref: 'Pokemon' },
-  realWorld: {  
+  realWorld: {
     longitude:      Number,
     latitude:       Number,
     countryCode:    String,
@@ -187,8 +189,10 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
 /**
  * Init Pokémon data in party
  */
-TrainerSchema.methods.initParty = function(callback) {
-  Pokemon.initCollection(this.party, callback);
+TrainerSchema.methods.initParty = function(callback){
+  async.eachSeries(this.party, function(pokemon, next){
+    pokemon.initData(next);
+  }, callback);
 };
 
 
@@ -197,7 +201,7 @@ TrainerSchema.methods.initParty = function(callback) {
  * @param  {Number}   latitude
  * @param  {Number}   longitude
  */
-TrainerSchema.methods.setLocation = function(latitude, longitude, callback) {
+TrainerSchema.methods.setLocation = function(latitude, longitude, callback){
   var me = this;
   me.realWorld.latitude = latitude;
   me.realWorld.longitude = longitude;
@@ -214,7 +218,7 @@ TrainerSchema.methods.setLocation = function(latitude, longitude, callback) {
  * Get the position of given Pokémon
  * @param  {Pokemon} pokemon
  */
-TrainerSchema.methods.findPokemon = function(pokemon) {
+TrainerSchema.methods.findPokemon = function(pokemon){
   var partyPopulated = this.populated('party');
   var result = null;
   _.each(this.party, function(pm, index){
@@ -245,7 +249,7 @@ TrainerSchema.methods.findPokemon = function(pokemon) {
  * @param  {Item} item
  * @param  {Number} number
  */
-TrainerSchema.methods.hasItem = function(item, number) {
+TrainerSchema.methods.hasItem = function(item, number){
   if (!_.isObject(item)) return false;
   number = number || 1;
 
@@ -264,7 +268,7 @@ TrainerSchema.methods.hasItem = function(item, number) {
  * @param  {Item}   item
  * @param  {Number}   number
  */
-TrainerSchema.methods.addItem = function(item, number, callback) {
+TrainerSchema.methods.addItem = function(item, number, callback){
   if (!_.isObject(item)) return false;
 
   var itemBag = _.find(this.bag, function(bag){
@@ -285,7 +289,7 @@ TrainerSchema.methods.addItem = function(item, number, callback) {
  * @param  {Item}   item
  * @param  {Number}   number
  */
-TrainerSchema.methods.removeItem = function(item, number, callback) {
+TrainerSchema.methods.removeItem = function(item, number, callback){
   if (!_.isObject(item)) return callback(new Error('ERR_INVALID_PARAM'));
 
   var itemBag = _.find(this.bag, function(bag){

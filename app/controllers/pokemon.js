@@ -7,7 +7,7 @@
 var _ = require('underscore');
 var Item = require('../models/item');
 
-var partyNum = function(req) {
+var partyNum = function(req){
   var party = _.filter(req.trainer.party, function(pokemon){
       return !pokemon.isEgg && !pokemon.pokemonCenter
         && !pokemon._id.equals(req.pokemon._id);
@@ -16,12 +16,12 @@ var partyNum = function(req) {
 };
 
 // Get Pokémon information
-exports.get = function(req, res) {
+exports.get = function(req, res){
   res.json(req.pokemon);
 };
 
 // Release a Pokémon
-exports.release = function(req, res) {
+exports.release = function(req, res){
   if (req.pokemon.isEgg)
     return res.json(403, { error: 'CANNOT_RELEASE_EGG' });
   if (req.pokemon.pokemonCenter)
@@ -48,13 +48,12 @@ exports.release = function(req, res) {
 };
 
 // Deposit a Pokémon
-exports.deposit = function(req, res) {
+exports.deposit = function(req, res){
   if (req.pokemon.pokemonCenter)
     return res.json(403, { error: 'CANNOT_DEPOSIT_PC' });
 
   var pos = req.trainer.findPokemon(req.pokemon);
   var storage = req.trainer.storageSlot();
-  console.log(storage);
 
   if (!pos) return res.json(500, { error: 'FIND_POKEMON_ERROR' });
   if (!pos.party) return res.json(403, { error: 'POKEMON_NOT_IN_PARTY' });
@@ -70,7 +69,7 @@ exports.deposit = function(req, res) {
 };
 
 // Withdraw a Pokémon
-exports.withdraw = function(req, res) {
+exports.withdraw = function(req, res){
   if (req.trainer.party.length == 6)
     res.json(403, { error: 'ERR_NO_PARTY_SLOT' });
 
@@ -88,7 +87,7 @@ exports.withdraw = function(req, res) {
 };
 
 // Set nickname or tradable status
-exports.put = function(req, res) {
+exports.put = function(req, res){
   if (typeof req.body.nickname === 'string') {
     req.pokemon.nickname = req.body.nickname.substr(0, 12);
   }
@@ -102,7 +101,7 @@ exports.put = function(req, res) {
 };
 
 // Hold an item
-exports.holdItem = function(req, res) {
+exports.holdItem = function(req, res){
   Item(req.body.itemId, function(err, item){
     if (err) return res.json(500, { error: err.message });
 
@@ -121,7 +120,7 @@ exports.holdItem = function(req, res) {
 };
 
 // Take a hold item
-exports.takeHoldItem = function(req, res) {
+exports.takeHoldItem = function(req, res){
   if (!req.pokemon.holdItem)
     return res.json(403, { error: 'NO_HOLD_ITEM' });
 
@@ -135,7 +134,7 @@ exports.takeHoldItem = function(req, res) {
 };
 
 // Send pokemon to Pokémon Center
-exports.sendPokemonCenter = function(req, res) {
+exports.sendPokemonCenter = function(req, res){
   var stats = req.pokemon.stats;
   if (stats.maxHp == stats.hp) return res.json(403, { error: 'HP_FULL' });
   if (req.pokemon.pokemonCenter) return res.json(403, { error: 'ALREADY_IN_PC' });

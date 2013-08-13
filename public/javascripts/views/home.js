@@ -6,7 +6,20 @@ define([
   ,'kinetic'
   ,'i18next'
   ,'text!templates/home.html'
+  ,'jquery.transit'
 ], function($, _, Backbone, Marionette, Kinetic, i18n, homeTemplate){
+
+  // Deferred image loading
+  var loadImage = function(src){
+    return $.Deferred(function(deferred){
+      var img = new Image();
+      img.onload = function(){
+        img.onload = null;
+        deferred.resolve(img);
+      };
+      img.src = src;
+    }).promise();
+  };
 
   var HomeView = Marionette.ItemView.extend({
     id: 'home-view'
@@ -19,7 +32,7 @@ define([
 
     ,template: _.template(homeTemplate)
 
-    ,config: {
+    ,options: {
       width: 810,
       height: 422,
       centerRadius: 110,
@@ -34,6 +47,7 @@ define([
       fontStyle: 'bold',
       stroke: 'rgba(255,255,255,0.5)',
       textColor: '#FFF',
+      hoverDuration: 0.25,
       exitDuration: 0.5,
       items: [
         {
@@ -80,19 +94,10 @@ define([
       ]
     }
 
-    ,onClose: function(){
-      var stage = this.layer.getStage();
-      stage && stage.destroy();
-      $('body').css('cursor', '');
-    }
+    ,initialize: function(){
+      var opt = this.options;
 
-    ,drawSector: function(data, pos){
-      var beginAngle, textX, textY, me = this,
-        opt = me.config,
-        layer = me.layer;
-
-      // determine arc path
-      var angles = [
+      this.angles = [
         opt.smallAngle / 2 + opt.bigAngle,
         opt.smallAngle * 1.5 + opt.bigAngle * 2,
         Math.PI - opt.smallAngle * 1.5 - opt.bigAngle,
@@ -101,21 +106,32 @@ define([
         opt.smallAngle * 1.5 + opt.bigAngle * 2 - Math.PI,
         - opt.smallAngle * 1.5 - opt.bigAngle,
         - opt.smallAngle / 2
-      ]; 
-      
-      beginAngle = angles[pos];
+      ];
+    }
+
+    ,onClose: function(){
+      var stage = this.layer.getStage();
+      stage && stage.destroy();
+      $('body').css('cursor', '');
+    }
+
+    ,drawSector: function(data, pos){
+      var me = this, opt = me.options;
+
+      // determine arc path
+      var beginAngle = me.angles[pos];
 
       // determine text position
-      textX = Math.abs(beginAngle) < Math.PI / 2 ? opt.textDistance : - opt.textDistance - opt.textWidth;
+      var textX = Math.abs(beginAngle) < Math.PI / 2 ? opt.textDistance : - opt.textDistance - opt.textWidth;
 
-      textY = (opt.textDistance + opt.textWidth / 3 - opt.fontSize / 2)
-          * Math.abs(Math.tan(beginAngle - opt.bigAngle / 2))
-          * beginAngle / Math.abs(beginAngle);
+      var textY = (opt.textDistance + opt.textWidth / 3 - opt.fontSize / 2)
+        * Math.abs(Math.tan(beginAngle - opt.bigAngle / 2))
+        * beginAngle / Math.abs(beginAngle);
       
       var group = new Kinetic.Group({name: 'angle_' + beginAngle});
 
       var shape = new Kinetic.Shape({
-        drawFunc: function(canvas) {
+        drawFunc: function(canvas){
           var ctx = canvas.getContext();
           ctx.beginPath();
           ctx.arc(opt.width / 2, opt.height / 2, opt.centerRadius, beginAngle, beginAngle - opt.bigAngle, true);
@@ -143,54 +159,78 @@ define([
       group.add(shape);
       group.add(text);
 
-      var cloneShape = null;
-      
-      var loadPattern = function(callback){
-        if (cloneShape) {
-          return callback();
-        }
-        if (me.patternLoaded) {
-          cloneShape = shape.clone({
-            fillPatternImage: me.patternImg,
-            fillPriority: 'pattern',
-            opacity: 0
-          });
-          group.add(cloneShape);
-          callback();
-        }
-      };
+      var tween = null;
 
       group.on('mouseenter touchstart', function(){
-        loadPattern(function(){
-          new Kinetic.Tween({
-            node: cloneShape, 
-            duration: 0.25,
-            opacity: 1,
-            easing: Kinetic.Easings.EaseInOut
-          }).play();
-        });
+        me.patternLoad.done(function(patternImg){
+          if (!tween) {
+            var patternShape = shape.clone({
+              fillPatternImage: patternImg,
+              fillPriority: 'pattern',
+              opacity: 0
+            });
+            group.add(patternShape);
+            tween = new Kinetic.Tween({
+              node: patternShape, 
+              duration: me.options.hoverDuration,
+              opacity: 1,
+              easing: Kinetic.Easings.EaseInOut
+            });
+          }
+          tween.play();
+        })
         $('body').css('cursor', 'pointer');
       }).on('mouseleave touchend touchmove', function(){
-        if (cloneShape) {
-          new Kinetic.Tween({
-            node: cloneShape, 
-            duration: 0.25,
-            opacity: 0,
-            easing: Kinetic.Easings.EaseInOut
-          }).play();
-        }
+        tween && tween.reverse();
         $('body').css('cursor', '');
       }).on('click tap', function(){
+        tween && tween.pause();
         me.scatter(group, function(){
           Backbone.history.navigate(data.href, {trigger: true});
         });
       });
 
-      layer.add(group);
+      me.layer.add(group);
+    }
+
+    ,drawCenter: function(){
+      var me = this, opt = me.options;
+
+      return loadImage(opt.centerImage).done(function(img){
+        var tween, image = new Kinetic.Image({
+          x: (opt.width - img.width) / 2,
+          y: (opt.height - img.height) / 2,
+          image: img,
+          width: img.width,
+          height: img.height,
+          filter: Kinetic.Filters.Brighten
+        });
+        image.on('mouseenter touchstart', function(){
+          if (!tween) {
+            tween = new Kinetic.Tween({
+              node: image,
+              duration: opt.hoverDuration,
+              filterBrightness: 50,
+              easing: Kinetic.Easings.EaseInOut
+            });
+          }
+          tween.play();
+          $('body').css('cursor', 'pointer');
+        }).on('mouseleave touchend touchmove', function(){
+          tween && tween.reverse();
+          $('body').css('cursor', '');
+        }).on('click tap', function(){
+          tween && tween.pause();
+          me.scatter(null, function(){
+            Backbone.history.navigate('/party', {trigger: true});
+          });
+        });
+        me.layer.add(image);
+      });
     }
 
     ,onRender: function(){
-      var me = this, opt = me.config;
+      var me = this, opt = me.options;
 
       var stage = new Kinetic.Stage({
         container: me.ui.nav.get(0),
@@ -198,86 +238,48 @@ define([
         height: opt.height
       });
 
-      var layer = new Kinetic.Layer();
-      me.layer = layer;
+      me.layer = new Kinetic.Layer();
 
-      _.each(opt.items, function(item, i){
-        me.drawSector(item, i);
+      _.each(opt.items, me.drawSector, me);
+      me.drawCenter().done(function(){
+        stage.add(me.layer);
       });
 
-      if (opt.pattern) {
-        me.patternImg = new Image();
-        me.patternLoaded = false;
-        me.patternImg.onload = function(){
-          me.patternLoaded = true;
-        };
-        me.patternImg.src = opt.pattern;
-      }
-
-      if (opt.centerImage) {
-        var img = new Image();
-        img.onload = function(){
-          var image = new Kinetic.Image({
-            x: (opt.width - img.width) / 2,
-            y: (opt.height - img.height) / 2,
-            image: img,
-            width: img.width,
-            height: img.height
-          });
-          image.on('mouseenter touchstart', function(){
-            layer.clear();
-            this.setFilter(Kinetic.Filters.Brighten);
-            this.setFilterBrightness(50);
-            layer.draw();
-            $('body').css('cursor', 'pointer');
-          }).on('mouseleave touchend touchmove', function(){
-            layer.clear();
-            this.clearFilter();
-            layer.draw();
-            $('body').css('cursor', '');
-          }).on('click tap', function(){
-            me.scatter(null, function(){
-              Backbone.history.navigate('/party', {trigger: true});
-            });
-          });
-          layer.add(image);
-          stage.add(layer);
-        };
-        img.src = opt.centerImage;
-      } else {
-        stage.add(layer);
-      }
+      me.patternLoad = loadImage(opt.pattern);
     }
 
     ,scatter: function(group, callback){
-      var me = this, opt = me.config;
+      var me = this, opt = me.options;
 
-      _.each(me.layer.children, function(item){
-        var angle, tween;
+      $.when.apply($, _.map(me.layer.children, function(item){
+        var angle, tween, deferred = $.Deferred();
+        var tweenOpts = {
+          node: item, 
+          duration: opt.exitDuration,
+          easing: Kinetic.Easings.EaseInOut,
+          onFinish: function(){
+            deferred.resolve();
+          }
+        };
 
         if (item.nodeType == 'Group' && item != group) {
           angle = parseFloat(item.getName().split('_')[1]) - opt.smallAngle / 2;
-          tween = new Kinetic.Tween({
-            node: item, 
-            duration: opt.exitDuration,
-            easing: Kinetic.Easings.EaseInOut,
+          _.extend(tweenOpts, {
             x: opt.width / 2 * Math.cos(angle),
             y: opt.width / 2 * Math.sin(angle)
           });
         } else {
-          tween = new Kinetic.Tween({
-            node: item,
-            duration: opt.exitDuration,
-            easing: Kinetic.Easings.EaseInOut,
+          _.extend(tweenOpts, {
             opacity: 0
           });
         }
 
-        tween.play();
-      });
-
-      me.ui.bottomIcons.fadeOut(opt.exitDuration * 1000).promise().done(callback);
+        new Kinetic.Tween(tweenOpts).play();
+        return deferred.promise();
+      }).concat(me.ui.bottomIcons.transition({opacity: 0}, opt.exitDuration * 1000)))
+      .done(callback);
     }
   });
+
   return HomeView;
 });

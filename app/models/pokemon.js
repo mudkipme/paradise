@@ -145,7 +145,7 @@ PokemonSchema.virtual('expNextLevel').get(function(){
 /**
  * 神奇宝贝升级时的操作
  */
-PokemonSchema.methods.onLevelUp = function(callback) {
+PokemonSchema.methods.onLevelUp = function(callback){
   // Gain happiness
   // Evolution
 };
@@ -154,7 +154,7 @@ PokemonSchema.methods.onLevelUp = function(callback) {
  * 获得经验值
  * @param  {Number}   exp      经验值数字
  */
-PokemonSchema.methods.gainExperience = function(exp, callback) {
+PokemonSchema.methods.gainExperience = function(exp, callback){
   if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
 
   this.initData(function(err, me){
@@ -194,7 +194,7 @@ PokemonSchema.methods.gainExperience = function(exp, callback) {
 /**
  * Level up this Pokémon
  */
-PokemonSchema.methods.levelUp = function(callback) {
+PokemonSchema.methods.levelUp = function(callback){
   if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
 
   this.initData(function(err, me) {
@@ -212,7 +212,7 @@ PokemonSchema.methods.levelUp = function(callback) {
 /**
  * Gain happiness
  */
-PokemonSchema.methods.gainHappiness = function(happiness, callback) {
+PokemonSchema.methods.gainHappiness = function(happiness, callback){
   if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
   if (this.happiness >= 255) return callback(null);
 
@@ -225,7 +225,7 @@ PokemonSchema.methods.gainHappiness = function(happiness, callback) {
 /**
  * Gain effort values
  */
-PokemonSchema.methods.gainEffort = function(effort, callback) {
+PokemonSchema.methods.gainEffort = function(effort, callback){
   if (!_.isObject(effort)) return callback(new Error('ERR_INVALID_PARAM'));
 
   var me = this,
@@ -250,7 +250,7 @@ PokemonSchema.methods.gainEffort = function(effort, callback) {
 /**
  * Set hold item
  */
-PokemonSchema.methods.setHoldItem = function(item, callback) {
+PokemonSchema.methods.setHoldItem = function(item, callback){
   if (item) {
     if (!item.holdable) return callback(new Error('ITEM_NOT_HOLDABLE'));
     this._item = item;
@@ -266,7 +266,7 @@ PokemonSchema.methods.setHoldItem = function(item, callback) {
 /**
  * Init data of this Pokémon
  */
-PokemonSchema.methods.initData = function(callback) {
+PokemonSchema.methods.initData = function(callback){
   var me = this;
   if (me._inited) return callback(null, me);
 
@@ -302,8 +302,8 @@ PokemonSchema.methods.initData = function(callback) {
   });
 };
 
-PokemonSchema.statics.createPokemon = function(opts, callback) {
-  Species(opts.speciesNumber, opts.formIdentifier, function(err, species) {
+PokemonSchema.statics.createPokemon = function(opts, callback){
+  Species(opts.speciesNumber, opts.formIdentifier, function(err, species){
     if (err) return callback(err);
 
     var gender, natureId, level = opts.level || 5,
@@ -361,18 +361,6 @@ PokemonSchema.statics.createPokemon = function(opts, callback) {
 
     callback(null, pokemon);
   });
-};
-
-PokemonSchema.statics.initCollection = function(collection, callback) {
-  var actions = [];
-  _.each(collection, function(pokemon) {
-    actions.push(function(next) {
-      pokemon.initData(function() {
-        next();
-      });
-    });
-  });
-  async.series(actions, callback);
 };
 
 var Pokemon = mongoose.model('Pokemon', PokemonSchema);

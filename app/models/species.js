@@ -34,7 +34,7 @@ var Species = function(nationalNumber, form, callback) {
 
       db.all(sql, params, next);
     }
-    ,function(rows, next) {
+    ,function(rows, next){
       if (!rows.length) return next(new Error('MissingNo.'));
 
       raw = rows[0];
@@ -54,27 +54,22 @@ var Species = function(nationalNumber, form, callback) {
       db.all('SELECT slot, type_id FROM pokemon_types WHERE pokemon_id = ?',
         [raw.pokemon_id], next);
     }
-    ,function(rows, next) {
+    ,function(rows, next){
       if (!rows.length) return next(new Error('UNKNOWN_TYPE'));
 
       rows = _.sortBy(rows, function(row){ return row.slot; });
-
-      async.mapSeries(rows, function(row, cb){
-        Type(row.type_id, cb);
-      }, next);
+      async.mapSeries(_.pluck(rows, 'type_id'), Type, next);
     }
     ,function(types, next){
       species.types = types;
 
-      db.all('SELECT id, identifier FROM pokemon_egg_groups LEFT JOIN '
-        + 'egg_groups ON egg_group_id = id WHERE species_id = ?'
+      db.all('SELECT id, identifier FROM pokemon_egg_groups LEFT JOIN egg_groups ON egg_group_id = id WHERE species_id = ?'
         , [species.number], next);
     }
     ,function(rows, next){
       species.eggGroups = rows;
 
-      db.all('SELECT id, identifier, base_stat, effort FROM pokemon_stats '
-        + 'JOIN stats ON stat_id = id WHERE pokemon_id = ?'
+      db.all('SELECT id, identifier, base_stat, effort FROM pokemon_stats JOIN stats ON stat_id = id WHERE pokemon_id = ?'
         , [raw.pokemon_id], next);
     }
     ,function(rows, next){
@@ -144,8 +139,8 @@ var speciesProto = {
 
 
 // Get all Pokémon's names
-Species.allNames = function(cb){
-  db.all('SELECT id AS number, identifier AS name FROM pokemon_species', cb);
+Species.allNames = function(callback){
+  db.all('SELECT id AS number, identifier AS name FROM pokemon_species', callback);
 };
 
 // Total number of Pokémon species. Bigger for compatibility.

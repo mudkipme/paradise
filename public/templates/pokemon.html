@@ -60,10 +60,10 @@
     <!-- Disposit, release or send to Pokémon Center -->
     <div class="actions">
       <% if (pokemon.lostHp) { %>
-        <p><button class="btn btn-success btn-small btn-send-pc"> - <%= t('action.send-pokemon-center') %> - </button></p>
+        <p><button class="btn btn-success btn-xs btn-send-pc"> - <%= t('action.send-pokemon-center') %> - </button></p>
       <% } %>
-      <p><button class="btn btn-primary btn-small btn-deposit"> - <%= t('action.deposit') %> - </button></p>
-      <p><button class="btn btn-danger btn-small btn-release"> - <%= t('action.release') %> - </button></p>
+      <p><button class="btn btn-primary btn-xs btn-deposit"> - <%= t('action.deposit') %> - </button></p>
+      <p><button class="btn btn-danger btn-xs btn-release"> - <%= t('action.release') %> - </button></p>
     </div>
   <% } else { %>
     <p class="pokemon-center-time alt">
