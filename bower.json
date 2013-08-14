@@ -8,7 +8,7 @@
     "jquery.transit": "*",
     "backbone": "*",
     "underscore": "*",
-    "bootstrap": "https://github.com/twbs/bootstrap/archive/3.0.0-wip.zip",
+    "bootstrap": "3.0.0-rc.2",
     "bootstrap-switch": "*",
     "moment": "*",
     "i18next": "*",

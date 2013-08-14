@@ -22,10 +22,10 @@ define([
   var MainRegion = Marionette.Region.extend({
     el: '#paradise-app > main'
     ,expand: function(){
-      this.$el.removeClass('col-lg-9 col-sm-9 col-lg-push-3 col-sm-push-3');
+      this.$el.removeClass('col-sm-9 col-sm-push-3').addClass('col-sm-12');
     }
     ,collapse: function(){
-      this.$el.addClass('col-lg-9 col-sm-9 col-lg-push-3 col-sm-push-3');
+      this.$el.removeClass('col-sm-12').addClass('col-sm-9 col-sm-push-3');
     }
   });
 

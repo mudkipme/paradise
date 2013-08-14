@@ -8,7 +8,7 @@ define([
 ], function($, _, Marionette, i18n, alertTemplate){
 
   var AlertView = Marionette.ItemView.extend({
-    className: 'alert fade in'
+    className: 'alert alert-dismissable fade in'
 
     ,template: _.template(alertTemplate)
     ,templateHelpers: { t: i18n.t }
