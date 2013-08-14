@@ -6,6 +6,8 @@ body {
 
 .navbar-52poke {
   background-color: lighten(@color-52poke, 10%);
+  border-width: 0 0 1px;
+
   .navbar-brand {
     color: #fff;
   }
@@ -31,6 +33,10 @@ body {
       border-color: @color-52poke;
     }
   }
+
+  &, .navbar-collapse {
+    border-color: darken(@color-52poke, 10%);
+  }
 }
 
 @media (min-width: 768px) {
@@ -38,6 +44,9 @@ body {
     main:not(.col-sm-push-3) + aside {
       display: none;
     }
+  }
+  .navbar-52poke .navbar-header {
+    padding-left: 0;
   }
 }
 
