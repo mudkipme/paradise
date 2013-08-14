@@ -12,20 +12,14 @@ var Item = require('../models/item');
 
 // Get trainer's information
 exports.get = function(req, res){
-  if (!req.params.name && req.trainer) return res.json(req.trainer);
+  if (req.trainer && (!req.params.name || req.params.name == req.trainer.name))
+    return res.json(req.trainer);
 
-  Trainer.findOne({ name: req.params.name })
-  .populate('party')
-  .exec(function(err, trainer) {
+  Trainer.findByName(req.params.name, function(err, trainer){
     if (err) return res.json(500, { error: err.message });
-    if (trainer) {
-      trainer.initParty(function(err){
-        if (err) return res.json(500, { error: err.message });
-        res.json(trainer);
-      });
-    } else {
-      res.json(404, { error: 'TRAINER_NOT_FOUND' });
-    }
+    if (!trainer) return res.json(404, { error: 'TRAINER_NOT_FOUND' });
+
+    res.json(trainer);
   });
 };
 

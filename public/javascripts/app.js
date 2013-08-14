@@ -1,5 +1,6 @@
 define([
   'jquery'
+  ,'underscore'
   ,'backbone'
   ,'marionette'
   ,'app-base'
@@ -13,7 +14,7 @@ define([
   ,'moment/lang/zh-cn'
   ,'moment/lang/zh-tw'
   ,'bootstrap/collapse'
-], function($, Backbone, Marionette, AppBase, i18n, moment,
+], function($, _, Backbone, Marionette, AppBase, i18n, moment,
   vent, Router, Controller, AlertView, ModalView){
 
   var App = new AppBase();
@@ -51,9 +52,9 @@ define([
       var me = this;
       me.ensureEl();
       me.$el.on('hidden.bs.modal', function(){
-        setTimeout(function(){
+        _.defer(function(){
           me.close();
-        }, 0);
+        });
       });
     }
     ,onShow: function(view){
@@ -117,12 +118,8 @@ define([
 
   // initialize router and controller
   App.addInitializer(function(){
-    var controller = new Controller({
-      App: App
-    });
-
     App.appRouter = new Router({
-      controller: controller
+      controller: new Controller
     });
   });
 

@@ -2,19 +2,25 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title><%= t('app.pokemon-paradise') %> - <%= t('app.pokemon-zone') %></title>
+    <title><%= t('app.pokemon-paradise') %></title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <link href="stylesheets/app.css" rel="stylesheet" />
-    <link rel="apple-touch-icon-precomposed" href="http://static.52poke.com/apple-icon.png" />
+    <link rel="apple-touch-icon-precomposed" href="/images/apple-icon.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/images/apple-icon-ipad.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/images/apple-icon.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/images/apple-icon-ipad.png" />
     <script>
       if (!("ontouchstart" in document.documentElement)) {
         document.documentElement.className += " no-touch";
       }
       var PARADISE = {
-        locale: '<%= i18n.lng() %>'
-        ,trainerName: '<%- me.name %>'
-        ,imgBase: '<%= settings["img base"] %>'
+        imgBase: '<%= settings["img base"] %>'
+        ,locale: '<%= i18n.lng() %>'
+        ,trainerName: '<%= me.name %>'
+        ,luckSpeciesNumber: '<%= me.luckSpecies.number %>'
+        ,luckSpeciesName: '<%= me.luckSpecies.name %>'
       };
     </script>
     <script data-main="javascripts/main" src="components/requirejs/require.js"></script>
@@ -34,11 +40,11 @@
 
         <div class="collapse navbar-collapse navbar-52poke-collapse">
           <ul class="nav navbar-nav">
-              <li><a href="http://bbs.52poke.com/"><%= t('app.forum') %></a></li>
-              <li><a href="http://www.52poke.com/"><%= t('app.main-page') %></a></li>
-              <li><a href="http://wiki.52poke.com/"><%= t('app.wiki') %></a></li>
-              <li class="active"><a href="/"><%= t('app.pokemon-paradise') %></a></li>
-            </ul>
+            <li><a href="http://bbs.52poke.com/"><%= t('app.forum') %></a></li>
+            <li><a href="http://www.52poke.com/"><%= t('app.main-page') %></a></li>
+            <li><a href="http://wiki.52poke.com/"><%= t('app.wiki') %></a></li>
+            <li class="active"><a href="/"><%= t('app.pokemon-paradise') %></a></li>
+          </ul>
         </div>
       </div>
     </nav>

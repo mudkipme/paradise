@@ -6,16 +6,20 @@ define([
   ,'views/bag'
   ,'models/trainer'
 ], function(Marionette, MenuView, HomeView, PartyView, BagView, Trainer){
+
+  // Avoid circular dependencies
+  var App = null;
+
   return Marionette.Controller.extend({
-    // Display menu view
-    initialize: function(options){
-      this.App = options.App;
-      this.App.menuRegion.show(new MenuView);
+    initialize: function(){
+      App = require('app');
+
+      App.menuRegion.show(new MenuView);
       this.trainer = new Trainer({ name: PARADISE.trainerName });
     }
 
     ,home: function(){
-      var App = this.App, homeView = new HomeView;
+      var homeView = new HomeView;
       homeView.on('before:render', function(){
         App.mainRegion.expand();
       });
@@ -26,12 +30,12 @@ define([
     }
 
     ,party: function(){
-      this.App.mainRegion.show(new PartyView({collection: this.trainer.party}));
-      this.trainer.fetch();
+      App.mainRegion.show(new PartyView({collection: this.trainer.party}));
+      this.trainer.fetch({reset: true});
     }
 
     ,bag: function(){
-      this.App.mainRegion.show(new BagView({collection: this.trainer.pocket}));
+      App.mainRegion.show(new BagView({collection: this.trainer.pocket}));
       this.trainer.pocket.fetch();
     }
   });

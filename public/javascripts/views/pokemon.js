@@ -48,7 +48,6 @@ define([
     ,template: _.template(pokemonTemplate)
     ,templateHelpers: {
       t: i18n.t
-      ,imgBase: PARADISE.imgBase
       ,Gender: Gender
 
       // Generate the sprite url of Pokémon

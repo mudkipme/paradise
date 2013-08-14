@@ -150,10 +150,7 @@ PokemonSchema.methods.onLevelUp = function(callback){
   // Evolution
 };
 
-/**
- * 获得经验值
- * @param  {Number}   exp      经验值数字
- */
+// Gain experience
 PokemonSchema.methods.gainExperience = function(exp, callback){
   if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
 
@@ -174,15 +171,11 @@ PokemonSchema.methods.gainExperience = function(exp, callback){
     });
 
     // 判断升级事件
-    (function levelUp(times, cb){
-      if (!times) return cb();
+    async.times(me.level - currentLevel, function(n, next){
+      me.onLevelUp(next);
+    }, function(err){
+      if (err) return callback(err);
 
-      me.onLevelUp(function(err){
-        if (err) return cb(err);
-        levelUp(--times, cb);
-      })
-    })(me.level - currentLevel, function(err){
-      // 保存数据，返回升级的经验值数字
       me.save(function(err){
         if (err) return callback(err);
         callback(null, me.experience - currentExperience);
@@ -310,7 +303,7 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
       experience = species.experience(level),
       individual = {}, effort = {};
 
-    // 性别判断
+    // Gender
     if (species.genderRadio == -1) {
       gender = Gender.genderless;
     } else if (species.genderRadio == 0) {
@@ -318,27 +311,27 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
     } else if (species.genderRadio == 8) {
       gender = Gender.female;
     } else {
-      gender = opts.gender || Math.random() * 8 < species.genderRadio ? Gender.female : Gender.male;
+      gender = opts.gender
+        || _.random(0, 7) < species.genderRadio ? Gender.female : Gender.male;
     }
 
-    // 性格选择
+    // Nature
     natureId = opts.natureId || (opts.nature && opts.nature.id)
-           || Math.floor(Math.random() * Nature.max + 1);
+      || _.random(1, Nature.max);
 
-    // 个体值和努力值
+    // Species stats and Base stats
     var individual = {}, effort = {};
     _.each(['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'],
       function(key) {
-        individual[key] = Math.floor(Math.random() * 32);
+        individual[key] = _.random(0, 31);
         effort[key] = 0;
       });
     _.extend(individual, opts.individual);
     _.extend(effort, opts.effort);
 
-    // 闪光
-    // TODO：国际结婚判定
+    // Alternate color
     if (!opts.isShiny && opts.isShiny !== false) {
-      opts.isShiny = Math.floor(Math.random() * 8192) == 0;
+      opts.isShiny = _.random(0, 8192) == 0;
     }
 
     pokemon = new Pokemon({

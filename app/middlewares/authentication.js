@@ -26,18 +26,12 @@ exports.login = function(req, res, next) {
 exports.trainer = function(req, res, next) {
   if (!req.member) return next();
 
-  Trainer
-  .findOne({'name': req.member.username})
-  .populate('party')
-  .exec(function(err, trainer){
+  Trainer.findByName(req.member.username, function(err, trainer){
     if (err) return res.json(500, { error: err.message });
     if (!trainer) return next();
 
-    trainer.initParty(function(err){
-      if (err) return res.json(500, { error: err.message });
-      res.locals.me = req.trainer = trainer;
-      next();
-    });
+    res.locals.me = req.trainer = trainer;
+    next();
   });
 };
 

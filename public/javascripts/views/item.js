@@ -13,10 +13,7 @@ define([
     ,model: Item
 
     ,template: _.template(itemTemplate)
-    ,templateHelpers: {
-      t: i18n.t
-      ,imgBase: PARADISE.imgBase
-    }
+    ,templateHelpers: { t: i18n.t }
   });
 
   return ItemView;

@@ -143,7 +143,9 @@ Species.allNames = function(callback){
   db.all('SELECT id AS number, identifier AS name FROM pokemon_species', callback);
 };
 
-// Total number of Pokémon species. Bigger for compatibility.
+// Bigger for compatibility.
 Species.max = 1024;
+// Total number of Pokémon species.
+Species.total = 649;
 
 module.exports = Species;

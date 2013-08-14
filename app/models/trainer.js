@@ -1,13 +1,14 @@
-var mongoose = require('mongoose'),
-  async = require('async'),
-  BitArray = require('bit-array'),
-  _ = require('underscore'),
-  Geode = require('geode'),
-  Schema = mongoose.Schema,
-  config = require('../../config.json'),
-  Species = require('./species'),
-  Pokemon = require('./pokemon');
+var mongoose = require('mongoose');
+var async = require('async');
+var BitArray = require('bit-array');
+var _ = require('underscore');
+var Geode = require('geode');
+var time = require('time');
+var Species = require('./species');
+var Pokemon = require('./pokemon');
+var config = require('../../config.json');
 
+var Schema = mongoose.Schema;
 var geode = new Geode(config.thirdParty.geonames, {});
 
 // Pokémon Storage System
@@ -57,6 +58,10 @@ var TrainerSchema = new Schema({
   battlePoint:      { type: Number, default: 0 }
 }, {
   toJSON: { virtuals: true }
+});
+
+TrainerSchema.virtual('luckSpecies').get(function(){
+  return this._todaySpecies;
 });
 
 TrainerSchema.methods.setPokedexSeen = function(speciesNumber) {
@@ -305,6 +310,56 @@ TrainerSchema.methods.removeItem = function(item, number, callback){
   });
 
   this.save(callback);
+};
+
+// Get today's lucky Pokémon
+TrainerSchema.methods.todaySpecies = function(callback){
+  var me = this;
+
+  var cb = function(err, species){
+    if (err) return callback(err);
+    me._todaySpecies = species;
+    callback(null, species);
+  };
+
+  if (me.lastLogin && me.todayLuck) {
+    var lastLogin = new time.Date(me.lastLogin.getTime());
+    var now = new time.Date();
+
+    lastLogin.setTimezone(me.realWorld.timezoneId);
+    now.setTimezone(me.realWorld.timezoneId);
+
+    if (now.getFullYear() == lastLogin.getFullYear()
+      && now.getMonth() == lastLogin.getMonth()
+      && now.getDate() == lastLogin.getDate()) {
+      return Species(me.todayLuck, cb);
+    }
+  }
+
+  me.lastLogin = new Date();
+  me.todayLuck = _.random(1, Species.total);
+  me.save(function(err){
+    if (err) return callback(err);
+    Species(me.todayLuck, cb);
+  });
+};
+
+// Find trainer by name, and init necessary information
+TrainerSchema.statics.findByName = function(name, callback){
+  this.findOne({ name: name })
+  .populate('party')
+  .exec(function(err, trainer){
+    if (err) return callback(err);
+    if (!trainer) return callback(null, null);
+
+    async.series([
+      trainer.initParty.bind(trainer)
+      ,trainer.todaySpecies.bind(trainer)
+    ], function(err){
+      if (err) return callback(err);
+      callback(null, trainer);
+    });
+  });
 };
 
 TrainerSchema.index({ name: 1 });
