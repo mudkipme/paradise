@@ -12,19 +12,15 @@ requirejs.config({
     ,i18next: '../components/i18next/release/i18next.amd.withJQuery-1.6.3'
     ,moment: '../components/moment/moment'
     ,'moment/lang': '../components/moment/min/lang'
-    ,bootstrap: '../components/bootstrap/js'
+    ,bootstrap: '../components/bootstrap/dist/js/bootstrap'
     ,'bootstrap/switch': '../components/bootstrap-switch/static/js/bootstrap-switch'
   }
   ,shim: {
     underscore: { exports: '_' }
     ,backbone: { exports: 'Backbone', deps: ['jquery', 'underscore'] }
     ,'juqery.transit': { deps: ['jquery'] }
-    ,'bootstrap/alert': { deps: ['jquery', , 'bootstrap/transition'] }
-    ,'bootstrap/collapse': { deps: ['jquery', 'bootstrap/transition'] }
-    ,'bootstrap/modal': { deps: ['jquery', 'bootstrap/transition'] }
-    ,'bootstrap/tooltip': { deps: ['jquery', 'bootstrap/transition'] }
-    ,'bootstrap/transition': { deps: ['jquery'] }
-    ,'bootstrap/switch': { deps: ['jquery'] }
+    ,'bootstrap': { deps: ['jquery'] }
+    ,'bootstrap/switch': { deps: ['jquery', 'bootstrap'] }
   }
 });
 

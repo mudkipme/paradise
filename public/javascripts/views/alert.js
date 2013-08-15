@@ -4,7 +4,7 @@ define([
   ,'marionette'
   ,'i18next'
   ,'text!templates/alert.html'
-  ,'bootstrap/alert'
+  ,'util'
 ], function($, _, Marionette, i18n, alertTemplate){
 
   var AlertView = Marionette.ItemView.extend({

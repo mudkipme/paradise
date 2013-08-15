@@ -5,7 +5,7 @@ define([
   ,'marionette'
   ,'i18next'
   ,'text!templates/menu.html'
-  ,'bootstrap/collapse'
+  ,'util'
 ], function($, _, Backbone, Marionette, i18n, menuTemplate){
 
   var MenuView = Marionette.ItemView.extend({

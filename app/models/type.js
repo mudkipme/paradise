@@ -10,13 +10,10 @@ var Type = function(id, callback){
   if (typeCache[id]) return callback(null, typeCache[id]);
 
   async.series({
-    type: function(next){
-      db.get('SELECT * FROM types WHERE id = ?', [id], next);
-    }
-    ,efficacy: function(next){
-      db.all('SELECT * FROM type_efficacy WHERE damage_type_id = ? OR target_type_id = ?'
-        ,[id, id], next);
-    }
+    type: db.get.bind(db, 'SELECT * FROM types WHERE id = ?', [id])
+    ,efficacy: db.all.bind(db,
+      'SELECT * FROM type_efficacy WHERE damage_type_id = ? OR target_type_id = ?'
+      ,[id, id])
   }, function(err, result){
     if (err) return callback(err);
     if (!result.type) return callback(new Error('UNKNOWN_TYPE'));

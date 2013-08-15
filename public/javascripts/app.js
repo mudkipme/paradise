@@ -13,7 +13,7 @@ define([
   ,'views/modal'
   ,'moment/lang/zh-cn'
   ,'moment/lang/zh-tw'
-  ,'bootstrap/collapse'
+  ,'util'
 ], function($, _, Backbone, Marionette, AppBase, i18n, moment,
   vent, Router, Controller, AlertView, ModalView){
 

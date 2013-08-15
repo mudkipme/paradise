@@ -222,11 +222,11 @@ PokemonSchema.methods.gainEffort = function(effort, callback){
   if (!_.isObject(effort)) return callback(new Error('ERR_INVALID_PARAM'));
 
   var me = this,
-    currentEffort = _.reduce(this.effort, function(memo, num) {
+    currentEffort = _.reduce(me.effort, function(memo, num){
       return memo + num;
     });
 
-  this.effort.forEach(function(value, key) {
+  _.each(me.effort, function(value, key) {
     var e = effort[key] || 0;
     me.effort[key] = Math.min( me.effort[key] + e, 255 );
     currentEffort += me.effort[key] - value;
@@ -237,7 +237,7 @@ PokemonSchema.methods.gainEffort = function(effort, callback){
     }
   });
 
-  this.save(callback);
+  me.save(callback);
 }
 
 /**
@@ -263,28 +263,32 @@ PokemonSchema.methods.initData = function(callback){
   var me = this;
   if (me._inited) return callback(null, me);
 
-  async.series({
+  var inits = {
     species: async.apply(Species, me.speciesNumber, me.formIdentifier)
     ,nature: async.apply(Nature, me.natureId)
-    ,originalTrainer: function(next){
-      if (!me.originalTrainer) return next();
-      me.populate('originalTrainer', 'name', next);
-    }
-    ,pokeBall: function(next){
-      if (!me.pokeBallId) return next();
-      Item(me.pokeBallId, next); 
-    }
-    ,holdItem: function(next){
-      if (!me.holdItemId) return next();
-      Item(me.holdItemId, next);
-    }
-    ,pokemonCenter: function(next){
-      if (!me.pokemonCenter || me.pokemonCenterTime) return next();
+  };
+
+  if (me.pokeBallId) {
+    inits.pokeBall = async.apply(Item, me.pokeBallId);
+  }
+
+  if (me.holdItemId) {
+    inits.holdItem = async.apply(Item, me.holdItemId);
+  }
+
+  if (me.originalTrainer) {
+    inits.originalTrainer = me.populate.bind(me, 'originalTrainer', 'name');
+  }
+
+  if (me.pokemonCenter && !pokemonCenterTime) {
+    inits.pokemonCenter = function(next){
       me.pokemonCenter = null;
       me.lostHp = 0;
       me.save(next);
-    }
-  }, function(err, results){
+    };
+  }
+
+  async.series(inits, function(err, results){
     if (err) return callback(err);
     me._species = results.species;
     me._nature = results.nature;

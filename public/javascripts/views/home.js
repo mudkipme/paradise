@@ -7,21 +7,8 @@ define([
   ,'i18next'
   ,'vent'
   ,'text!templates/home.html'
-  ,'jquery.transit'
-  ,'bootstrap/tooltip'
+  ,'util'
 ], function($, _, Backbone, Marionette, Kinetic, i18n, vent, homeTemplate){
-
-  // Deferred image loading
-  var loadImage = function(src){
-    return $.Deferred(function(deferred){
-      var img = new Image();
-      img.onload = function(){
-        img.onload = null;
-        deferred.resolve(img);
-      };
-      img.src = src;
-    }).promise();
-  };
 
   var HomeView = Marionette.ItemView.extend({
     id: 'home-view'
@@ -203,7 +190,7 @@ define([
     ,drawCenter: function(){
       var me = this, opt = me.options;
 
-      return loadImage(opt.centerImage).done(function(img){
+      return $.loadImage(opt.centerImage).done(function(img){
         var tween, image = new Kinetic.Image({
           x: (opt.width - img.width) / 2,
           y: (opt.height - img.height) / 2,
@@ -252,7 +239,7 @@ define([
         stage.add(me.layer);
       });
 
-      me.patternLoad = loadImage(opt.pattern);
+      me.patternLoad = $.loadImage(opt.pattern);
 
       me.$('[title]').tooltip();
     }
@@ -290,14 +277,14 @@ define([
     }
 
     ,luckSpecies: function(){
-      var page = i18n.t('pokemon:' + PARADISE.luckSpeciesName);
+      var species = i18n.t('pokemon:' + PARADISE.luckSpeciesName);
       vent.trigger('modal', {
-        title: i18n.t('modal.wiki-title')
-        ,content: i18n.t('modal.wiki-content', {page: page})
+        title: i18n.t('modal.lucky-title')
+        ,content: i18n.t('modal.lucky-content', {species: species})
         ,type: 'confirm'
         ,btnType: 'info'
         ,accept: function(){
-          window.open('http://wiki.52poke.com/wiki/' + encodeURIComponent(page));
+          window.open('http://wiki.52poke.com/wiki/' + encodeURIComponent(species));
         }
       });
     }

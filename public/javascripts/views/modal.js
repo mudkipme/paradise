@@ -4,7 +4,7 @@ define([
   ,'marionette'
   ,'i18next'
   ,'text!templates/modal.html'
-  ,'bootstrap/modal'
+  ,'util'
 ], function($, _, Marionette, i18n, modalTemplate){
 
   var ModalView = Marionette.ItemView.extend({

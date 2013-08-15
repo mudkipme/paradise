@@ -105,7 +105,7 @@
     "title": "提示信息"
     ,"ok": "确定"
     ,"cancel": "取消"
-    ,"wiki-title": "前往神奇宝贝百科"
-    ,"wiki-content": "你要前往神奇宝贝百科查看__page__的资料吗？"
+    ,"lucky-title": "幸运神奇宝贝"
+    ,"lucky-content": "今天的幸运神奇宝贝是__species__，点击确定前往神奇宝贝百科查看__species__的资料。"
   }
 }

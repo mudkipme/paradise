@@ -6,8 +6,7 @@ define([
   ,'vent'
   ,'models/pokemon'
   ,'text!templates/pokemon.html'
-  ,'bootstrap/tooltip'
-  ,'bootstrap/switch'
+  ,'util'
 ], function($, _, Marionette, i18n, vent, Pokemon, pokemonTemplate){
 
   var Gender = { female: 1, male: 2, genderless: 3 };
@@ -86,8 +85,7 @@ define([
 
     ,collapse: function(){
       if (!this.collapsed) {
-        this.trigger('before:collapse');
-        this.ui.content.slideUp();
+        this.ui.content.transUp();
         this.collapsed = true;
       }
     }
@@ -95,7 +93,7 @@ define([
     ,expand: function(){
       if (this.collapsed) {
         this.trigger('before:expand');
-        this.ui.content.slideDown();
+        this.ui.content.transDown();
         this.collapsed = false;
       }
     }
@@ -140,10 +138,10 @@ define([
       me.model.save({nickname: nickname}, {patch: true});
       me.ui.nicknameText.show();
       me.ui.nicknameInput.hide();
-      
-      setTimeout(function(){
+
+      me.$el.one('mouseup', _.throttle(function(){
         me.collapsible = true;
-      }, 100);
+      }));
     }
 
     ,sendPokemonCenter: function(){

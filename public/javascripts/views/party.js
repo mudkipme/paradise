@@ -3,7 +3,7 @@ define([
   ,'underscore'
   ,'marionette'
   ,'views/pokemon'
-  ,'jquery.transit'
+  ,'util'
 ], function($, _, Marionette, PokemonView){
 
   var PartyView = Marionette.CollectionView.extend({
