@@ -4,7 +4,6 @@ define([
   'jquery'
   ,'jquery.transit'
   ,'bootstrap'
-  ,'bootstrap/switch'
 ], function($){
 
   // Deferred image loading
@@ -77,6 +76,38 @@ define([
     }).apply(this, arguments)
     .promise().done(function(){
       this.css($.extend({ 'overflow': overflow }, options)).hide();
+    });
+  };
+
+  // iOS7 style switch
+  // Inspired by https://github.com/mnmly/ios7-switch
+  $.fn.iosSwitch = function(){
+    if (this.prop('type') != 'checkbox') return;
+
+    this.hide();
+
+    var el = $('<div/>').addClass('ios-switch').insertBefore(this);
+    $('<div/>').addClass('on-background background-fill').appendTo(el);
+    $('<div/>').addClass('state-background background-fill').appendTo(el);
+    $('<div/>').addClass('handle').appendTo(el);
+
+    this.filter(':checked').prev().addClass('on');
+
+    el.find('.handle').on('webkitAnimationEnd animationend', function(){
+      $(this).removeClass('handle-animate');
+    });
+
+    el.click(function(){
+      var me = $(this), input = me.next();
+      if (me.hasClass('on')) {
+        me.removeClass('on').addClass('off');
+        input.prop('checked', false);
+      } else {
+        me.removeClass('off').addClass('on');
+        input.prop('checked', true);
+      }
+      me.find('.handle').addClass('handle-animate');
+      input.trigger('change');
     });
   };
 

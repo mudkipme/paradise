@@ -299,6 +299,13 @@ PokemonSchema.methods.initData = function(callback){
   });
 };
 
+// Hide some information from toJSON
+PokemonSchema.methods.toJSON = function(options){
+  var res = mongoose.Document.prototype.toJSON.call(this, options);
+  return _.omit(res, ['individual', 'effort', 'lostHp'
+    , 'natureId', 'holdItemId', 'pokeBallId']);
+};
+
 PokemonSchema.statics.createPokemon = function(opts, callback){
   Species(opts.speciesNumber, opts.formIdentifier, function(err, species){
     if (err) return callback(err);

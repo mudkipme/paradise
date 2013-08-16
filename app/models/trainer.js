@@ -344,6 +344,13 @@ TrainerSchema.methods.todaySpecies = function(callback){
   });
 };
 
+// Hide some information from toJSON
+TrainerSchema.methods.toJSON = function(options){
+  var res = mongoose.Document.prototype.toJSON.call(this, options);
+  return _.omit(res, ['pokedexCaughtHex', 'pokedexSeenHex'
+    , 'storage', 'bag', 'todayLuck']);
+};
+
 // Find trainer by name, and init necessary information
 TrainerSchema.statics.findByName = function(name, callback){
   this.findOne({ name: name })

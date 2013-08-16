@@ -277,7 +277,7 @@ define([
     }
 
     ,luckSpecies: function(){
-      var species = i18n.t('pokemon:' + PARADISE.luckSpeciesName);
+      var species = i18n.t('pokemon:' + this.model.get('luckSpecies').name);
       vent.trigger('modal', {
         title: i18n.t('modal.lucky-title')
         ,content: i18n.t('modal.lucky-content', {species: species})

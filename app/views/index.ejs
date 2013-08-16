@@ -18,9 +18,7 @@
       var PARADISE = {
         imgBase: '<%= settings["img base"] %>'
         ,locale: '<%= i18n.lng() %>'
-        ,trainerName: '<%= me.name %>'
-        ,luckSpeciesNumber: '<%= me.luckSpecies.number %>'
-        ,luckSpeciesName: '<%= me.luckSpecies.name %>'
+        ,me: <%- JSON.stringify(me) -%>
       };
     </script>
     <script data-main="javascripts/main" src="components/requirejs/require.js"></script>

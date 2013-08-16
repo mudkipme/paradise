@@ -26,7 +26,7 @@ define([
 
     ,events: {
       'click': 'toggle'
-      ,'switch-change .tradable .switch': 'setTradable'
+      ,'change .tradable input': 'setTradable'
       ,'click .name span': 'setNicknameBegin'
       ,'blur .name input': 'setNicknameEnd'
       ,'click .btn-send-pc': 'sendPokemonCenter'
@@ -76,7 +76,7 @@ define([
     }
 
     ,onRender: function(){
-      this.$('.switch').bootstrapSwitch();
+      this.$('input[type="checkbox"]').iosSwitch();
       this.$('[title]').tooltip();
       if (!this.collapsed) {
         this.ui.content.show();
@@ -99,7 +99,7 @@ define([
     }
 
     ,toggle: function(e){
-      if ($(e.target).closest('.switch').size()
+      if ($(e.target).closest('.ios-switch').size()
         || e.target.tagName.toUpperCase() == 'BUTTON'
         || e.target.tagName.toUpperCase() == 'INPUT'
         || e.target.tagName.toUpperCase() == 'A'
@@ -113,8 +113,8 @@ define([
       }
     }
 
-    ,setTradable: function(e, data){
-      this.model.save({tradable: data.value}, {patch: true});
+    ,setTradable: function(e){
+      this.model.save({tradable: e.target.checked}, {patch: true});
     }
 
     ,setNicknameBegin: function(e){

@@ -1,0 +1,111 @@
+/* 
+ * ios7-switch
+ * By https://github.com/mnmly/ios7-switch
+ * MIT License
+ */
+
+.ios-switch {
+  height: 24px;
+  width: 40px;
+  position: relative;
+  background-color: #E5E5E5;
+  border-radius: 50px;
+  backface-visibility: hidden;
+  cursor: pointer;
+
+  .background-fill {
+    width: 100%;
+    height: 100%;
+    border-radius: 50px;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .on-background {
+    #gradient > .vertical(#00e459, #00e158);
+    opacity: 0;
+    z-index: 1;
+    .transition(.3s 0.2s);
+  }
+
+  .state-background {
+    border-radius: 50px;
+    z-index: 2;
+    #gradient > .vertical(#fff, #fdfdfd);
+    border: 1px solid #E5E5E5;
+    .box-sizing(border-box);
+    .scale(1);
+    .transition(.4s);
+  }
+
+  .handle {
+    width: 22px;
+    height: 22px;
+    background-color: #fff;
+    top: 1px;
+    left: 1px;
+    position: absolute;
+    border-radius: 20px;
+    -webkit-box-shadow: 0 0 3px 1px hsla(0, 0%, 0%, .075), 0 3px 5px hsla(0, 0%, 0%, .15), 1px 2px 2px hsla(0, 0%, 0%, .05);
+    box-shadow: 0 0 3px 1px hsla(0, 0%, 0%, .075), 0 3px 5px hsla(0, 0%, 0%, .15), 1px 2px 2px hsla(0, 0%, 0%, .05);
+    z-index: 3;
+    .transition-transform(.3s 0.25s cubic-bezier(0.455, 0.030, 0.215, 1.330));
+  }
+
+  &.off {
+    .handle {
+      .translate3d(0px, 0, 0);
+    }
+    .handle-animate {
+      -webkit-animation: expand-off .3s 0.2s;
+      animation: expand-off .3s 0.2s;
+    }
+    .on-background {
+      .transition(.3s 0s);
+    }
+    .state-background {
+      .transition(.4s 0.25s);
+    }
+  }
+
+  &.on {
+    .handle {
+      .translate3d(16px, 0, 0);
+    }
+    .handle-animate {
+      -webkit-animation: expand-on .3s 0.2s;
+      animation: expand-on .3s 0.2s;
+    }
+    .on-background {
+      opacity: 1;
+    }
+    .state-background {
+      .scale(0);
+    }
+  }
+}
+
+@-webkit-keyframes expand-on {
+  0% { width: 22px; }
+  40% { width: 26px; }
+  100% { width: 22px; }
+}
+
+@keyframes expand-on {
+  0% { width: 22px; }
+  40% { width: 26px; }
+  100% { width: 22px; }
+}
+
+@-webkit-keyframes expand-off {
+  0% { width: 22px; left: 1px; }
+  40% { width: 26px; left: -3px; }
+  100% { width: 22px; left: 1px; }
+}
+
+@keyframes expand-off {
+  0% { width: 22px; left: 1px; }
+  40% { width: 26px; left: -3px; }
+  100% { width: 22px; left: 1px; }
+}

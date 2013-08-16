@@ -15,11 +15,11 @@ define([
       App = require('app');
 
       App.menuRegion.show(new MenuView);
-      this.trainer = new Trainer({ name: PARADISE.trainerName });
+      this.trainer = new Trainer(PARADISE.me);
     }
 
     ,home: function(){
-      var homeView = new HomeView;
+      var homeView = new HomeView({model: this.trainer});
       homeView.on('before:render', function(){
         App.mainRegion.expand();
       });
