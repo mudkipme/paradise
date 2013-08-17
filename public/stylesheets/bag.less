@@ -1,0 +1,164 @@
+#bag-view {
+  position: relative;
+  padding-left: 50px;
+  padding-right: 50px;
+
+  .bg-top, .bg-middle, .bg-bottom {
+    .hidden-xs;
+    z-index: -1;
+    position: absolute;
+    width: 100%;
+    left: 0;
+  }
+  .bg-top {
+    height: 418px;
+    background-color: #eed85b;
+  }
+  .bg-middle {
+    top: 418px;
+    height: 98px;
+    background-color: #e0a038;
+  }
+  .bg-bottom {
+    top: 516px;
+    height: 176px;
+    font-size: 0;
+    .bl, .br {
+      width: 50%;
+      max-width: 50%;
+      display: inline-block;
+      height: 176px;
+      border-style: solid;
+      border-color: #e0a038;
+      border-bottom-color: transparent;
+      border-top-width: 88px;
+      border-right-width: 133px;
+      border-bottom-width: 88px;
+      border-left-width: 133px;
+    }
+    .bl {
+      border-left-color: transparent;
+    }
+    .br {
+      border-right-color: transparent;
+    }
+
+    .bottom-bag {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      margin-left: -184.5px;
+      width: 369px;
+      height: 176px;
+      background: url(../images/bag/bottom-bag.png) no-repeat;
+    }
+  }
+
+  .pocket-select {
+    font-size: 0;
+    text-align: center;
+    padding: 10px 0;
+    margin-bottom: 0;
+
+    li {
+      display: inline-block;
+      background-color: #f0e088;
+      background-repeat: no-repeat;
+      background-position: center center;
+      .box-sizing(border-box);
+      width: 44px;
+      height: 44px;
+      border: 2px solid #a18b53;
+      border-radius: 22px;
+      .box-shadow(0 0 5px #fff);
+      cursor: pointer;
+
+      &:not(:last-of-type) {
+        margin-right: 30px;
+      }
+      &.selected {
+        -webkit-box-shadow: 0 0 5px #fff, 0 2px #a18b53 inset;
+                box-shadow: 0 0 5px #fff, 0 2px #a18b53 inset;
+        cursor: pointer;
+      }
+
+      &:not(.selected):hover {
+        border-color: #c7aa66;
+      }
+
+      &[data-pocket="misc"] {
+        background-image: data-uri('../images/bag/bag-misc.png');
+      }
+      &.selected[data-pocket="misc"] {
+        background-image: data-uri('../images/bag/bag-misc-select.png');
+      }
+      &[data-pocket="medicine"] {
+        background-image: data-uri('../images/bag/bag-medicine.png');
+      }
+      &.selected[data-pocket="medicine"] {
+        background-image: data-uri('../images/bag/bag-medicine-select.png');
+      }
+      &[data-pocket="pokeballs"] {
+        background-image: data-uri('../images/bag/bag-pokeballs.png');
+      }
+      &.selected[data-pocket="pokeballs"] {
+        background-image: data-uri('../images/bag/bag-pokeballs-select.png');
+      }
+      &[data-pocket="berries"] {
+        background-image: data-uri('../images/bag/bag-berries.png');
+      }
+      &.selected[data-pocket="berries"] {
+        background-image: data-uri('../images/bag/bag-berries-select.png');
+      }
+      &[data-pocket="mail"] {
+        background-image: data-uri('../images/bag/bag-mail.png');
+      }
+      &.selected[data-pocket="mail"] {
+        background-image: data-uri('../images/bag/bag-mail-select.png');
+      }
+      &[data-pocket="key"] {
+        background-image: data-uri('../images/bag/bag-key.png');
+      }
+      &.selected[data-pocket="key"] {
+        background-image: data-uri('../images/bag/bag-key-select.png');
+      }
+    }
+  }
+
+  .item-container {
+    .make-row();
+
+    .item-grid {
+      .make-sm-column(6);
+
+      .item-view {
+        margin: 0 auto 6px;
+      }
+    }
+  }
+
+  .item-pages {
+    text-align: center;
+    .pagination {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  #bag-view {
+    min-height: 692px;
+  }
+}
+
+@media (min-width: 992px) {
+  #bag-view {
+    .bg-bottom {
+      .bl, .br {
+        border-right-width: 178px;
+        border-left-width: 178px;
+      }
+    }
+  }
+}

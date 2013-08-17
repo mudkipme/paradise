@@ -4,7 +4,7 @@
   "dependencies": {
     "requirejs": "*",
     "requirejs-text": "*",
-    "jquery": "2.*.*",
+    "jquery": "*",
     "jquery.transit": "*",
     "backbone": "*",
     "underscore": "*",
@@ -12,8 +12,5 @@
     "moment": "*",
     "i18next": "*",
     "backbone.marionette": "*"
-  },
-  "resolutions": {
-    "jquery": "2.*.*"
   }
 }

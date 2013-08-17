@@ -1,1 +1,22 @@
-<img class="dream-img" src="<%= PARADISE.imgBase %>/items-dream/<%= item.name %>.png" alt="<%= t('item:'+item.name) %>" />
+<div class="item-img" style="background-image: url(<%= PARADISE.imgBase %>/items-dream/<%= item.name %>.png)"></div>
+
+<h5><%= t('item:'+item.name) %></h5>
+<p class="description"><%= t('item:description.'+item.name) %></p>
+
+  <div class="actions btn-group">
+    <% if (!_.contains(['machines', 'key'], item.pocket)) { %>
+      <button class="btn btn-gift"><%= t('action.gift') %></button>
+    <% } %>
+    <% if (item.usableOverworld) { %>
+      <button class="btn btn-use"><%= t('action.use') %></button>
+    <% } %>
+    <% if (!_.contains(['machines', 'key'], item.pocket)) { %>
+      <button class="btn btn-hold"><%= t('action.hold') %></button>
+    <% } %>
+  </div>
+
+<% if (!_.contains(['machines', 'key'], item.pocket)) { %>
+  <p class="number">
+    × <span><%= number %></span>
+  </p>
+<% } %>

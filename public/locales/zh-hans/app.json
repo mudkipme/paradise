@@ -48,6 +48,9 @@
     ,"deposit": "放入寄存箱"
     ,"release": "放回野生"
     ,"release-confirm": "你真的要将这只神奇宝贝放回野生吗？"
+    ,"gift": "赠送"
+    ,"use": "使用"
+    ,"hold": "携带"
   }
   ,"type": {
     "normal": "一般"
@@ -95,6 +98,16 @@
     ,"sassy": "狂妄"
     ,"careful": "慎重"
     ,"quirky": "浮躁"
+  }
+  ,"pocket": {
+    "misc": "道具"
+    ,"medicine": "回复"
+    ,"pokeballs": "神奇宝贝球"
+    ,"machines": "技能学习器"
+    ,"berries": "树果"
+    ,"mail": "邮件"
+    ,"battle": "对战道具"
+    ,"key": "重要道具"
   }
   ,"error": {
     "title": "发生错误"

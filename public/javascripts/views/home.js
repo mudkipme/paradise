@@ -19,7 +19,8 @@ define([
     }
 
     ,events: {
-      'click .luck-species': 'luckSpecies'
+      'click .bottom-icons a[href]': 'navigate'
+      ,'click .icon-luck': 'luckSpecies'
     }
 
     ,template: _.template(homeTemplate)
@@ -273,6 +274,11 @@ define([
         return deferred.promise();
       }).concat(me.ui.bottomIcons.transition({opacity: 0}, opt.exitDuration * 1000)))
       .done(callback);
+    }
+
+    ,navigate: function(e){
+      e.preventDefault();
+      Backbone.history.navigate(e.target.pathname, {trigger: true});
     }
 
     ,luckSpecies: function(){

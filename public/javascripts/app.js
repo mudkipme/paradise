@@ -51,11 +51,9 @@ define([
     ,initialize: function(){
       var me = this;
       me.ensureEl();
-      me.$el.on('hidden.bs.modal', function(){
-        _.defer(function(){
-          me.close();
-        });
-      });
+      me.$el.on('hidden.bs.modal', _.throttle(function(){
+        me.close();
+      }));
     }
     ,onShow: function(view){
       view.$el.modal('show');

@@ -1,5 +1,26 @@
+<div class="bg-top"></div>
+<div class="bg-middle"></div>
+<div class="bg-bottom">
+  <div class="bl"></div><div class="br"></div>
+  <div class="bottom-bag"></div>
+</div>
 <ul class="pocket-select">
-  
+  <li data-pocket="misc" class="selected" title="<% t('pocket.misc') %>"></li>
+  <li data-pocket="medicine" title="<% t('pocket.medicine') %>"></li>
+  <li data-pocket="pokeballs" title="<% t('pocket.pokeballs') %>"></li>
+  <li data-pocket="berries" title="<% t('pocket.berries') %>"></li>
+  <li data-pocket="mail" title="<% t('pocket.mail') %>"></li>
+  <li data-pocket="key" title="<% t('pocket.key') %>"></li>
 </ul>
-<div class="item-container"></div>
-<div class="item-pages"></div>
+<div class="item-container">
+  <% _.times(6, function(){ %>
+    <div class="item-grid">
+      <div class="item-view item-view-empty"></div>
+    </div>
+  <% }) %>
+</div>
+<div class="item-pages">
+  <ul class="pagination">
+    <li class="active"><a href="#">1</a></li>
+  </ul>
+</div>

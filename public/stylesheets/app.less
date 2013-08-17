@@ -4,7 +4,9 @@ body {
   font-family: "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei", "Microsoft JhengHei", "WenQuanYi Micro Hei", Arial, sans-serif;
 }
 
-.navbar-52poke {
+nav.navbar {
+  .navbar-static-top;
+  .navbar-inverse;
   background-color: lighten(@color-52poke, 10%);
   border-width: 0 0 1px;
 
@@ -65,13 +67,19 @@ footer {
   }
 }
 
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
 @media (min-width: 768px) {
   #paradise-app {
     main.expand + aside {
       display: none;
     }
   }
-  .navbar-52poke .navbar-header {
+  nav.navbar .navbar-header {
     padding-left: 0;
   }
 }

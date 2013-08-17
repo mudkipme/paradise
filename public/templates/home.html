@@ -1,10 +1,10 @@
 <div class="paradise-nav-wrap"><div id="paradise-nav"></div></div>
-<ul class="bottom-icons">
-  <li data-icon="me"></li>
-  <li data-icon="square"></li>
-  <li data-icon="setting"></li>
-  <li data-icon="migrate"></li>
-  <li class="luck-species" title="<%= t('pokemon:' + luckSpecies.name) %>">
-    <img src="<%= PARADISE.imgBase %>/sprites/<%= luckSpecies.number %>.gif" alt="<%= t('pokemon:' + luckSpecies.name) %>" />
-  </li>
-</ul>
+<div class="bottom-icons">
+  <a href="/trainer" class="icon-trainer-card" title="<%= t('menu.trainer-card') %>"></a>
+  <a href="/timeline" class="icon-timeline" title="<%= t('menu.timeline') %>"></a>
+  <a href="/setting" class="icon-setting" title="<%= t('menu.trainer-setting') %>"></a>
+  <a href="/migrate" class="icon-migrate" title="<%= t('menu.poke-transfer') %>"></a>
+  <a class="icon-luck" title="<%= t('pokemon:' + luckSpecies.name) %>">
+    <img src="<%= PARADISE.imgBase %>/sprites/<%= ('00' + luckSpecies.number).substr(-3) %>.gif" alt="<%= t('pokemon:' + luckSpecies.name) %>" />
+  </a>
+</div>
