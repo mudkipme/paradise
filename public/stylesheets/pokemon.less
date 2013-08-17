@@ -107,23 +107,23 @@
   }
 
   .happiness-anger {
-    background-image: url(data:image/gif;base64,R0lGODlhDwAQALIDAFhYYKiosPj4+P///0hIWOCAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQBZAAGACwAAAAADwAQAAADQ2iw3KxByElFWHLovSWWREUMHkCFoEAKXzWtLTqN5SzCpvvWM+GHuBlnQGMBIpkh6aJgIC0Ng3R6hE6v1yMAy5VuuQkAIfkEBWQABgAsAwACAAkACgAAAxQoJMzr7bUZ6ZOQasJ5LCB4haI2JQA7);
+    background-image: data-uri('../images/pokemon/happiness-anger.gif');
   }
 
   .happiness-normal {
-    background-image: url(data:image/gif;base64,R0lGODlhDwAQAKECAFhYYKiosPj4+AAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQBZAADACwAAAAADwAQAAACMRyOiRbiD0U4sTpqI85vc0EBDTiKF0BeZYl+p/vCx8hNBkJPy8Dzpt0L9kQAodF3LAAAIfkEBWQAAwAsAgAGAAsAAgAAAgcUMoaqeR4KADs=);
+    background-image: data-uri('../images/pokemon/happiness-normal.gif');
   }
 
   .happiness-smile {
-    background-image: url(data:image/gif;base64,R0lGODlhDwAQALICAFhYYKiosPj4+FBQWPhAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQBZAAFACwAAAAADwAQAAADOFiw3KxByElFWDVLrCuXwxROnzCaVHmeQtm1gFid6mCzbrdErwUoDJ7vUSgWAZGLcblE/phQRTQBACH5BAVkAAUALAQACAAHAAMAAAMIOLpK7kOMFxMAOw==);
+    background-image: data-uri('../images/pokemon/happiness-smile.gif');
   }
 
   .happiness-happy {
-    background-image: url(data:image/gif;base64,R0lGODlhDwAQALICAFhYYKiosPj4+FBQWPiIAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQBZAAFACwAAAAADwAQAAADO1iw3KxByElFWDVLrCsPQySBIjcIp3SmJjqtG9B58jvcaTxT3C4sotlFwQheHoVkEhAZKp9KJgBKXVYTACH5BAVkAAUALAMAAwAJAAgAAAMXGBPSqmK0GKVsduo5ur8DIYrgSHJfkwAAOw==);
+    background-image: data-uri('../images/pokemon/happiness-happy.gif');
   }
 
   .happiness-full {
-    background-image: url(data:image/gif;base64,R0lGODlhDwAQALICAFhYYKiosPj4+JgwAPi4uPhAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQBZAAGACwAAAAADwAQAAADPWiw3KxByElFWDVLrCuXwyCE1DcQxVCkk7m+4gZQ6hrLlXrjefZ1sgjQAlAwhMSHYbkERC7MaNRZlFoV1wQAIfkEBWQABgAsAwADAAkACAAAAxYos8pDpYwoJ6XrYqWH+Jb0jZM3kmcCADs=);
+    background-image: data-uri('../images/pokemon/happiness-full.gif');
   }
 
   .content {
@@ -138,7 +138,7 @@
     padding: 50px 7px 6px;
     line-height: 15px;
     display: none;
-    -webkit-transition: translate3d(0,0,0);
+    .transition(translate3d(0,0,0));
 
     p, .experience-bar, .tradable {
       margin-bottom: 6px;
@@ -173,10 +173,16 @@
       color: #9d261d;
     }
     .tradable {
-      line-height: 24px; 
+      line-height: 24px;
+      .ios-switch {
+        .pull-right;
+      }
     }
     .actions {
       text-align: center;
+      button {
+        .btn-xs;
+      }
     }
     .poke-ball {
       position: absolute;
@@ -184,7 +190,7 @@
       right: 37px;
     }
     .shiny-star {
-      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAbElEQVQYlXWQwQnAIAxFn4KgdBk36ayOUCjFY3eRYk/aSyy16L+EJD8vIdDrAIrEoQxQ7nOtYjStoYENyED6DSWp70qm1QxvfagaiNaHOjMAsREuwH2JYsjAouXA19CokjvA6AE+zdb//9PlD7q/LXMbRMtpAAAAAElFTkSuQmCC);
+      background-image: data-uri('../images/pokemon/shiny-star.png');
       width: 9px;
       height: 9px;
       position: absolute;

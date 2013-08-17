@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link href="stylesheets/app.css" rel="stylesheet" />
+    <link href="stylesheets/main.css" rel="stylesheet" />
     <link rel="apple-touch-icon-precomposed" href="/images/apple-icon.png" />
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/images/apple-icon-ipad.png" />
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/images/apple-icon.png" />
@@ -63,9 +63,9 @@
       
       <div id="paradise-alert"></div>
 
-      <section class="row" id="paradise-app">
-        <main class="col-sm-9 col-sm-push-3"></main>
-        <aside class="col-sm-3 col-sm-pull-9"></aside>
+      <section id="paradise-app">
+        <main></main>
+        <aside></aside>
       </section>
       <hr />
       <footer>
@@ -83,6 +83,28 @@
         document.getElementById('browser-error').style.display = 'block';
         document.getElementById('paradise-app').style.display = 'none';
       }
+
+      /* viewport fix for Windows Phone 8 */
+      if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+        var msViewportStyle = document.createElement("style");
+        msViewportStyle.appendChild(
+          document.createTextNode('@-ms-viewport{width:auto!important}')
+        );
+        document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+      }
+
+      /* viewport fix for 7-inch Tablets */
+      window.addEventListener('orientationchange', function(){
+        if (screen.width >= 600 && screen.width < 768) {
+          document.querySelector("meta[name=viewport]")
+          .setAttribute('content', 'width=768px, user-scalable=0');
+        } else {
+          document.querySelector("meta[name=viewport]")
+          .setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=no');
+        }
+      }, false);
+
+      window.dispatchEvent(new Event('orientationchange'));
     </script>
   </body>
 </html>

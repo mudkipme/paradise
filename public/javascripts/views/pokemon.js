@@ -22,6 +22,7 @@ define([
       content: '.content'
       ,nicknameText: '.name span'
       ,nicknameInput: '.name input'
+      ,tradable: '.tradable input'
     }
 
     ,events: {
@@ -32,11 +33,11 @@ define([
       ,'click .btn-send-pc': 'sendPokemonCenter'
       ,'click .btn-deposit': 'deposit'
       ,'click .btn-release': 'release'
-      ,'dragstart': 'dragstart'
-      ,'dragenter': 'dragenter'
-      ,'dragover': 'dragover'
-      ,'dragend': 'dragend'
-      ,'drop': 'drop'
+      ,'dragstart': 'bubbleDragEvent'
+      ,'dragenter': 'bubbleDragEvent'
+      ,'dragover': 'bubbleDragEvent'
+      ,'dragend': 'bubbleDragEvent'
+      ,'drop': 'bubbleDragEvent'
     }
 
     ,modelEvents: {
@@ -113,8 +114,8 @@ define([
       }
     }
 
-    ,setTradable: function(e){
-      this.model.save({tradable: e.target.checked}, {patch: true});
+    ,setTradable: function(){
+      this.model.save({tradable: this.ui.tradable.prop('checked')}, {patch: true});
     }
 
     ,setNicknameBegin: function(e){
@@ -166,24 +167,8 @@ define([
     }
 
     // Bubble drag events to collection view
-    ,dragstart: function(e){
-      this.trigger('dragstart', e);
-    }
-
-    ,dragenter: function(e){
-      this.trigger('dragenter', e);
-    }
-
-    ,dragover: function(e){
-      this.trigger('dragover', e);
-    }
-
-    ,dragend: function(e){
-      this.trigger('dragend', e);
-    }
-
-    ,drop: function(e){
-      this.trigger('drop', e);
+    ,bubbleDragEvent: function(e){
+      this.trigger(e.type, e);
     }
   });
 

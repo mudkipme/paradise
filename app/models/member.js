@@ -1,6 +1,6 @@
 var db = require('../common').mysqlConnection;
 
-var Member = function() {
+var Member = function(){
   var me = this;
 
   me._rawUserInfo = {};
@@ -16,7 +16,7 @@ var Member = function() {
   }});
 };
 
-Member.getMember = function(user, byId, callback) {
+Member.getMember = function(user, byId, callback){
   var key = (byId === true) ? 'userid' : 'username';
   if (!callback) callback = byId;
   db.query(
@@ -32,7 +32,10 @@ Member.getMember = function(user, byId, callback) {
     });
 };
 
-Member.getLogin = function(req, callback) {
+Member.getLogin = function(req, callback){
+  if (process.env.DEMO_USER)
+    return Member.getMember(process.env.DEMO_USER, callback);
+
   if (!req.session.userid || !req.session.token)
     return callback(new Error('NOT_LOGINED'));
 
@@ -50,7 +53,7 @@ Member.getLogin = function(req, callback) {
     });
 };
 
-Member.prototype.addMoney = function(amount, callback) {
+Member.prototype.addMoney = function(amount, callback){
   var me = this;
 
   db.query(

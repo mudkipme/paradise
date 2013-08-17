@@ -11,7 +11,7 @@ define([
       this.party = new Party(this.get('party'));
       this.pocket = new Pocket({trainer: this});
 
-      this.listenTo(this.party, 'moveParty', this.move);
+      this.listenTo(this.party, 'sort', this.moveParty);
     }
 
     ,url: function(){
@@ -28,7 +28,6 @@ define([
       this.party.each(function(pokemon){
         order.push(pokemon.id);
       });
-      this.party.trigger('reset');
       this.sync(null, this, {
         url: this.url() + '/move'
         ,type: 'POST'

@@ -11,6 +11,10 @@ define([
 
     ,itemView: PokemonView
 
+    ,collectionEvents: {
+      'sort': 'render'
+    }
+
     ,onAfterItemAdded: function(view){
       if (this.options.draggable !== false) {
         view.$el.prop('draggable', true);
@@ -33,7 +37,7 @@ define([
     }
 
     ,onItemviewDragstart: function(view, e){
-      this.dragSrc = view;
+      this.dragSource = view;
       view.trigger('before:expand');
 
       view.$el.addClass('dragging');
@@ -65,12 +69,8 @@ define([
     ,onItemviewDrop: function(view, e){
       e.stopPropagation();
       e.preventDefault();
-      if (this.dragSrc && this.dragSrc != view) {
-        var srcOrder = this.dragSrc.model.order;
-        this.dragSrc.model.order = view.model.order;
-        view.model.order = srcOrder;
-        this.collection.sort();
-        this.collection.trigger('move');
+      if (this.dragSource && this.dragSource != view) {
+        this.collection.swap(this.dragSource.model, view.model);
       }
     }
   });

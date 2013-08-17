@@ -12,7 +12,6 @@ define([
 
   var HomeView = Marionette.ItemView.extend({
     id: 'home-view'
-    ,className: 'hidden-xs'
 
     ,ui: {
       nav: '#paradise-nav'
