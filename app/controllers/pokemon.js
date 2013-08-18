@@ -4,6 +4,7 @@
  */
 
 // dependencies
+var async = require('async');
 var _ = require('underscore');
 var Item = require('../models/item');
 
@@ -102,19 +103,28 @@ exports.put = function(req, res){
 
 // Hold an item
 exports.holdItem = function(req, res){
+  var itemId = parseInt(req.body.itemId);
+
+  if (!req.trainer.hasItem(itemId))
+    return res.json(403, { error: 'NO_ENOUGH_ITEM_IN_BAG' });
+
   Item(req.body.itemId, function(err, item){
     if (err) return res.json(500, { error: err.message });
 
-    if (!req.trainer.hasItem(item))
-      return res.json(403, { error: 'NO_ITEM_IN_BAG' });
+    var actions = [
+      req.pokemon.setHoldItem.bind(req.pokemon, item)
+      ,req.trainer.removeItem.bind(req.trainer, item, 1)
+    ];
 
-    req.pokemon.setHoldItem(item, function(err){
-      if (err) return res.json(500, { error: err.message });
+    if (req.pokemon.holdItem) {
+      actions.unshift(
+        req.trainer.addItem.bind(req.trainer, req.pokemon.holdItem, 1)
+      );
+    }
 
-      req.trainer.removeItem(item, 1, function(err){
-        if (err) return res.json(500, { error: err.message });
-        res.json(req.pokemon.holdItem);
-      });
+    async.series(actions, function(err){
+      if (err) return res.json(403, { error: err.message });
+      res.json(req.pokemon);
     });
   });
 };
@@ -124,12 +134,13 @@ exports.takeHoldItem = function(req, res){
   if (!req.pokemon.holdItem)
     return res.json(403, { error: 'NO_HOLD_ITEM' });
 
-  req.trainer.addItem(req.pokemon.holdItem, 1, function(err){
+  async.series([
+    req.trainer.addItem.bind(req,trainer, req.pokemon.holdItem, 1)
+    ,req.pokemon.setHoldItem.bind(req.pokemon, null)
+  ], function(err){
     if (err) return res.json(500, { error: err.message });
-    req.pokemon.setHoldItem(null, function(err){
-      if (err) return res.json(500, { error: err.message });
-      res.json(req.pokemon);
-    });
+
+    res.json(req.pokemon);
   });
 };
 

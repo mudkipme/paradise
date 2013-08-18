@@ -2,12 +2,13 @@ var index = require('./controllers/index');
 var bbs = require('./controllers/bbs');
 var trainer = require('./controllers/trainer');
 var pokemon = require('./controllers/pokemon');
+var item = require('./controllers/item');
 var auth = require('./middlewares/authentication');
 var pm = require('./middlewares/pokemon-middleware');
 
 var defaults = [auth.login, auth.trainer, auth.locale];
 var isSelf = [auth.login, auth.trainer, auth.isSelf];
-var selfPokemon = [auth.login, auth.trainer, pm.selfPokemon];
+var myPokemon = [auth.login, auth.trainer, pm.myPokemon];
 
 module.exports = function(app) {
   app.get('/', defaults, index.index);
@@ -15,8 +16,8 @@ module.exports = function(app) {
   app.get('/bbs', bbs.login);
 
   // Trainer actions
-  app.get('/api/trainer', [auth.login, auth.trainer], trainer.get);
-  app.post('/api/trainer', [auth.login, auth.trainer], trainer.post);
+  app.get('/api/trainer', defaults, trainer.get);
+  app.post('/api/trainer', defaults, trainer.post);
   app.get('/api/trainer/:name', trainer.get);
   app.get('/api/trainer/:name/pokedex', trainer.pokedex);
   app.get('/api/trainer/:name/pokemon', trainer.pokemon);
@@ -28,14 +29,18 @@ module.exports = function(app) {
   // Pokémon actions
   app.param('pokemonId', pm.pokemon);
   app.get('/api/pokemon/:pokemonId', pokemon.get);
-  app.post('/api/pokemon/:pokemonId/release', selfPokemon, pokemon.release);
-  app.post('/api/pokemon/:pokemonId/deposit', selfPokemon, pokemon.deposit);
-  app.post('/api/pokemon/:pokemonId/withdraw', selfPokemon, pokemon.withdraw);
-  app.put('/api/pokemon/:pokemonId', selfPokemon, pokemon.put);
-  app.patch('/api/pokemon/:pokemonId', selfPokemon, pokemon.put);
-  app.post('/api/pokemon/:pokemonId/hold-item', selfPokemon, pokemon.holdItem);
+  app.post('/api/pokemon/:pokemonId/release', myPokemon, pokemon.release);
+  app.post('/api/pokemon/:pokemonId/deposit', myPokemon, pokemon.deposit);
+  app.post('/api/pokemon/:pokemonId/withdraw', myPokemon, pokemon.withdraw);
+  app.put('/api/pokemon/:pokemonId', myPokemon, pokemon.put);
+  app.patch('/api/pokemon/:pokemonId', myPokemon, pokemon.put);
+  app.post('/api/pokemon/:pokemonId/hold-item', myPokemon, pokemon.holdItem);
   app.post('/api/pokemon/:pokemonId/hold-item/take'
-    , selfPokemon, pokemon.takeHoldItem);
+    , myPokemon, pokemon.takeHoldItem);
   app.post('/api/pokemon/:pokemonId/send-pokemon-center'
-    , selfPokemon, pokemon.sendPokemonCenter);
+    , myPokemon, pokemon.sendPokemonCenter);
+
+  // Item actions
+  app.get('/api/item/:itemId', defaults, item.get);
+  app.post('/api/item/:itemId/gift', defaults, item.gift);
 };

@@ -24,7 +24,7 @@ define([
     }
 
     ,initialize: function(){
-      this.listenTo(this.bag, 'reset sync', this.refresh);
+      this.listenTo(this.bag, 'add remove reset sync', this.refresh);
     }
 
     ,refresh: function(){
@@ -46,7 +46,7 @@ define([
         this.state.currentPage = currentPage = totalPages;
       }
 
-      this.reset(pocket.slice((currentPage - 1) * pageSize,
+      this.set(pocket.slice((currentPage - 1) * pageSize,
         currentPage * pageSize));
     }
 

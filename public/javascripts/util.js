@@ -111,5 +111,12 @@ define([
     });
   };
 
+  // Simply reset scrollTop
+  $.fn.appear = function(){
+    if ($(window).scrollTop() > this.offset().top) {
+      $(window).scrollTop(this.offset().top);
+    }
+  }
+
   return $;
 });

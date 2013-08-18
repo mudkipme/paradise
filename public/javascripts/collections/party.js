@@ -36,6 +36,7 @@ define([
       dest.order = index;
 
       this.sort();
+      this.trigger('move');
     }
   });
   return Party;

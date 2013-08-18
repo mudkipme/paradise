@@ -11,7 +11,7 @@ define([
       this.party = new Party(this.get('party'));
       this.pocket = new Pocket({trainer: this});
 
-      this.listenTo(this.party, 'sort', this.moveParty);
+      this.listenTo(this.party, 'move', this.moveParty);
     }
 
     ,url: function(){

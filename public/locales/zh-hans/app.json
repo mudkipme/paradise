@@ -54,6 +54,8 @@
     ,"gift-item": "赠送道具"
     ,"use-item": "使用道具"
     ,"hold-item": "携带道具"
+    ,"gift-done": "成功向 __trainer__ 赠送了 __number__ 个 __item__。"
+    ,"hold-done": "__pokemon__ 成功带上了 __item__。"
   }
   ,"type": {
     "normal": "一般"
@@ -116,6 +118,8 @@
     "title": "发生错误"
     ,"retry-please": "发生未知错误，请重试并向神奇宝贝部落格管理员反馈。"
     ,"ONE_POKEMON_LEFT": "您的队伍中只有一只神奇宝贝。"
+    ,"CANNOT_GIFT_SELF": "不能向自己赠送道具。"
+    ,"TRAINER_NOT_FOUND": "无法找到这个训练家。"
   }
   ,"modal": {
     "title": "提示信息"

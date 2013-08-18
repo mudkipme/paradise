@@ -8,7 +8,7 @@
   <div class="form-group">
     <label class="control-label" for="gift-number-<%= item.id %>">数量</label>
     <div>
-      <input type="number" class="gift-number" id="gift-number-<%= item.id %>" value="1" required="" min="1" max="<%= number %>">
+      <input type="number" class="gift-number" id="gift-number-<%= item.id %>" value="1" required="" min="1" max="<%= number %>" pattern="[0-9]*">
     </div>
   </div>
   <button type="submit" class="btn btn-gift-submit"><%= t('action.gift') %></button>

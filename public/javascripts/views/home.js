@@ -241,7 +241,9 @@ define([
 
       me.patternLoad = $.loadImage(opt.pattern);
 
-      me.$('[title]').tooltip();
+      if ($('html').hasClass('no-touch')) {
+        me.$('[title]').tooltip();
+      }
     }
 
     ,scatter: function(group, callback){

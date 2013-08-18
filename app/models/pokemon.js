@@ -280,7 +280,7 @@ PokemonSchema.methods.initData = function(callback){
     inits.originalTrainer = me.populate.bind(me, 'originalTrainer', 'name');
   }
 
-  if (me.pokemonCenter && !pokemonCenterTime) {
+  if (me.pokemonCenter && !me.pokemonCenterTime) {
     inits.pokemonCenter = function(next){
       me.pokemonCenter = null;
       me.lostHp = 0;

@@ -36,7 +36,9 @@ define([
     }
 
     ,onRender: function(){
-      this.ui.pocketSelect.tooltip({container: this.el});
+      if ($('html').hasClass('no-touch')) {
+        this.ui.pocketSelect.tooltip({container: this.el});
+      }
     }
 
     ,appendHtml: function(cv, iv, index){

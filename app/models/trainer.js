@@ -255,15 +255,12 @@ TrainerSchema.methods.findPokemon = function(pokemon){
  * @param  {Number} number
  */
 TrainerSchema.methods.hasItem = function(item, number){
-  if (!_.isObject(item)) return false;
+  var id = _.isObject(item) ? item.id : item;
+  var itemBag = _.findWhere(this.bag, {itemId: id});
   number = number || 1;
 
-  var itemBag = _.find(this.bag, function(bag){
-    return bag.itemId == item.id;
-  });
-
   if (itemBag && itemBag.number >= number)
-    return true;
+    return itemBag.number;
   else
     return false;
 };
@@ -274,14 +271,12 @@ TrainerSchema.methods.hasItem = function(item, number){
  * @param  {Number}   number
  */
 TrainerSchema.methods.addItem = function(item, number, callback){
-  if (!_.isObject(item)) return false;
-
-  var itemBag = _.find(this.bag, function(bag){
-    return bag.itemId == item.id;
-  });
+  var id = _.isObject(item) ? item.id : item;
+  var itemBag = _.findWhere(this.bag, {itemId: id});
+  if (number <= 0) { number = 1; }
 
   if (!itemBag) {
-    this.bag.push({ itemId: item.id, number: number });
+    this.bag.push({ itemId: id, number: number });
   } else {
     itemBag.number += number;
   }
@@ -295,11 +290,9 @@ TrainerSchema.methods.addItem = function(item, number, callback){
  * @param  {Number}   number
  */
 TrainerSchema.methods.removeItem = function(item, number, callback){
-  if (!_.isObject(item)) return callback(new Error('ERR_INVALID_PARAM'));
-
-  var itemBag = _.find(this.bag, function(bag){
-    return bag.itemId == item.id;
-  });
+  var id = _.isObject(item) ? item.id : item;
+  var itemBag = _.findWhere(this.bag, {itemId: id});
+  if (number <= 0) { number = 1; }
 
   if (!itemBag || itemBag.number < number)
     return callback(new Error('NO_ENOUGH_ITEM_IN_BAG'));

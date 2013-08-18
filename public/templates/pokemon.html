@@ -57,7 +57,7 @@
 
     <!-- Disposit, release or send to Pokémon Center -->
     <div class="actions">
-      <% if (pokemon.lostHp) { %>
+      <% if (pokemon.stats.hp < pokemon.stats.maxHp) { %>
         <p><button class="btn btn-success btn-send-pc"> - <%= t('action.send-pokemon-center') %> - </button></p>
       <% } %>
       <p><button class="btn btn-primary btn-deposit"> - <%= t('action.deposit') %> - </button></p>

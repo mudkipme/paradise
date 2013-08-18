@@ -1,0 +1,6 @@
+<% _.each(items, function(pokemon){ %>
+  <a href="#">
+    <img src="<%= PARADISE.imgBase %>/sprites/<%= ('00' + pokemon.species.number).substr(-3) %>.gif" alt="<%= t('pokemon:' + pokemon.species.name) %>" />
+    <%- pokemon.nickname || t('pokemon:'+pokemon.species.name) %>
+  </a>
+<% }) %>

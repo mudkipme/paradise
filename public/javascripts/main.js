@@ -19,7 +19,6 @@ requirejs.config({
     ,backbone: { exports: 'Backbone', deps: ['jquery', 'underscore'] }
     ,'juqery.transit': { deps: ['jquery'] }
     ,'bootstrap': { deps: ['jquery'] }
-    ,'bootstrap/switch': { deps: ['jquery', 'bootstrap'] }
   }
 });
 

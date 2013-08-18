@@ -39,6 +39,21 @@ define([
         }
       });
     }
+
+    ,holdItem: function(item){
+      var me = this;
+      me.sync(null, me, {
+        url: me.url() + '/hold-item'
+        ,type: 'POST'
+        ,data: {itemId: item.get('item').id}
+        ,processData: true
+        ,success: function(data){
+          me.set(data);
+          item.trigger('hold', {pokemon: me});
+          item.collection.fetch();
+        }
+      });
+    }
   });
   return Pokemon;
 });

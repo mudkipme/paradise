@@ -28,6 +28,9 @@ define([
     ,collapse: function(){
       this.$el.removeClass('expand');
     }
+    ,onShow: function(){
+      this.$el.appear();
+    }
   });
 
   var AlertRegion = Marionette.Region.extend({
@@ -40,9 +43,7 @@ define([
       });
     }
     ,onShow: function(){
-      if ($(window).scrollTop() > this.$el.offset().top) {
-        $(window).scrollTop(this.$el.offset().top);
-      }
+      this.$el.appear();
     }
   });
 

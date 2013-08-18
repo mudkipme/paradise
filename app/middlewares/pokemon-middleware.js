@@ -22,7 +22,7 @@ exports.pokemon = function(req, res, next, pokemonId){
 /**
  * Limit request 
  */
-exports.selfPokemon = function(req, res, next){
+exports.myPokemon = function(req, res, next){
   if (req.trainer && req.pokemon.trainer
     && req.pokemon.trainer._id.equals(req.trainer._id)) {
     next();
