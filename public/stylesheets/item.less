@@ -50,4 +50,32 @@
       font-size: 15px;
     }
   }
+
+  .gift-form {
+    .control-label {
+      .make-xs-column(4);
+      .make-sm-column(4);
+    }
+    .control-label + div {
+      .make-xs-column(8);
+      .make-sm-column(8);
+      padding-left: 0;
+      input {
+        .form-control;
+
+        &:valid {
+          .has-success > .form-control;
+        }
+
+        &:invalid {
+          .has-error > .form-control;
+        }
+      }
+    }
+
+    .btn-gift-submit {
+      .btn-info;
+      .btn-block;
+    }
+  }
 }

@@ -30,10 +30,10 @@ define([
 
     ,update: function(router, route){
       this.$('.selected').removeClass('selected');
-      this.$('a[href="/' + route + '"]')
+      this.$('a[href="/' + _.invert(router.appRoutes)[route] + '"]')
       .addClass('selected')
       .closest('.collapse')
-      .collapse('show');
+      .prev().trigger('click');
     }
   });
   

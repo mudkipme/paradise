@@ -51,6 +51,9 @@
     ,"gift": "赠送"
     ,"use": "使用"
     ,"hold": "携带"
+    ,"gift-item": "赠送道具"
+    ,"use-item": "使用道具"
+    ,"hold-item": "携带道具"
   }
   ,"type": {
     "normal": "一般"

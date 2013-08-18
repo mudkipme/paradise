@@ -1,0 +1,13 @@
+<div class="rooftop"></div>
+<div class="light"></div>
+<div class="poster"></div>
+<div class="bottom"></div>
+<ul class="shelves">
+  <% _.each(['pokeballs', 'medicine', 'misc', 'berries', 'mail'], function(pocket){ %>
+    <li data-pocket="<%= pocket %>">
+      <img src="/images/pokemart/<%= pocket %>.png" alt="<%= t('pocket.'+pocket) %>" />
+      <% if (pocket != 'mail') { %><div class="platform"></div><% } %>
+    </li>
+  <% }) %>
+</ul>
+<div class="clerk"><div class="clerk-eye"></div></div>

@@ -18,9 +18,9 @@ define([
       return '/api/trainer/' + this.get('name');
     }
 
-    ,parse: function(response){
-      this.party.set(response.party);
-      return response;
+    ,parse: function(resp){
+      this.party.set(resp.party);
+      return resp;
     }
 
     ,moveParty: function(){

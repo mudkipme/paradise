@@ -5,12 +5,9 @@
   <div class="bottom-bag"></div>
 </div>
 <ul class="pocket-select">
-  <li data-pocket="misc" class="selected" title="<% t('pocket.misc') %>"></li>
-  <li data-pocket="medicine" title="<% t('pocket.medicine') %>"></li>
-  <li data-pocket="pokeballs" title="<% t('pocket.pokeballs') %>"></li>
-  <li data-pocket="berries" title="<% t('pocket.berries') %>"></li>
-  <li data-pocket="mail" title="<% t('pocket.mail') %>"></li>
-  <li data-pocket="key" title="<% t('pocket.key') %>"></li>
+  <% _.each(['misc', 'medicine', 'pokeballs', 'berries', 'mail', 'key'], function(pocket){ %>
+    <li><a data-pocket="<%=pocket%>" <%if (state.pocket==pocket) { %>class="selected"<% } %> title="<%= t('pocket.'+pocket) %>"></a></li>
+  <% }) %>
 </ul>
 <div class="item-container">
   <% _.times(6, function(){ %>

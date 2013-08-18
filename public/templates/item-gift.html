@@ -1,0 +1,15 @@
+<form class="gift-form form-horizontal">
+  <div class="form-group">
+    <label class="control-label" for="gift-trainer-<%= item.id %>">赠送给</label>
+    <div>
+      <input type="text" class="gift-trainer" id="gift-trainer-<%= item.id %>" required="" autofocus="">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label" for="gift-number-<%= item.id %>">数量</label>
+    <div>
+      <input type="number" class="gift-number" id="gift-number-<%= item.id %>" value="1" required="" min="1" max="<%= number %>">
+    </div>
+  </div>
+  <button type="submit" class="btn btn-gift-submit"><%= t('action.gift') %></button>
+</form>

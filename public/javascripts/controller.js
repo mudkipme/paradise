@@ -4,8 +4,9 @@ define([
   ,'views/home'
   ,'views/party'
   ,'views/bag'
+  ,'views/pokemart'
   ,'models/trainer'
-], function(Marionette, MenuView, HomeView, PartyView, BagView, Trainer){
+], function(Marionette, MenuView, HomeView, PartyView, BagView, PokeMartView, Trainer){
 
   // Avoid circular dependencies
   var App = null;
@@ -15,11 +16,11 @@ define([
       App = require('app');
 
       App.menuRegion.show(new MenuView);
-      this.trainer = new Trainer(PARADISE.me);
+      App.trainer = new Trainer(PARADISE.me);
     }
 
     ,home: function(){
-      var homeView = new HomeView({model: this.trainer});
+      var homeView = new HomeView({model: App.trainer});
       homeView.on('before:render', function(){
         App.mainRegion.expand();
       });
@@ -30,13 +31,17 @@ define([
     }
 
     ,party: function(){
-      App.mainRegion.show(new PartyView({collection: this.trainer.party}));
-      this.trainer.fetch({reset: true});
+      App.mainRegion.show(new PartyView({collection: App.trainer.party}));
+      App.trainer.fetch();
     }
 
     ,bag: function(){
-      App.mainRegion.show(new BagView({collection: this.trainer.pocket}));
-      this.trainer.pocket.fetch();
+      App.mainRegion.show(new BagView({collection: App.trainer.pocket}));
+      App.trainer.pocket.fetch();
+    }
+
+    ,pokeMart: function(){
+      App.mainRegion.show(new PokeMartView);
     }
   });
 });

@@ -2,7 +2,7 @@
 <div class="content">
   <!-- Detailed information of Pokémon -->
   <div class="left-info">
-    <p>ID. <span title="<%= pokemon.id %>"><%= pokemon.displayId %></span></p>
+    <p>ID. <span title="<%= pokemon.id %>" data-placement="right"><%= pokemon.displayId %></span></p>
     <p><%= t('stat.nature') %>: <%= t('nature.'+pokemon.nature.name) %></p>
     <p><%= t('stat.experience') %>: <%= pokemon.experience %></p>
   </div>

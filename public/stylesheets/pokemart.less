@@ -1,0 +1,149 @@
+#poke-mart-view {
+  overflow: hidden;
+  .shelves {
+    margin: 0;
+    padding: 0;
+    li {
+      position: relative;
+      padding-bottom: 14px;
+      cursor: pointer;
+
+      img {
+        display: block;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+
+      .platform {
+        position: absolute;
+        .box-sizing(border-box);
+        width: 100%;
+        height: 14px;
+        bottom: 0;
+        border: 3px solid #535353;
+        background-color: #b9b3ae;
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  #poke-mart-view {
+    background-color: #d4f2f6;
+    position: relative;
+    height: 696px;
+
+    .shelves {
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      top: 97px;
+      width: 452px;
+      height: 484px;
+
+      li {
+        display: block;
+        position: absolute;
+        
+        &[data-pocket="pokeballs"] {
+          top: 167px;
+          left: 5px;
+        }
+
+        &[data-pocket="medicine"] {
+          top: 155px;
+          left: 235px;
+        }
+
+        &[data-pocket="misc"] {
+          top: 228px;
+          left: 1px;
+        }
+
+        &[data-pocket="berries"] {
+          top: 350px;
+          left: 10px;
+        }
+      }
+    }
+
+    .rooftop, .light, .poster, .clerk, .bottom {
+      position: absolute;
+      .box-sizing(border-box);
+    }
+
+    .rooftop {
+      width: 100%;
+      height: 34px;
+      background-color: #e0dfdb;
+      border-bottom: 3px solid #535353;
+    }
+
+    .light {
+      width: 351px;
+      height: 120px;
+      right: -60px;
+      background: url(../images/pokemart/light.png) no-repeat;
+    }
+
+    .poster {
+      width: 287px;
+      height: 282px;
+      top: 122px;
+      right: -140px;
+      background: url(../images/pokemart/poster.png) no-repeat;
+    }
+
+    .clerk {
+      width: 267px;
+      height: 372px;
+      top: 235px;
+      right: 0;
+      background: url(../images/pokemart/clerk.png) no-repeat;
+      pointer-events: none;
+
+      .clerk-eye {
+        position: absolute;
+        width: 72px;
+        height: 30px;
+        top: 66px;
+        left: 118px;
+        &.clerk-eye-2 {
+          background: data-uri('../images/pokemart/clerk-eye-2.png');
+        }
+        &.clerk-eye-3 {
+          background: data-uri('../images/pokemart/clerk-eye-3.png');
+        }
+        &.clerk-eye-4 {
+          background: data-uri('../images/pokemart/clerk-eye-4.png');
+        }
+        &.clerk-eye-5 {
+          background: data-uri('../images/pokemart/clerk-eye-5.png');
+        }
+      }
+    }
+
+    .bottom {
+      width: 100%;
+      height: 105px;
+      top: 591px;
+      border-top: 3px solid #535353;
+      #gradient > .vertical(#3daed8, #fff);
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  #poke-mart-view {
+    .light, .poster {
+      right: 0;
+    }
+
+    .shelves {
+      left: 29px;
+    }
+    .clerk {
+      right: 26px;
+    }
+  }
+}
