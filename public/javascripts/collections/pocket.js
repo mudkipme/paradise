@@ -24,10 +24,10 @@ define([
     }
 
     ,initialize: function(){
-      this.listenTo(this.bag, 'add remove reset sync', this.refresh);
+      this.listenTo(this.bag, 'add remove change', this.refresh);
     }
 
-    ,refresh: function(){
+    ,refresh: function(e){
       var me = this;
       var pageSize = this.state.pageSize;
       var currentPage = this.state.currentPage;

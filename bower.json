@@ -11,6 +11,8 @@
     "bootstrap": "3.0.0-rc.2",
     "moment": "*",
     "i18next": "*",
-    "backbone.marionette": "*"
+    "backbone.marionette": "*",
+    "backbone.wreqr": "*",
+    "backbone.babysitter": "*"
   }
 }

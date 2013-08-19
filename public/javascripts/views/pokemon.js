@@ -41,8 +41,7 @@ define([
     }
 
     ,modelEvents: {
-      'change:nickname': 'render'
-      ,'change:pokemonCenterTime': 'render'
+      'change': 'render'
     }
 
     ,template: _.template(pokemonTemplate)
@@ -115,7 +114,8 @@ define([
     }
 
     ,setTradable: function(){
-      this.model.save({tradable: this.ui.tradable.prop('checked')}, {patch: true});
+      this.model.save({ tradable: this.ui.tradable.prop('checked') }
+        ,{ patch: true, silent: true });
     }
 
     ,setNicknameBegin: function(e){

@@ -106,7 +106,8 @@ exports.bag = function(req, res){
 
     res.json(_.map(result, function(item, index){
       return {
-        item: item
+        id: item.id
+        ,item: item
         ,number: req.trainer.bag[index].number
       };
     }));

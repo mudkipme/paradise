@@ -17,8 +17,9 @@ exports.get = function(req, res){
     if (err) return res.json(500, {error: err.message});
 
     res.json({
-      number: req.trainer.hasItem(itemId)
+      id: item.id
       ,item: item
+      ,number: req.trainer.hasItem(itemId)
     });
   });
 };
