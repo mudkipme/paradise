@@ -13,9 +13,7 @@ define([
     ,templateHelpers: { t: i18n.t }
 
     ,collectionEvents: {
-      'add': 'render'
-      ,'remove': 'render'
-      ,'reset': 'render'
+      'all': 'render'
     }
 
     ,events: {

@@ -2,7 +2,6 @@
   margin: -9px -14px;
   a {
     display: block;
-    text-decoration: none;
     padding: 0 14px 6px;
     img {
       width: 32px;
@@ -12,6 +11,11 @@
 
     &:not(:last-of-type) {
       border-bottom: 1px solid @list-group-border;
+    }
+
+    &:hover {
+      text-decoration: none;
+      background-color: @list-group-hover-bg;
     }
   }
 }

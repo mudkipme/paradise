@@ -19,7 +19,7 @@ define([
     }
 
     ,parse: function(resp){
-      this.party.set(resp.party);
+      this.party.reset(resp.party);
       return resp;
     }
 

@@ -25,6 +25,7 @@ define([
     ,events: {
       'submit .gift-form': 'giftSubmit'
       ,'selectPokemon .btn-hold': 'holdItem'
+      ,'shown.bs.popover .btn-hold': 'showPartyPopover'
     }
 
     ,modelEvents: {
@@ -58,17 +59,34 @@ define([
       me.ui.hold.popover(_.defaults({
         content: function(){
           if (!me.partyPopover) {
-            me.partyPopover = new PartyPopoverView({ collection: require('app').trainer.party });
+            me.partyPopover = new PartyPopoverView({
+              collection: require('app').trainer.party
+              ,button: me.ui.hold
+            });
+            require('app').trainer.fetch();
+            me.partyPopover.render();
           } else {
             me.partyPopover.button = me.ui.hold;
           }
-          return me.partyPopover.render().el;
+          return me.partyPopover.el;
         }
       }, popoverOpts));
     }
 
     ,onShow: function(){
       this.ellipsisDesc();
+    }
+
+    ,showPartyPopover: function(e){
+      if (this.partyPopover) {
+        this.partyPopover.delegateEvents();
+      }
+    }
+
+    ,onClose: function(){
+      if (this.partyPopover) {
+        this.partyPopover.close();
+      }
     }
 
     // Truncate long descriptions
