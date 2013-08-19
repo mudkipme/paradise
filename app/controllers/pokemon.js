@@ -123,23 +123,22 @@ exports.holdItem = function(req, res){
     }
 
     async.series(actions, function(err){
-      if (err) return res.json(403, { error: err.message });
+      if (err) return res.json(500, { error: err.message });
       res.json(req.pokemon);
     });
   });
 };
 
 // Take a hold item
-exports.takeHoldItem = function(req, res){
+exports.takeItem = function(req, res){
   if (!req.pokemon.holdItem)
     return res.json(403, { error: 'NO_HOLD_ITEM' });
 
   async.series([
-    req.trainer.addItem.bind(req,trainer, req.pokemon.holdItem, 1)
+    req.trainer.addItem.bind(req.trainer, req.pokemon.holdItem, 1)
     ,req.pokemon.setHoldItem.bind(req.pokemon, null)
   ], function(err){
     if (err) return res.json(500, { error: err.message });
-
     res.json(req.pokemon);
   });
 };

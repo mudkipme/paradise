@@ -32,6 +32,7 @@ define([
       ,'blur .name input': 'setNicknameEnd'
       ,'click .btn-send-pc': 'sendPokemonCenter'
       ,'click .btn-deposit': 'deposit'
+      ,'click .btn-take-item': 'takeItem'
       ,'click .btn-release': 'release'
       ,'dragstart': 'bubbleDragEvent'
       ,'dragenter': 'bubbleDragEvent'
@@ -42,6 +43,7 @@ define([
 
     ,modelEvents: {
       'change': 'render'
+      ,'takeItem': 'takeItemDone'
     }
 
     ,template: _.template(pokemonTemplate)
@@ -151,6 +153,22 @@ define([
 
     ,deposit: function(){
       this.model.deposit();
+    }
+
+    ,takeItem: function(){
+      this.model.takeItem();
+    }
+
+    ,takeItemDone: function(item){
+      var item = i18n.t('item:' + item.name);
+      var pokemon = _.escape(this.model.get('nickname'))
+        || i18n.t('pokemon:' + this.model.get('species').name);
+
+      vent.trigger('alert', {
+        type: 'success'
+        ,title: i18n.t('action.take-item')
+        ,content: i18n.t('action.take-done', {pokemon: pokemon, item: item})
+      });
     }
 
     ,release: function(){

@@ -35,8 +35,7 @@ module.exports = function(app) {
   app.put('/api/pokemon/:pokemonId', myPokemon, pokemon.put);
   app.patch('/api/pokemon/:pokemonId', myPokemon, pokemon.put);
   app.post('/api/pokemon/:pokemonId/hold-item', myPokemon, pokemon.holdItem);
-  app.post('/api/pokemon/:pokemonId/hold-item/take'
-    , myPokemon, pokemon.takeHoldItem);
+  app.post('/api/pokemon/:pokemonId/take-item', myPokemon, pokemon.takeItem);
   app.post('/api/pokemon/:pokemonId/send-pokemon-center'
     , myPokemon, pokemon.sendPokemonCenter);
 

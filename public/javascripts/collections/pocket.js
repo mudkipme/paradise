@@ -48,6 +48,8 @@ define([
 
       this.set(pocket.slice((currentPage - 1) * pageSize,
         currentPage * pageSize));
+
+      this.trigger('refresh');
     }
 
     ,getPage: function(page){

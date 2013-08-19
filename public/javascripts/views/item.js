@@ -135,10 +135,10 @@ define([
       this.ui.hold.popover('hide');
     }
 
-    ,holdDone: function(e){
+    ,holdDone: function(pokemon){
       var item = i18n.t('item:' + this.model.get('item').name);
-      var pokemon = _.escape(e.pokemon.get('nickname'))
-        || i18n.t('pokemon:' + e.pokemon.get('species').name);
+      var pokemon = _.escape(pokemon.get('nickname'))
+        || i18n.t('pokemon:' + pokemon.get('species').name);
 
       vent.trigger('alert', {
         type: 'success'

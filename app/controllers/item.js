@@ -50,8 +50,9 @@ exports.gift = function(req, res){
     ], function(err, results){
       if (err) return res.json(500, {error: err.message});
       res.json({
-        number: req.trainer.hasItem(itemId)
+        id: item.id
         ,item: results[0]
+        ,number: req.trainer.hasItem(itemId)
       });
     });
   });

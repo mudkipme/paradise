@@ -54,8 +54,10 @@
     ,"gift-item": "赠送道具"
     ,"use-item": "使用道具"
     ,"hold-item": "携带道具"
+    ,"take-item": "取下道具"
     ,"gift-done": "成功向 __trainer__ 赠送了 __number__ 个 __item__。"
     ,"hold-done": "__pokemon__ 成功带上了 __item__。"
+    ,"take-done": "从 __pokemon__ 取下了 __item__。"
   }
   ,"type": {
     "normal": "一般"

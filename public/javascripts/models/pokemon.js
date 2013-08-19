@@ -49,8 +49,20 @@ define([
         ,processData: true
         ,success: function(data){
           me.set(data);
-          item.trigger('hold', {pokemon: me});
+          item.trigger('hold', me);
           item.collection.fetch();
+        }
+      });
+    }
+
+    ,takeItem: function(){
+      var me = this, item = me.get('holdItem');
+      me.sync(null, me, {
+        url: me.url() + '/take-item'
+        ,type: 'POST'
+        ,success: function(data){
+          me.set(data);
+          me.trigger('takeItem', item);
         }
       });
     }

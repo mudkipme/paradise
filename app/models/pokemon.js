@@ -246,10 +246,10 @@ PokemonSchema.methods.gainEffort = function(effort, callback){
 PokemonSchema.methods.setHoldItem = function(item, callback){
   if (item) {
     if (!item.holdable) return callback(new Error('ITEM_NOT_HOLDABLE'));
-    this._item = item;
+    this._holdItem = item;
     this.holdItemId = item.id;
   } else {
-    this._item = null;
+    this._holdItem = null;
     this.holdItemId = null;
   }
 
