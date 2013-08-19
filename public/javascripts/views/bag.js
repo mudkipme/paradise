@@ -51,12 +51,12 @@ define([
       $container.find('.item-grid').eq(index).empty().append(iv.el);
     }
 
-    ,removeChildView: function(view){      
+    ,removeChildView: function(view){
       var grid = view.$el.parent();
       Marionette.CompositeView.prototype.removeChildView.call(this, view);
       $('<div/>').addClass('item-view item-view-empty').appendTo(grid);
+      grid.appendTo(this.getItemViewContainer(this));
     }
-
 
     ,renderPage: function(){
       var pagination = this.ui.pagination.empty();
