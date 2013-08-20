@@ -69,7 +69,7 @@ footer {
 
 @media (min-width: 992px) {
   .container {
-    max-width: 960px;
+    max-width: 990px;
   }
 }
 
@@ -79,14 +79,18 @@ footer {
       display: none;
     }
   }
-  nav.navbar .navbar-header {
-    padding-left: 0;
-  }
 }
 
 @media (max-width: 767px) {
-  #paradise-app {
+  .app-container {
     max-width: 385px;
-    margin: 0 auto;
+  }
+}
+
+.modal-open {
+  body&,
+  .navbar-fixed-top,
+  .navbar-fixed-bottom {
+    margin-right: 0;
   }
 }

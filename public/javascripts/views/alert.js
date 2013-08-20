@@ -20,9 +20,7 @@ define([
     }
 
     ,onRender: function(){
-      if (this.options.type) {
-        this.$el.addClass('alert-' + this.options.type);
-      }
+      this.$el.addClass('alert-' + (this.options.type || 'warning'));
       this.$el.alert();
     }
   });

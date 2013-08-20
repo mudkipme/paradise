@@ -8,7 +8,7 @@
     "jquery.transit": "*",
     "backbone": "*",
     "underscore": "*",
-    "bootstrap": "3.0.0-rc.2",
+    "bootstrap": "*",
     "moment": "*",
     "i18next": "*",
     "backbone.marionette": "*",
