@@ -4,7 +4,8 @@ define([
   ,'backbone'
   ,'collections/party'
   ,'collections/pocket'
-], function($, _, Backbone, Party, Pocket){
+  ,'collections/storage'
+], function($, _, Backbone, Party, Pocket, Storage){
 
   var Trainer = Backbone.Model.extend({
     idAttribute: 'name'
@@ -13,6 +14,7 @@ define([
     ,initialize: function(){
       this.party = new Party(this.get('party'));
       this.pocket = new Pocket({trainer: this});
+      this.storage = new Storage([], {trainer: this});
 
       this.listenTo(this.party, 'move', this.moveParty);
     }

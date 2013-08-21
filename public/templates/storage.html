@@ -1,0 +1,39 @@
+<div class="title">
+  <div class="custom">
+    <div>
+      <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+        <%= t('wallpaper.'+(wallpaper || 'blue')) %> <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <% _.each(wallpapers, function(wp){ %>
+          <li data-wallpaper="<%= wallpaper %>" <%if (wp == (wallpaper || 'blue')){%>class="active"<%}%>><a href="#"><%= t('wallpaper.'+wp) %></a></li>
+        <% }) %>
+      </ul>
+    </div>
+    <div>
+      <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+        <%= t('action.storage-sort') %> <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li data-sort="time"><a href="#"><%= t('action.storage-sort-time') %></a></li>
+        <li data-sort="level"><a href="#"><%= t('action.storage-sort-level') %></a></li>
+        <li data-sort="dex"><a href="#"><%= t('action.storage-sort-dex') %></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="name">
+    <%- name || t('stat.storage-name', {index: index + 1}) %>
+  </div>
+</div>
+<div class="content">
+  <div class="pokemon-container">
+    <% _.times(30, function(){ %>
+      <div class="pokemon-grid">
+        <div class="storage-pokemon-view storage-pokemon-view-empty"></div>
+      </div>
+    <% }) %>
+  </div>
+  <div class="storage-pages">
+    <ul class="pagination"><li class="disabled"><a href="#">«</a></li><li class="active"><a href="#">1</a></li><li class="disabled"><a href="#">»</a></li></ul>
+  </div>
+</div>

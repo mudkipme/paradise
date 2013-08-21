@@ -13,8 +13,11 @@ var geode = new Geode(config.thirdParty.geonames, {});
 
 // Pokémon Storage System
 var StorageSchema = new Schema({
-  name:    String,
-  pokemon: [{ type: Schema.Types.ObjectId, ref: 'Pokemon' }]
+  name:      String,
+  wallpaper: String,
+  pokemon:   [{ type: Schema.Types.ObjectId, ref: 'Pokemon' }]
+}, {
+  toJSON: { virtuals: true }
 });
 
 /**
@@ -124,7 +127,7 @@ TrainerSchema.methods.storageSlot = function() {
   }
 
   if (boxId == -1) {
-    me.storage.push({name: '', pokemon: []});
+    me.storage.push({name: '', wallpaper: '', pokemon: []});
     boxId = me.storage.length;
     position = 0;
   }

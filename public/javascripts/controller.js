@@ -5,8 +5,9 @@ define([
   ,'views/party'
   ,'views/bag'
   ,'views/pokemart'
+  ,'views/storage'
   ,'models/trainer'
-], function(Marionette, MenuView, HomeView, PartyView, BagView, PokeMartView, Trainer){
+], function(Marionette, MenuView, HomeView, PartyView, BagView, PokeMartView, StorageView, Trainer){
 
   // Avoid circular dependencies
   var App = null;
@@ -42,6 +43,11 @@ define([
 
     ,pokeMart: function(){
       App.mainRegion.show(new PokeMartView);
+    }
+
+    ,storage: function(){
+      App.mainRegion.show(new StorageView({collection: App.trainer.storage}));
+      App.trainer.storage.fetch();
     }
   });
 });

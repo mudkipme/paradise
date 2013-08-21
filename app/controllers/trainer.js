@@ -151,9 +151,6 @@ exports.move = function(req, res){
   req.trainer.party = req.body.order;
   req.trainer.save(function(err){
     if (err) return res.json(500, { error: err.message });
-    req.trainer.populate('party', function(err){
-      if (err) return res.json(500, { error: err.message });
-      return res.json(req.trainer.party);
-    });
+    res.send(204);
   });
 };

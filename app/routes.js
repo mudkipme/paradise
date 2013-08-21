@@ -1,8 +1,12 @@
+// Controllers
 var index = require('./controllers/index');
 var bbs = require('./controllers/bbs');
 var trainer = require('./controllers/trainer');
 var pokemon = require('./controllers/pokemon');
 var item = require('./controllers/item');
+var storage = require('./controllers/storage');
+
+// Middlewares
 var auth = require('./middlewares/authentication');
 var pm = require('./middlewares/pokemon-middleware');
 
@@ -10,7 +14,7 @@ var defaults = [auth.login, auth.trainer, auth.locale];
 var isSelf = [auth.login, auth.trainer, auth.isSelf];
 var myPokemon = [auth.login, auth.trainer, pm.myPokemon];
 
-module.exports = function(app) {
+module.exports = function(app){
   app.get('/', defaults, index.index);
   app.get(/^\/(party|pokedex|bag|trainer|storage|world|timeline|pokemart|daycare|trade|battle|rank|migrate|setting|record|help)$/, defaults, index.defaults);
   app.get('/bbs', bbs.login);
@@ -42,4 +46,7 @@ module.exports = function(app) {
   // Item actions
   app.get('/api/item/:itemId', defaults, item.get);
   app.post('/api/item/:itemId/gift', defaults, item.gift);
+
+  // Storage actions
+  app.get('/api/storage/:boxId', defaults, storage.get);
 };

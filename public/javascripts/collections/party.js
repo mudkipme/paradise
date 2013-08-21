@@ -20,6 +20,22 @@ define([
       this.on('add remove reset', this.resetOrder);
     }
 
+    // Reset the order in party
+    // Won't need in future Backbone release
+    ,set: function(models, options){
+      Backbone.Collection.prototype.set.apply(this, arguments);
+
+      if (options && options.parse) models = this.parse(models, options);
+
+      var ids = _.pluck(models, 'id');
+      if (!_.isEqual(this.pluck('id'), ids)) {
+        _.each(ids, function(id, index){
+          this.get(id).order = index;
+        }, this);
+        this.sort();
+      }
+    }
+
     ,comparator: function(pokemon) {
       return pokemon.order;
     }

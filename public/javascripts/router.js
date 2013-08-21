@@ -7,6 +7,7 @@ define([
       ,'party': 'party'
       ,'bag': 'bag'
       ,'pokemart': 'pokeMart'
+      ,'storage': 'storage'
     }
   });
 });

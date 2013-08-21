@@ -12,7 +12,7 @@ define([
     ,itemView: PokemonView
 
     ,collectionEvents: {
-      'sort': 'render'
+      'sort': 'sortPokemon'
     }
 
     ,onAfterItemAdded: function(view){
@@ -72,6 +72,13 @@ define([
       if (this.dragSource && this.dragSource != view) {
         this.collection.swap(this.dragSource.model, view.model);
       }
+    }
+
+    ,sortPokemon: function(){
+      var me = this;
+      me.collection.each(function(pokemon, index){
+        me.$el.children().eq(index).before(me.children.findByModel(pokemon).el);
+      });
     }
   });
   
