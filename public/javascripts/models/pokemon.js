@@ -1,11 +1,16 @@
 define([
   'jquery',
   'underscore',
-  'backbone'
-], function($, _, Backbone){
+  'backbone',
+  'vent'
+], function($, _, Backbone, vent){
 
   var Pokemon = Backbone.Model.extend({
     urlRoot: '/api/pokemon'
+
+    ,initialize: function(){
+      this.listenTo(vent, 'io:pokemon:change', this.ioChange);
+    }
 
     ,deposit: function(){
       var me = this;
@@ -65,6 +70,12 @@ define([
           me.trigger('takeItem', item);
         }
       });
+    }
+
+    ,ioChange: function(data){
+      if (data.id == this.get('id')) {
+        this.set(data);
+      }
     }
   });
   return Pokemon;

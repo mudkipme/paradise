@@ -1,18 +1,32 @@
 var sqlite3 = require('sqlite3').verbose();
 var mysql = require('mysql');
-var base = new sqlite3.Database(__dirname + '/database/base.sqlite3');
+var mongoose = require('mongoose');
+var express = require('express');
 var config = require('../config.json');
 
-var connection = mysql.createConnection({
+// Session store
+var sessionStore = new express.session.MemoryStore();
+
+// MySQL connection
+var mysqlConnection = mysql.createConnection({
   host: 'localhost',
   user: config.bbs.dbUser,
   password: config.bbs.dbPass,
   database: config.bbs.dbName
 });
 
-connection._ = function(sql){
+mysqlConnection._ = function(sql){
   return sql.split('{prefix}').join(config.bbs.dbPrefix || '');
-}
+};
 
-exports.mysqlConnection = connection;
-exports.baseData = base;
+// Mongoose connection
+mongoose.connect(config.database.url, {
+  server: { socketOptions: { keepAlive: 1 } }
+  ,replset: { socketOptions: { keepAlive: 1 } }
+});
+mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
+
+exports.baseData = new sqlite3.Database(__dirname + '/database/base.sqlite3');
+exports.mysqlConnection = mysqlConnection;
+exports.mongoConnection = mongoose.connection;
+exports.sessionStore = sessionStore;

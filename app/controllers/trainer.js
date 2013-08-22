@@ -6,6 +6,7 @@
 // dependencies
 var async = require('async');
 var _ = require('underscore');
+var io = require('../io');
 var Trainer = require('../models/trainer');
 var Pokemon = require('../models/pokemon');
 var Item = require('../models/item');
@@ -152,5 +153,6 @@ exports.move = function(req, res){
   req.trainer.save(function(err){
     if (err) return res.json(500, { error: err.message });
     res.send(204);
+    io.emit(req, 'party:move', req.body.order);
   });
 };

@@ -1,5 +1,7 @@
 var async = require('async');
-var i18n = require("i18next");
+var express = require('express');
+var i18n = require('i18next');
+var sessionStore = require('../common').sessionStore;
 var Member = require('../models/member.js');
 var config = require('../../config.json');
 var Trainer = require('../models/trainer.js');
@@ -63,4 +65,37 @@ exports.isSelf = function(req, res, next) {
   } else {
     res.json(403, { error: 'PERMISSION_DENIED' });
   }
+};
+
+
+// Socket.io authorization
+exports.sio = function(data, next){
+  if (!data.headers.cookie) return next(null, false);
+
+  express.cookieParser(config.app.cookieSecret)(data, {}, function(err){
+    if (err) return next(err, false);
+    data.cookie = data.signedCookies;
+  });
+
+  data.sessionID = data.cookie['connect.sid'];
+
+  sessionStore.get(data.sessionID, function(err, session){
+    if (err) return next(err, false);
+    if (!session) return next(null, false);
+    data.session = session;
+
+    Member.getLogin(data, function(err, member){
+      if (err) return next(err, false);
+      if (!member) return next(null, false);
+      
+      data.member = member;
+      Trainer.findByName(member.username, function(err, trainer){
+        if (err) return next(err, false);
+        if (!trainer) return next(null, false);
+
+        data.trainer = trainer;
+        next(null, true);
+      });
+    });
+  });
 };

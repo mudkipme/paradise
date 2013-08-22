@@ -13,6 +13,7 @@ requirejs.config({
     ,i18next: '../components/i18next/release/i18next.amd.withJQuery-1.6.3'
     ,moment: '../components/moment/moment'
     ,'moment/lang': '../components/moment/min/lang'
+    ,'socket.io': '../components/socket.io-client/dist/socket.io'
   }
   ,shim: {
     underscore: { exports: '_' }

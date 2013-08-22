@@ -6,6 +6,7 @@
 // dependencies
 var async = require('async');
 var _ = require('underscore');
+var io = require('../io');
 var Item = require('../models/item');
 
 var partyNum = function(req){
@@ -98,6 +99,7 @@ exports.put = function(req, res){
   req.pokemon.save(function(err){
     if (err) return res.json(500, { error: err.message });
     res.send(req.pokemon);
+    io.emit(req, 'pokemon:change', req.pokemon);
   });
 };
 

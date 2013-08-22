@@ -1,9 +1,10 @@
 define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'models/pokemon'
-], function($, _, Backbone, Pokemon){
+  'jquery'
+  ,'underscore'
+  ,'backbone'
+  ,'vent'
+  ,'models/pokemon'
+], function($, _, Backbone, vent, Pokemon){
 
   var Party = Backbone.Collection.extend({
     model: Pokemon
@@ -18,6 +19,7 @@ define([
 
       this.on('deposit release', this.remove);
       this.on('add remove reset', this.resetOrder);
+      this.listenTo(vent, 'io:party:move', this.ioMove);
     }
 
     // Reset the order in party
@@ -53,6 +55,15 @@ define([
 
       this.sort();
       this.trigger('move');
+    }
+
+    ,ioMove: function(order){
+      _.each(order, function(id, index){
+        if (this.get(id)) {
+          this.get(id).order = index;
+        }
+      }, this);
+      this.sort();
     }
   });
   return Party;

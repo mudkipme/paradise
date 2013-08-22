@@ -10,11 +10,12 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
-var mongoose = require('mongoose');
-var i18n = require("i18next");
+var i18n = require('i18next');
 var config = require('./config.json');
+var common = require('./app/common');
 
 var app = express();
+var server = http.createServer(app);
 
 i18n.init({
   resGetPath: 'public/locales/__lng__/__ns__.json'
@@ -40,7 +41,7 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser(config.app.cookieSecret));
-app.use(express.session());
+app.use(express.session({ key: 'connect.sid', store: common.sessionStore }));
 i18n.registerAppHelper(app);
 app.use(app.router);
 
@@ -56,13 +57,10 @@ if ('production' == app.get('env')) {
 }
 
 require('./app/routes')(app);
+require('./app/io').connect(server);
 
-// Connect to MongoDB database
-mongoose.connect(config.database.url);
-mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
-mongoose.connection.once('open', function(){
-  console.log('Connected to ' + config.database.url);
-  http.createServer(app).listen(app.get('port'), function(){
+common.mongoConnection.once('open', function(){
+  server.listen(app.get('port'), function(){
     console.log('Paradise server listening on port ' + app.get('port'));
   });
 });

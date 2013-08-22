@@ -9,13 +9,14 @@ define([
   ,'vent'
   ,'router'
   ,'controller'
+  ,'io'
   ,'views/alert'
   ,'views/modal'
   ,'moment/lang/zh-cn'
   ,'moment/lang/zh-tw'
   ,'util'
 ], function($, _, Backbone, Marionette, AppBase, i18n, moment,
-  vent, Router, Controller, AlertView, ModalView){
+  vent, Router, Controller, io, AlertView, ModalView){
 
   var App = new AppBase();
 
@@ -120,6 +121,11 @@ define([
     App.appRouter = new Router({
       controller: new Controller
     });
+  });
+
+  // initialize socket.io connection
+  App.addInitializer(function(){
+    io.start();
   });
 
   // After all initialize events
