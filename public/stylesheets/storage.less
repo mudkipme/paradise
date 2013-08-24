@@ -39,7 +39,7 @@
     }
   }
 
-  .content {
+  > .content {
     padding: 16px 16px 0;
   }
 
@@ -73,8 +73,23 @@
         }
       }
     }
-    .content {
+    > .content {
       background-color: @storageBlue;
+    }
+  }
+
+
+  .popover {
+    max-width: none;
+    background-color: #7c92d5;
+    margin: 37px 0;
+    padding: 0;
+    border: none;
+    .arrow {
+      display: none;
+    }
+    .popover-content {
+      padding: 0;
     }
   }
 }
@@ -88,14 +103,30 @@
   border-radius: 50px;
   margin: 8px auto;
 
+  &:not(.storage-pokemon-view-empty) {
+    cursor: pointer;
+  }
+
   img.sprite {
     display: block;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+  }
+}
+
+@media (max-width: 767px) {
+  #storage-view {
+    .popover {
+      left: 50% !important;
+      margin-left: -146px;
+      margin-top: 0;
+    }
   }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
   #storage-view {
-    .content {
+    > .content {
       padding: 5px 5px 0;
     }
   }

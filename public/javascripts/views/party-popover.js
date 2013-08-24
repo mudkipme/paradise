@@ -13,7 +13,7 @@ define([
     ,templateHelpers: { t: i18n.t }
 
     ,collectionEvents: {
-      'add remove change': 'render'
+      'add remove change sort': 'render'
     }
 
     ,events: {

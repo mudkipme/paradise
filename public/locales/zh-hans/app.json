@@ -42,11 +42,12 @@
     ,"meet-date": "__meetDate__ <span class='meet-place'>__meetPlace__</span> 得到，等级 __meetLevel__"
     ,"tradable": "允许被请求交换"
     ,"pokemon-center-time": "它正在神奇宝贝中心休息，还需__pokemonCenterTime__回复"
-    ,"storage-name": "BOX __index__"
+    ,"storage-name": "BOX __boxId__"
   }
   ,"action": {
     "send-pokemon-center": "送到神奇宝贝中心"
     ,"deposit": "放入寄存箱"
+    ,"withdraw": "取回队伍"
     ,"release": "放回野生"
     ,"release-confirm": "你真的要将这只神奇宝贝放回野生吗？"
     ,"gift": "赠送"

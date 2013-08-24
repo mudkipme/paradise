@@ -1,16 +1,11 @@
 define([
   'jquery',
   'underscore',
-  'backbone',
-  'vent'
-], function($, _, Backbone, vent){
+  'backbone'
+], function($, _, Backbone){
 
   var Pokemon = Backbone.Model.extend({
     urlRoot: '/api/pokemon'
-
-    ,initialize: function(){
-      this.listenTo(vent, 'io:pokemon:change', this.ioChange);
-    }
 
     ,deposit: function(){
       var me = this;
@@ -30,6 +25,17 @@ define([
         ,type: 'POST'
         ,success: function(){
           me.trigger('release', me);
+        }
+      });
+    }
+
+    ,withdraw: function(){
+      var me = this;
+      me.sync(null, me, {
+        url: me.url() + '/withdraw'
+        ,type: 'POST'
+        ,success: function(){
+          me.trigger('withdraw', me);
         }
       });
     }
@@ -70,12 +76,6 @@ define([
           me.trigger('takeItem', item);
         }
       });
-    }
-
-    ,ioChange: function(data){
-      if (data.id == this.get('id')) {
-        this.set(data);
-      }
     }
   });
   return Pokemon;

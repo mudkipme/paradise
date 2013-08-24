@@ -40,7 +40,7 @@ define([
       ,'margin-bottom': this.css('margin-bottom')
     };
 
-    return this.css({
+    this.css({
       height: 0
       ,'padding-top': 0
       ,'padding-bottom': 0
@@ -49,7 +49,9 @@ define([
       ,'overflow': 'hidden'
       ,'visibility': visibility
       ,'position': position
-    }).transition.bind(this, options).apply(this, arguments)
+    }).offset();
+
+    return this.transition.bind(this, options).apply(this, arguments)
     .promise().done(function(){
       this.css({ 'overflow': overflow });
     });
@@ -66,8 +68,8 @@ define([
       ,'margin-bottom': this.css('margin-bottom')
     }
 
-    return this.css($.extend({ 'overflow': 'hidden' }, options))
-    .transition.bind(this, {
+    this.css($.extend({ 'overflow': 'hidden' }, options)).offset();
+    return this.transition.bind(this, {
       height: 0
       ,'padding-top': 0
       ,'padding-bottom': 0
@@ -92,24 +94,24 @@ define([
     $('<div/>').addClass('handle').appendTo(el);
 
     this.filter(':checked').prev().addClass('on');
-
-    el.find('.handle').on('webkitAnimationEnd animationend', function(){
-      $(this).removeClass('handle-animate');
-    });
-
-    el.click(function(){
-      var me = $(this), input = me.next();
-      if (me.hasClass('on')) {
-        me.removeClass('on').addClass('off');
-        input.prop('checked', false);
-      } else {
-        me.removeClass('off').addClass('on');
-        input.prop('checked', true);
-      }
-      me.find('.handle').addClass('handle-animate');
-      input.trigger('change');
-    });
   };
+
+  $(document).on('click', '.ios-switch', function(){
+    var me = $(this), input = me.next();
+    if (me.hasClass('on')) {
+      me.removeClass('on').addClass('off');
+      input.prop('checked', false);
+    } else {
+      me.removeClass('off').addClass('on');
+      input.prop('checked', true);
+    }
+    me.find('.handle').addClass('handle-animate');
+    input.trigger('change');
+  });
+
+  $(document).on('webkitAnimationEnd animationend', '.ios-switch .handle', function(){
+    $(this).removeClass('handle-animate');
+  });
 
   // Simply reset scrollTop
   $.fn.appear = function(){

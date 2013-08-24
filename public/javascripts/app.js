@@ -12,11 +12,12 @@ define([
   ,'io'
   ,'views/alert'
   ,'views/modal'
+  ,'models/trainer'
   ,'moment/lang/zh-cn'
   ,'moment/lang/zh-tw'
   ,'util'
 ], function($, _, Backbone, Marionette, AppBase, i18n, moment,
-  vent, Router, Controller, io, AlertView, ModalView){
+  vent, Router, Controller, io, AlertView, ModalView, Trainer){
 
   var App = new AppBase();
 
@@ -116,8 +117,10 @@ define([
     });
   });
 
-  // initialize router and controller
+  // initialize trainer, router and controller
   App.addInitializer(function(){
+    App.trainer = new Trainer(PARADISE.me);
+
     App.appRouter = new Router({
       controller: new Controller
     });

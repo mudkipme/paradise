@@ -7,16 +7,45 @@ define([
 
   var App = null, socket = null;
 
-  var ventList = [
-    'pokemon:change'
-    ,'party:move'
-  ];
+  var ioEvents = {
+    'pokemon:change': function(pokemon){
+      App.trainer.party.modelSet(pokemon);
+      App.trainer.storage.modelSet(pokemon);
+    }
+    ,'party:move': function(order){
+      App.trainer.party.orderChange(order);
+    }
+    ,'party:add': function(pokemon){
+      App.trainer.party.add(pokemon);
+    }
+    ,'party:remove': function(id){
+      var pokemon = App.trainer.party.get(id);
+      pokemon && App.trainer.party.remove(pokemon);
+    }
+    ,'storage:add': function(pokemon){
+      if (pokemon.boxId === App.trainer.storage.boxId) {
+        delete pokemon.boxId;
+        App.trainer.storage.add(pokemon);
+      }
+    }
+    ,'storage:remove': function(pos){
+      if (pos.boxId === App.trainer.storage.boxId) {
+        var pokemon = App.trainer.storage.findWhere({position: pos.position});
+        pokemon && App.trainer.storage.remove(pokemon);
+      }
+    }
+  };
 
-  // Bubble all socket.io events to *vent*
   var initEvents = function(){
-    _.each(ventList, function(eventName){
+    _.each(ioEvents, function(cb, eventName){
       socket.on(eventName, function(data){
-        vent.trigger('io:' + eventName, data);
+        if (_.isFunction(cb)) {
+          cb.apply(socket, arguments);
+        }
+        // Bubble all socket.io events to *vent*
+        var args = _.toArray(arguments);
+        args.unshift('io:' + eventName);
+        vent.trigger.apply(vent, args);
       });
     });
   };

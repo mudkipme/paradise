@@ -11,7 +11,7 @@
   }
   .pokemon-bottom {
     height: 46px;
-    background: url(../images/pokemon/party-pokemon.png) center bottom no-repeat;
+    background: url(../images/pokemon/party-pokemon.png) center -71px no-repeat;
   }
 
   .sprite {
@@ -171,7 +171,7 @@
       .btn-take-item {
         .btn-warning;
       }
-      .btn-deposit {
+      .btn-deposit, .btn-withdraw {
         .btn-primary;
       }
       .btn-release {
@@ -194,27 +194,40 @@
   }
 }
 
-@media (max-width: 384px) {
-  .pokemon-view {
-    overflow: hidden;
+.pokemon-view-narrow {
+  overflow: hidden;
 
-    .hp {
-      .progress {
-        width: 54px;
-      }
-    }
-    .content {
-      padding-left: 30px;
-      padding-right: 30px;
-      .experience-bar {
-        .progress {
-          width: 236px;
-        }
-      }
-
-      .poke-ball {
-        right: 57px;
-      }
+  .hp {
+    .progress {
+      width: 54px;
     }
   }
+  .content {
+    padding-left: 30px;
+    padding-right: 30px;
+    .experience-bar {
+      .progress {
+        width: 236px;
+      }
+    }
+
+    .poke-ball {
+      right: 57px;
+    }
+  }
+}
+
+@media (max-width: 384px) {
+  .pokemon-view {
+    .pokemon-view-narrow;
+  }
+}
+
+.popover .pokemon-view {
+  .pokemon-view-narrow;
+  cursor: default;
+  width: 290px;
+  
+  margin-top: -37px;
+  margin-bottom: -37px;
 }

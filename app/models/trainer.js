@@ -11,24 +11,6 @@ var config = require('../../config.json');
 var Schema = mongoose.Schema;
 var geode = new Geode(config.thirdParty.geonames, {});
 
-// Pokémon Storage System
-var StorageSchema = new Schema({
-  name:      String,
-  wallpaper: String,
-  pokemon:   [{ type: Schema.Types.ObjectId, ref: 'Pokemon' }]
-}, {
-  toJSON: { virtuals: true }
-});
-
-/**
- * Init Pokémon data in this storage
- */
-StorageSchema.methods.initStorage = function(callback){
-  async.eachSeries(this.pokemon, function(pokemon, next){
-    pokemon.initData(next);
-  }, callback);
-};
-
 var TrainerSchema = new Schema({
   name:             String,
   trainerId:        Number,
@@ -37,8 +19,16 @@ var TrainerSchema = new Schema({
   pokedexCaughtNum: { type: Number, default: 0 },
   pokedexSeenNum:   { type: Number, default: 0 },
   party:            [{ type: Schema.Types.ObjectId, ref: 'Pokemon' }],
-  storage:          [ StorageSchema ],
-  currentStorage:   { type: Number, default: 0 },
+  storage:          [{
+    name:           String,
+    wallpaper:      String
+  }],
+  currentBox:       { type: Number, default: 0 },
+  storagePokemon:   [{
+    boxId:          { type: Number, min: 0 },
+    position:       { type: Number, min: 0, max: 29 },
+    pokemon:        { type: Schema.Types.ObjectId, ref: 'Pokemon' }
+  }],
   bag: [{
     itemId:         Number,
     number:         Number
@@ -107,32 +97,33 @@ TrainerSchema.methods.getPokedex = function(callback) {
  * Find an empty slot in storage
  */
 TrainerSchema.methods.storageSlot = function() {
-  var me = this, boxId = -1, position = -1;
+  var me = this;
+  var storageNum = Math.max(me.storage.length, 8);
+  var box = [];
 
-  for (var i = 0; i < me.storage.length; i++) {
-    var currentBox = (me.currentStorage + i) % me.storage.length;
+  // the indexes of all boxes from currentBox
+  var boxIds = _.map(_.range(me.currentBox, me.currentBox + storageNum)
+    ,function(index){ return index % storageNum; });
 
-    var pokemon = me.storage[currentBox].pokemon;
-    for (var index = 0; index < 30; index++) {
-      if (!pokemon[index]) {
-        position = index;
-        break;
-      }
-    }
+  // find the box which has empty slot
+  var boxId = _.find(boxIds, function(boxId){
+    box = _.where(me.storagePokemon, { boxId: boxId });
+    return box.length < 30;
+  });
 
-    if (position != -1) {
-      boxId = currentBox;
-      break;
-    }
-  }
-
-  if (boxId == -1) {
-    me.storage.push({name: '', wallpaper: '', pokemon: []});
+  // add a box when there's no empty slot
+  if (_.isUndefined(boxId)) {
     boxId = me.storage.length;
-    position = 0;
+    me.storage.push({ name: '', wallpaper: '' });
   }
 
-  me.currentStorage = boxId;
+  // find an empty slot in the box
+  var position = _.find(_.range(0, 30), function(pos){
+    return _.isUndefined(_.findWhere(box, { position: pos })); 
+  });
+
+  me.currentBox = boxId;
+
   return {
     boxId: boxId,
     position: position
@@ -165,7 +156,7 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
     me.party.push(pokemon);
   } else {
     slot = me.storageSlot();
-    me.storage[slot.boxId].pokemon.set(slot.position, pokemon);
+    me.storagePokemon.push(_.extend({ pokemon: pokemon }, slot));
   }
 
   pokemon.initData(function(err, pokemon){
@@ -229,6 +220,7 @@ TrainerSchema.methods.setLocation = function(latitude, longitude, callback){
 TrainerSchema.methods.findPokemon = function(pokemon){
   var partyPopulated = this.populated('party');
   var result = null;
+
   _.each(this.party, function(pm, index){
     var id = partyPopulated ? pm._id : pm;
     if (id.equals(pokemon._id)) {
@@ -238,15 +230,9 @@ TrainerSchema.methods.findPokemon = function(pokemon){
   });
   if (result) return result;
 
-  _.each(this.storage, function(storage, boxId){
-    var storagePopulated = storage.populated('pokemon');
-    _.each(storage.pokemon, function(pm, position){
-      var id = storagePopulated ? pm._id : pm;
-      if (id.equals(pokemon._id)) {
-        result = { boxId: boxId, position: position };
-        return false;
-      }
-    });
+  result = _.find(this.storagePokemon, function(sp){
+    var id = sp.populated('pokemon') ? sp.pokemon._id : sp.pokemon;
+    return id.equals(pokemon._id);
   });
 
   return result;
@@ -344,7 +330,7 @@ TrainerSchema.methods.todaySpecies = function(callback){
 TrainerSchema.methods.toJSON = function(options){
   var res = mongoose.Document.prototype.toJSON.call(this, options);
   return _.omit(res, ['pokedexCaughtHex', 'pokedexSeenHex'
-    , 'storage', 'bag', 'todayLuck']);
+    , 'storage', 'storagePokemon', 'bag', 'todayLuck']);
 };
 
 // Find trainer by name, and init necessary information

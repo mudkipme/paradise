@@ -15,8 +15,10 @@ define([
     className: 'pokemon-view'
     ,model: Pokemon
 
-    ,collapsible: true
-    ,collapsed: true
+    ,options: {
+      collapsed: true
+      ,collapsible: true
+    }
 
     ,ui: {
       content: '.content'
@@ -32,9 +34,11 @@ define([
       ,'blur .name input': 'setNicknameEnd'
       ,'click .btn-send-pc': 'sendPokemonCenter'
       ,'click .btn-deposit': 'deposit'
+      ,'click .btn-withdraw': 'withdraw'
       ,'click .btn-take-item': 'takeItem'
       ,'click .btn-release': 'release'
       ,'dragstart': 'bubbleDragEvent'
+      ,'drag': 'bubbleDragEvent'
       ,'dragenter': 'bubbleDragEvent'
       ,'dragover': 'bubbleDragEvent'
       ,'dragend': 'bubbleDragEvent'
@@ -74,29 +78,30 @@ define([
     ,serializeData: function(){
       return {
         pokemon: this.model.toJSON()
+        ,inStorage: !_.isUndefined(this.model.collection.boxId)
       }
     }
 
     ,onRender: function(){
       this.$('input[type="checkbox"]').iosSwitch();
       this.$('[title]').tooltip();
-      if (!this.collapsed) {
+      if (!this.options.collapsed) {
         this.ui.content.show();
       }
     }
 
     ,collapse: function(){
-      if (!this.collapsed) {
+      if (!this.options.collapsed) {
         this.ui.content.transUp();
-        this.collapsed = true;
+        this.options.collapsed = true;
       }
     }
 
     ,expand: function(){
-      if (this.collapsed) {
+      if (this.options.collapsed) {
         this.trigger('before:expand');
         this.ui.content.transDown();
-        this.collapsed = false;
+        this.options.collapsed = false;
       }
     }
 
@@ -105,10 +110,11 @@ define([
         || e.target.tagName.toUpperCase() == 'BUTTON'
         || e.target.tagName.toUpperCase() == 'INPUT'
         || e.target.tagName.toUpperCase() == 'A'
-        || !this.collapsible) {
+        || !this.options.collapsible
+        || this.inSetNickname) {
         return;
       }
-      if (this.collapsed) {
+      if (this.options.collapsed) {
         this.expand();
       } else {
         this.collapse();
@@ -127,7 +133,7 @@ define([
 
       this.ui.nicknameText.hide();
       this.ui.nicknameInput.show().focus();
-      this.collapsible = false;
+      this.inSetNickname = true;
     }
 
     ,setNicknameEnd: function(e){
@@ -143,7 +149,7 @@ define([
       me.ui.nicknameInput.hide();
 
       me.$el.one('mouseup', _.throttle(function(){
-        me.collapsible = true;
+        me.inSetNickname = false;
       }));
     }
 
@@ -153,6 +159,10 @@ define([
 
     ,deposit: function(){
       this.model.deposit();
+    }
+
+    ,withdraw: function(){
+      this.model.withdraw();
     }
 
     ,takeItem: function(){

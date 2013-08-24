@@ -62,18 +62,23 @@ exports.deposit = function(req, res){
   if (!partyNum(req)) return res.json(403, { error: 'ONE_POKEMON_LEFT' });
 
   req.trainer.party.splice(pos.position, 1);
-  req.trainer.storage[storage.boxId].pokemon.set(storage.position, req.pokemon);
-
+  req.trainer.storagePokemon.push(_.extend({ pokemon: req.pokemon }, storage));
   req.trainer.save(function(err){
     if (err) return res.json(500, { error: err.message });
-    res.json(storage);
+    res.send(204);
+
+    // Send storage add events to all clients
+    io.sockets.in(req.trainer.id).emit('storage:add'
+      , _.extend(req.pokemon.toJSON(), storage));
+    // Send party remove events to all other clients
+    io.emit(req, 'party:remove', req.pokemon.id);
   });
 };
 
 // Withdraw a Pokémon
 exports.withdraw = function(req, res){
   if (req.trainer.party.length == 6)
-    res.json(403, { error: 'ERR_NO_PARTY_SLOT' });
+    return res.json(403, { error: 'ERR_NO_PARTY_SLOT' });
 
   var pos = req.trainer.findPokemon(req.pokemon);
 
@@ -81,10 +86,15 @@ exports.withdraw = function(req, res){
   if (pos.party) return res.json(403, { error: 'ALREADY_IN_PARTY' });
 
   req.trainer.party.push(req.pokemon);
-  req.trainer.storage[pos.boxId].pokemon.set(pos.position, null);
+  req.trainer.storagePokemon.pull(pos._id);
   req.trainer.save(function(err){
     if (err) return res.json(500, { error: err.message });
     res.send(204);
+
+    // Send storage add events to all clients
+    io.sockets.in(req.trainer.id).emit('party:add', req.pokemon);
+    // Send party remove events to all other clients
+    io.emit(req, 'storage:remove', pos);
   });
 };
 

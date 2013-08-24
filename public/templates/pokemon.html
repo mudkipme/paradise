@@ -57,10 +57,14 @@
 
     <!-- Disposit, release or send to Pokémon Center -->
     <div class="actions">
-      <% if (pokemon.stats.hp < pokemon.stats.maxHp) { %>
+      <% if (pokemon.stats.hp < pokemon.stats.maxHp && !inStorage) { %>
         <p><button class="btn btn-send-pc"> - <%= t('action.send-pokemon-center') %> - </button></p>
       <% } %>
-      <p><button class="btn btn-deposit"> - <%= t('action.deposit') %> - </button></p>
+      <% if (!inStorage) { %>
+        <p><button class="btn btn-deposit"> - <%= t('action.deposit') %> - </button></p>
+      <% } else { %>
+        <p><button class="btn btn-withdraw"> - <%= t('action.withdraw') %> - </button></p>
+      <% } %>
       <% if (pokemon.holdItem) { %>
         <p><button class="btn btn-take-item"> - <%= t('action.take-item') %> - </button></p>
       <% } %>

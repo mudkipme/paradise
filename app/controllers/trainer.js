@@ -92,7 +92,9 @@ exports.pokemon = function(req, res){
     Pokemon.find(condition)
     .skip(skip).limit(limit)
     .exec(function(err, pokemon){
-      Pokemon.initCollection(pokemon, function(err){
+      async.eachSeries(pokemon, function(pm, next){
+        pm.initData(next);
+      }, function(err){
         if (err) return res.json(500, { error: err.message });
         res.json(pokemon);
       });

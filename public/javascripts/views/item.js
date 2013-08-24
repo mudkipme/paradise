@@ -110,14 +110,16 @@ define([
     ,hidePopover: function(e){
       _.each([this.ui.gift, this.ui.hold], function(button){
         if (button.get(0) !== e.target) {
-          button.popover('hide');
+          var popover = button.data('bs.popover');
+          popover && popover.leave(popover);
         }
       });
     }
 
     ,giftSubmit: function(e){
       this.model.gift(this.$('.gift-trainer').val(), this.$('.gift-number').val());
-      this.ui.gift.popover('hide');
+      var popover = this.ui.gift.data('bs.popover');
+      popover && popover.leave(popover);
       e.preventDefault();
     }
 

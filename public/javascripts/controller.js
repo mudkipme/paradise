@@ -1,13 +1,13 @@
 define([
   'marionette'
+  ,'vent'
   ,'views/menu'
   ,'views/home'
   ,'views/party'
   ,'views/bag'
   ,'views/pokemart'
   ,'views/storage'
-  ,'models/trainer'
-], function(Marionette, MenuView, HomeView, PartyView, BagView, PokeMartView, StorageView, Trainer){
+], function(Marionette, vent, MenuView, HomeView, PartyView, BagView, PokeMartView, StorageView){
 
   // Avoid circular dependencies
   var App = null;
@@ -15,9 +15,7 @@ define([
   return Marionette.Controller.extend({
     initialize: function(){
       App = require('app');
-
       App.menuRegion.show(new MenuView);
-      App.trainer = new Trainer(PARADISE.me);
     }
 
     ,home: function(){

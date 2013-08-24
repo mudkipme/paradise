@@ -3,8 +3,9 @@ define([
   ,'underscore'
   ,'marionette'
   ,'views/pokemon'
+  ,'vent'
   ,'util'
-], function($, _, Marionette, PokemonView){
+], function($, _, Marionette, PokemonView, vent){
 
   var PartyView = Marionette.CollectionView.extend({
     id: 'party-view'
@@ -13,6 +14,19 @@ define([
 
     ,collectionEvents: {
       'sort': 'sortPokemon'
+    }
+
+    ,onRender: function(){
+      this.listenTo(vent, 'io:party:add', this.pokemonAdded);
+    }
+
+    ,pokemonAdded: function(pokemon){
+      pokemon = this.collection.get(pokemon.id);
+      if (pokemon) {
+        var el = this.children.findByModel(pokemon).$el;
+        el.css({'opacity': 0}).offset();
+        el.transition({'opacity': 1});
+      }
     }
 
     ,onAfterItemAdded: function(view){
@@ -42,6 +56,7 @@ define([
 
       view.$el.addClass('dragging');
       e.originalEvent.dataTransfer.effectAllowed = 'move';
+      e.originalEvent.dataTransfer.setData('Text', view.model.get('id'));
     }
 
     ,onItemviewDragenter: function(view, e){
