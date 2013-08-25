@@ -26,8 +26,8 @@ module.exports = function(app){
   app.get('/api/trainer/:name/pokedex', trainer.pokedex);
   app.get('/api/trainer/:name/pokemon', trainer.pokemon);
   app.get('/api/trainer/:name/bag', isSelf, trainer.bag);
-  app.put('/api/trainer/:name/accept-battle', isSelf, trainer.acceptBattle);
-  app.put('/api/trainer/:name/real-world', isSelf, trainer.realWorld);
+  app.put('/api/trainer/:name', isSelf, trainer.put);
+  app.patch('/api/trainer/:name', isSelf, trainer.put);
   app.post('/api/trainer/:name/move', isSelf, trainer.move);
 
   // Pokémon actions
@@ -49,4 +49,7 @@ module.exports = function(app){
 
   // Storage actions
   app.get('/api/storage/:boxId', defaults, storage.get);
+  app.put('/api/storage/:boxId', defaults, storage.put);
+  app.patch('/api/storage/:boxId', defaults, storage.put);
+  app.post('/api/storage/move', defaults, storage.move);
 };

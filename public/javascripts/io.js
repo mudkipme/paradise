@@ -34,6 +34,9 @@ define([
         pokemon && App.trainer.storage.remove(pokemon);
       }
     }
+    ,'storage:move': function(pokemon, options){
+      App.trainer.storage.moveSet(pokemon, options);
+    }
   };
 
   var initEvents = function(){

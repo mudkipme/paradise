@@ -50,11 +50,17 @@ var TrainerSchema = new Schema({
   todayLuck:        Number,
   battlePoint:      { type: Number, default: 0 }
 }, {
-  toJSON: { virtuals: true }
+  toJSON: { virtuals: true, minimize: false }
 });
 
 TrainerSchema.virtual('luckSpecies').get(function(){
   return this._todaySpecies;
+});
+
+TrainerSchema.virtual('storageNum').get(function(){
+  if (this.storage) {
+    return Math.max(this.storage.length, 8);
+  }
 });
 
 TrainerSchema.methods.setPokedexSeen = function(speciesNumber) {
@@ -98,7 +104,7 @@ TrainerSchema.methods.getPokedex = function(callback) {
  */
 TrainerSchema.methods.storageSlot = function() {
   var me = this;
-  var storageNum = Math.max(me.storage.length, 8);
+  var storageNum = me.storageNum;
   var box = [];
 
   // the indexes of all boxes from currentBox

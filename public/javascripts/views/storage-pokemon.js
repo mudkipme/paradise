@@ -19,6 +19,8 @@ define([
 
     ,events: {
       'shown.bs.popover': 'showPopover'
+      ,'dragstart': 'bubbleDragEvent'
+      ,'dragend': 'bubbleDragEvent'
     }
 
     ,ui: {
@@ -55,6 +57,8 @@ define([
         }
         ,container: me.storageView.el
       });
+
+      me.$el.prop('draggable', true);
     }
 
     ,showPopover: function(e){
@@ -76,6 +80,10 @@ define([
         this.pokemonPopover.close();
         this.$el.popover('destroy');
       }
+    }
+
+    ,bubbleDragEvent: function(e){
+      this.trigger(e.type, e);
     }
   });
 

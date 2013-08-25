@@ -38,7 +38,6 @@ define([
       ,'click .btn-take-item': 'takeItem'
       ,'click .btn-release': 'release'
       ,'dragstart': 'bubbleDragEvent'
-      ,'drag': 'bubbleDragEvent'
       ,'dragenter': 'bubbleDragEvent'
       ,'dragover': 'bubbleDragEvent'
       ,'dragend': 'bubbleDragEvent'
@@ -78,7 +77,7 @@ define([
     ,serializeData: function(){
       return {
         pokemon: this.model.toJSON()
-        ,inStorage: !_.isUndefined(this.model.collection.boxId)
+        ,inStorage: !_.isUndefined(this.model.collection.wallpaper)
       }
     }
 

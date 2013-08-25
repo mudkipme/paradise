@@ -89,7 +89,7 @@ exports.sio = function(data, next){
       if (!member) return next(null, false);
       
       data.member = member;
-      Trainer.findByName(member.username, function(err, trainer){
+      Trainer.findOne({ name: member.username }, function(err, trainer){
         if (err) return next(err, false);
         if (!trainer) return next(null, false);
 

@@ -8,10 +8,7 @@ define([
 ], function($, _, Backbone, Party, Pocket, Storage){
 
   var Trainer = Backbone.Model.extend({
-    idAttribute: 'name'
-    ,urlRoot: '/api/trainer'
-
-    ,initialize: function(){
+    initialize: function(){
       this.party = new Party(this.get('party'));
       this.pocket = new Pocket({trainer: this});
       this.storage = new Storage([], {trainer: this});

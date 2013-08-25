@@ -54,9 +54,7 @@ var PokemonSchema = new Schema({
   tradable:        { type: Boolean, default: config.app.acceptTrade },
   pokemonCenter:   Date
 }, {
-  toJSON: {
-    virtuals: true
-  }
+  toJSON: { virtuals: true, minimize: false }
 });
 
 _.each(['species', 'nature', 'pokeBall', 'holdItem'], function(key){

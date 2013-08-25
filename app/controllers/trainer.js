@@ -117,31 +117,29 @@ exports.bag = function(req, res){
   });
 };
 
-// Set whether accept battle
-exports.acceptBattle = function(req, res){
-  var acceptBattle = req.body.acceptBattle;
-  if (acceptBattle === true || acceptBattle == 'true') {
-    req.trainer.acceptBattle = true;
+// Set trainer information
+exports.put = function(req, res){
+  if (!_.isUndefined(req.body.acceptBattle)) {
+    req.trainer.acceptBattle = Boolean(req.body.acceptBattle);
   }
-  if (acceptBattle === false || acceptBattle == 'false') {
-    req.trainer.acceptBattle = false;
+
+  if (!_.isUndefined(req.body.currentBox)
+    && req.body.currentBox >= 0
+    && req.body.currentBox < req.trainer.storageNum) {
+    req.trainer.currentBox = Math.floor(req.body.currentBox);
   }
-  req.trainer.save(function(err){
-    if (err) return res.json(500, { error: err.message });
-    res.json(req.trainer.acceptBattle);
-  });
-};
+  var realWorld = req.body.realWorld;
+  var action = req.trainer.save.bind(req.trainer);
 
-// Set the real world information
-exports.realWorld = function(req, res){
-  if (!req.body.latitude || !req.body.longitude)
-    return res.json(400, { error: 'ILLEGAL_REQUEST_DATA' });
+  if (_.isObject(realWorld)) {
+    action = req.trainer.setLocation.bind(req.trainer, realWorld.latitude, realWorld.longitude);
+  }
 
-  req.trainer.setLocation(req.body.latitude, req.body.longitude, function(err){
+  action(function(err){
     if (err) return res.json(500, { error: err.message });
-    res.json(req.trainer.realWorld);
+    res.json(req.trainer);
   });
-};
+}
 
 // Move Pokémon in party
 exports.move = function(req, res){

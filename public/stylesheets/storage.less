@@ -1,4 +1,34 @@
 @storageBlue: #bad2ec;
+@storagePink: #ecc6b9;
+@storageGray: #808080;
+
+.storage-wallpaper(@wallpaperColor, @buttonTextColor) {
+  .title {
+    .name {
+      border-color: @wallpaperColor;
+      color: @wallpaperColor;
+
+      input {
+        .form-control;
+        width: 180px;
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+
+    .custom {
+      button {
+        .button-variant(@buttonTextColor, @wallpaperColor, darken(@wallpaperColor, 5%));
+        .caret {
+          border-top-color: @buttonTextColor;
+        }
+      }
+    }
+  }
+  > .content {
+    background-color: @wallpaperColor;
+  }
+}
 
 #storage-view {
   .title {
@@ -41,6 +71,10 @@
 
   > .content {
     padding: 16px 16px 0;
+    .storage-pages {
+      margin-left: -16px;
+      margin-right: -16px;
+    }
   }
 
   .pokemon-container {
@@ -56,28 +90,6 @@
   .storage-pages {
     text-align: center;
   }
-  
-  &.wallpaper-blue {
-    .title {
-      .name {
-        border-color: @storageBlue;
-        color: @storageBlue;
-      }
-
-      .custom {
-        button {
-          .button-variant(darken(@storageBlue, 50%), @storageBlue, darken(@storageBlue, 5%));
-          .caret {
-            border-top-color: darken(@storageBlue, 50%);
-          }
-        }
-      }
-    }
-    > .content {
-      background-color: @storageBlue;
-    }
-  }
-
 
   .popover {
     max-width: none;
@@ -92,6 +104,16 @@
       padding: 0;
     }
   }
+
+  &.wallpaper-blue {
+    .storage-wallpaper(@storageBlue, darken(@storageBlue, 50%));
+  }
+  &.wallpaper-pink {
+    .storage-wallpaper(@storagePink, darken(@storagePink, 50%));
+  }
+  &.wallpaper-gray {
+    .storage-wallpaper(@storageGray, #fff);
+  }
 }
 
 .storage-pokemon-view {
@@ -102,6 +124,18 @@
   border: 2px solid #fff;
   border-radius: 50px;
   margin: 8px auto;
+
+  &.dragging {
+    opacity: 0.5;
+  }
+
+  &.storage-pokemon-view-empty {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  &.dragover:not(.dragging) {
+    border-color: rgba(0, 0, 0, 0.3);
+  }
 
   &:not(.storage-pokemon-view-empty) {
     cursor: pointer;
@@ -128,6 +162,10 @@
   #storage-view {
     > .content {
       padding: 5px 5px 0;
+      .storage-pages {
+        margin-left: -5px;
+        margin-right: -5px;
+      }
     }
   }
 

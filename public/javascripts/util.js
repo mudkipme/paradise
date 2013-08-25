@@ -2,9 +2,10 @@
 
 define([
   'jquery'
+  ,'underscore'
   ,'jquery.transit'
   ,'bootstrap'
-], function($){
+], function($, _){
 
   // Deferred image loading
   $.loadImage = function(src){
@@ -53,7 +54,7 @@ define([
 
     return this.transition.bind(this, options).apply(this, arguments)
     .promise().done(function(){
-      this.css({ 'overflow': overflow });
+      this.css({ 'overflow': overflow, height: '' });
     });
   };
 
@@ -94,6 +95,7 @@ define([
     $('<div/>').addClass('handle').appendTo(el);
 
     this.filter(':checked').prev().addClass('on');
+    return this;
   };
 
   $(document).on('click', '.ios-switch', function(){
@@ -118,7 +120,42 @@ define([
     if ($(window).scrollTop() > this.offset().top) {
       $(window).scrollTop(this.offset().top);
     }
-  }
+    return this;
+  };
+
+  // Pagination
+  $.fn.pagination = function(currentPage, totalPages){
+    var pagination = this.empty();
+    if (!totalPages) {
+      return this;
+    }
+
+    var minPage = Math.max(currentPage - 2, 1);
+    var maxPage = Math.min(minPage + 5, totalPages);
+
+    if (maxPage - minPage < 5) {
+      minPage = Math.max(1, maxPage - 5);
+    }
+
+    _.each(_.range(minPage, maxPage + 1), function(page){
+      $('<li><a href="#">' + page + '</a></li>')
+      .toggleClass('active', page == currentPage)
+      .data('page', page)
+      .appendTo(pagination);
+    });
+    
+    $('<li><a href="#">&laquo;</a></li>')
+    .toggleClass('disabled', currentPage == 1)
+    .data('page', currentPage - 1)
+    .prependTo(pagination);
+
+    $('<li><a href="#">&raquo;</a></li>')
+    .toggleClass('disabled', currentPage == totalPages)
+    .data('page', currentPage + 1)
+    .appendTo(pagination);
+
+    return this;
+  };
 
   return $;
 });
