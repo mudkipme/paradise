@@ -49,7 +49,6 @@ define([
 
     ,move: function(pokemon, options){
       var me = this;
-
       me.sync(null, me, {
         url: '/api/storage/move'
         ,type: 'POST'
@@ -77,6 +76,20 @@ define([
         this.remove(pokemon);
       }
       this.trigger('move');
+    }
+
+    ,sortStorage: function(sortBy){
+      var me = this;
+      me.sync(null, me, {
+        url: '/api/storage/sort'
+        ,type: 'POST'
+        ,data: {sortBy: sortBy}
+        ,processData: true
+        ,success: function(){
+          me.trainer.set({'currentBox': 0});
+          me.fetch({reset: true});
+        }
+      });
     }
   });
 

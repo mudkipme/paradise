@@ -34,8 +34,18 @@ define([
         pokemon && App.trainer.storage.remove(pokemon);
       }
     }
+    ,'storage:change': function(boxId, attrs){
+      if (boxId == App.trainer.storage.boxId) {
+        _.extend(App.trainer.storage, attrs);
+        App.trainer.storage.trigger('sync');
+      }
+    }
     ,'storage:move': function(pokemon, options){
       App.trainer.storage.moveSet(pokemon, options);
+    }
+    ,'storage:reset': function(pokemon, options){
+      App.trainer.set({'currentBox': 0});
+      App.trainer.storage.fetch({reset: true});
     }
   };
 

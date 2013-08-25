@@ -9,7 +9,7 @@ var _ = require('underscore');
 var io = require('../io');
 var Pokemon = require('../models/pokemon');
 
-// Set the Pokemon collection in a storage box
+// Get the Pokémon collection in a storage box
 exports.get = function(req, res){
   var boxId = parseInt(req.params.boxId);
   var storage = req.trainer.storage[boxId] || { name: '', wallpaper: '' };
@@ -46,10 +46,11 @@ exports.put = function(req, res){
   req.trainer.save(function(err){
     if (err) return res.json(500, { error: err.message });
     res.send(204);
+    io.emit(req, 'storage:change', boxId, storage);
   });
 };
 
-// Move one Pokemon to another place
+// Move one Pokémon to another place
 exports.move = function(req, res){
   var pokemonId = req.body.pokemon;
   var boxId = parseInt(req.body.boxId);
@@ -57,12 +58,23 @@ exports.move = function(req, res){
   if (boxId < 0 || boxId >= req.trainer.storageNum || position < 0 || position > 29)
     return res.json(400, { error: 'ILLEGAL_REQUEST_DATA' });
 
+  if (_.isUndefined(req.body.position)) {
+    position = _.find(_.range(0, 30), function(pos){
+      return _.isUndefined(_.findWhere(req.trainer.storagePokemon, {boxId: boxId, position: pos}));
+    });
+  }
+
+  if (_.isUndefined(position))
+    return res.json(403, { error: 'NO_SLOT_FOUND' });
+
+  // Find the Pokémon to move
   var src = _.find(req.trainer.storagePokemon, function(sp){
     return sp.pokemon.equals(pokemonId);
   });
   if (!src) return res.json(403, { error: 'PERMISSION_DENIED' });
-  var dst = _.findWhere(req.trainer.storagePokemon, {boxId: boxId, position: position});
 
+  // Swap the Pokémon if there's another one
+  var dst = _.findWhere(req.trainer.storagePokemon, {boxId: boxId, position: position});
   if (dst) {
     dst.boxId = src.boxId;
     dst.position = src.position;
@@ -81,6 +93,41 @@ exports.move = function(req, res){
         if (err) return;
         io.emit(req, 'storage:move', src.pokemon, {boxId: boxId, position: position});
       });
+    });
+  });
+};
+
+// Sort all Pokémon in storage
+exports.sort = function(req, res){
+  var sortBy = req.body.sortBy;
+
+  var sortable = {
+    meetDate: true
+    ,level: false
+    ,speciesNumber: true
+  };
+
+  if (!_.contains(_.keys(sortable), sortBy))
+    return res.json(400, { error: 'ILLEGAL_REQUEST_DATA' });
+  
+  req.trainer.populate('storagePokemon.pokemon', function(err){
+    if (err) res.json(500, { error: err.message });
+
+    var sortedList = _.sortBy(req.trainer.storagePokemon, sortBy);
+    if (sortable[sortBy] === false) {
+      sortedList.reverse();
+    }
+
+    _.each(sortedList, function(sp, index){
+      sp.boxId = Math.floor(index / 30);
+      sp.position = index % 30;
+    });
+
+    req.trainer.currentBox = 0;
+    req.trainer.save(function(err){
+      if (err) return res.json(500, { error: err.message });
+      res.send(204);
+      io.emit(req, 'storage:reset');
     });
   });
 };

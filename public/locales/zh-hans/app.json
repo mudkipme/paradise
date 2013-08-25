@@ -64,6 +64,7 @@
     ,"storage-sort-time": "按收服时间排列"
     ,"storage-sort-level": "按等级排列"
     ,"storage-sort-dex": "按图鉴编号排列"
+    ,"storage-sort-confirm": "排列神奇宝贝会将所有寄存箱中的神奇宝贝重新排列，确定要继续吗？"
   }
   ,"type": {
     "normal": "一般"

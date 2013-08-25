@@ -102,7 +102,7 @@ TrainerSchema.methods.getPokedex = function(callback) {
 /**
  * Find an empty slot in storage
  */
-TrainerSchema.methods.storageSlot = function() {
+TrainerSchema.methods.storageSlot = function(){
   var me = this;
   var storageNum = me.storageNum;
   var box = [];

@@ -31,7 +31,7 @@ define([
 
     ,events: {
       'click .switch-wallpaper a': 'switchWallpaper'
-      ,'click .sort-pokemon a': 'sortPokemon'
+      ,'click .sort-storage a': 'sortStorage'
       ,'click .pagination a': 'switchPage'
       ,'click .name span': 'setNameBegin'
       ,'blur .name input': 'setNameEnd'
@@ -192,6 +192,20 @@ define([
         if (!$(grid).children().size()) {
           $('<div/>').addClass('storage-pokemon-view storage-pokemon-view-empty')
             .appendTo(grid);
+        }
+      });
+    }
+
+    ,sortStorage: function(e){
+      e.preventDefault();
+      var me = this, sortBy = $(e.target).data('sort');
+      vent.trigger('modal', {
+        title: i18n.t('action.storage-sort')
+        ,content: i18n.t('action.storage-sort-confirm')
+        ,type: 'confirm'
+        ,btnType: 'primary'
+        ,accept: function(){
+          me.collection.sortStorage(sortBy);
         }
       });
     }

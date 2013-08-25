@@ -52,4 +52,5 @@ module.exports = function(app){
   app.put('/api/storage/:boxId', defaults, storage.put);
   app.patch('/api/storage/:boxId', defaults, storage.put);
   app.post('/api/storage/move', defaults, storage.move);
+  app.post('/api/storage/sort', defaults, storage.sort);
 };
