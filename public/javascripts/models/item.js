@@ -29,6 +29,20 @@ define([
         }
       });
     }
+
+    ,buy: function(number){
+      var me = this;
+      me.sync(null, me, {
+        url: me.url() + '/buy'
+        ,type: 'POST'
+        ,data: { number: number }
+        ,processData: true
+        ,success: function(data){
+          me.trigger('buy', me, number);
+          me.set(data);
+        }
+      });
+    }
   });
 
   return Item;

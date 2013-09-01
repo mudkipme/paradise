@@ -59,8 +59,8 @@ define([
     ,removeItemView: function(item){
       var me = this, view = this.children.findByModel(item);
       view.hidePopover();
-      $.when(view.$el.transition({'border-color': 'rgba(255, 255, 255, 0.3)'})
-        ,view.ui.sprite.transition({opacity: 0}))
+      $.when(view.$el.transition({'border-color': 'rgba(255, 255, 255, 0.3)'}).promise()
+        ,view.ui.sprite.transition({opacity: 0}).promise())
       .done(function(){
         me.removeChildView(view);
         me.checkEmpty();

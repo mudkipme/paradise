@@ -274,7 +274,7 @@ define([
 
         new Kinetic.Tween(tweenOpts).play();
         return deferred.promise();
-      }).concat(me.ui.bottomIcons.transition({opacity: 0}, opt.exitDuration * 1000)))
+      }).concat(me.ui.bottomIcons.transition({opacity: 0}, opt.exitDuration * 1000).promise()))
       .done(callback);
     }
 

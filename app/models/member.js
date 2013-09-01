@@ -58,13 +58,13 @@ Member.prototype.addMoney = function(amount, callback){
 
   db.query(
     db._('UPDATE {prefix}userlist SET money = money + ? WHERE userid = ?')
-    ,[amount, this.userid]
+    ,[amount, me.userid]
     ,function(err) {
       if (err) return callback(err);
 
       db.query(
         db._('SELECT money FROM {prefix}userlist WHERE userid = ?')
-        ,[this.userid]
+        ,[me.userid]
         ,function(err, result) {
           if (err) return callback(err);
           if (!result.length) return callback(new Error('MEMBER_NOT_FOUND'));
@@ -76,15 +76,17 @@ Member.prototype.addMoney = function(amount, callback){
 };
 
 Member.prototype.addPoint = function(amount, callback){
+  var me = this;
+
   db.query(
     db._('UPDATE {prefix}userlist SET point = point + ? WHERE userid = ?')
-    ,[amount, this.userid]
+    ,[amount, me.userid]
     ,function(err){
       if (err) return callback(err);
 
       db.query(
         db._('SELECT point FROM {prefix}userlist WHERE userid = ?')
-        ,[this.userid]
+        ,[me.userid]
         ,function(err, result){
           if (err) return callback(err);
           if (!result.length) return callback(new Error('MEMBER_NOT_FOUND'));

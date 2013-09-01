@@ -28,7 +28,6 @@
     .shelf-item {
       width: 50%;
       float: left;
-      cursor: pointer;
 
       .item-img {
         margin: 0 auto;
@@ -36,15 +35,41 @@
         height: 90px;
         background-repeat: no-repeat;
         background-position: center center;
+        cursor: pointer;
       }
 
       .item-name {
+        cursor: pointer;
         font-size: 18px;
         color: #fff;
         text-align: center;
         margin-top: 21px;
       }
     }
+  }
+}
 
+.buy-form {
+  width: 161px;
+  .form-group {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 0;
+    .item-buy-number {
+      width: 100px;
+      &:valid {
+        .has-success > .form-control;
+      }
+
+      &:invalid {
+        .has-error > .form-control;
+      }
+    }
+  }
+  .btn-buy {
+    vertical-align: middle;
+  }
+  p {
+    text-align: center;
   }
 }

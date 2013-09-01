@@ -47,6 +47,7 @@ module.exports = function(app){
   app.get('/api/item', defaults, item.list);
   app.get('/api/item/:itemId', defaults, item.get);
   app.post('/api/item/:itemId/gift', defaults, item.gift);
+  app.post('/api/item/:itemId/buy', defaults, item.buy);
 
   // Storage actions
   app.get('/api/storage/:boxId', defaults, storage.get);

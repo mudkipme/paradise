@@ -1,12 +1,12 @@
 <form class="gift-form form-horizontal">
   <div class="form-group">
-    <label class="control-label" for="gift-trainer-<%= item.id %>">赠送给</label>
+    <label class="control-label" for="gift-trainer-<%= item.id %>"><%= t('action.gift-trainer') %></label>
     <div>
       <input type="text" class="gift-trainer" id="gift-trainer-<%= item.id %>" required="" autofocus="">
     </div>
   </div>
   <div class="form-group">
-    <label class="control-label" for="gift-number-<%= item.id %>">数量</label>
+    <label class="control-label" for="gift-number-<%= item.id %>"><%= t('action.gift-number') %></label>
     <div>
       <input type="number" class="gift-number" id="gift-number-<%= item.id %>" value="1" required="" min="1" max="<%= number %>" pattern="[0-9]*">
     </div>

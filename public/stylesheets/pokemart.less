@@ -26,8 +26,13 @@
     }
   }
 
+  .rooftop, .light, .poster, .clerk, .bottom {
+    display: none;
+  }
+
   .shelf-container {
-    position: relative;
+    position: absolute;
+    top: 0;
   }
 }
 
@@ -70,11 +75,11 @@
     }
 
     .shelf-container {
-      position: absolute;
       top: 97px;
     }
 
     .rooftop, .light, .poster, .clerk, .bottom {
+      display: block;
       position: absolute;
       .box-sizing(border-box);
     }
@@ -128,6 +133,35 @@
           background: data-uri('../images/pokemart/clerk-eye-5.png');
         }
       }
+
+      .bubble {
+        position: absolute;
+        bottom: 346px;
+        width: 174px;
+        padding: 10px;
+        right: 0;
+        border: 3px solid #b7a47c;
+        background-color: #faf5e2;
+        border-top-left-radius: 10px 20px;
+        border-top-right-radius: 10px 20px;
+        border-bottom-right-radius: 10px 20px;
+        border-bottom-left-radius: 10px 20px;
+        opacity: 0;
+        font-size: 18px;
+
+        &:after {
+          position: absolute;
+          background: data-uri('../images/pokemart/bubble-arrow.png');
+          width: 37px;
+          height: 39px;
+          bottom: -39px;
+          left: 49px;
+          content: " ";
+          -webkit-transform: scaleX(-1);
+              -ms-transform: scaleX(-1);
+                  transform: scaleX(-1);
+        }
+      }
     }
 
     .bottom {
@@ -151,6 +185,17 @@
     }
     .clerk {
       right: 26px;
+
+      .bubble {
+        right: auto;
+        width: 274px;
+        padding: 20px;
+        &:after {
+          -webkit-transform: none;
+              -ms-transform: none;
+                  transform: none;
+        }
+      }
     }
   }
 }

@@ -1,0 +1,12 @@
+<form class="buy-form form-inline">
+  <p>
+    <%= price %> <%= t('app.currency') %>
+  </p>
+  <p>
+    拥有数量: <span class="number" data-number="<%= number || 0 %>"><%= number || 0 %></span>
+  </p>
+  <div class="form-group">
+    <input type="number" class="form-control item-buy-number" placeholder="购买数量" autofocus="" required="" min="1" pattern="[0-9]*" />
+  </div>
+  <button type="submit" class="btn btn-primary btn-buy">确定</button>
+</form>

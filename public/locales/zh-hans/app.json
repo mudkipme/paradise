@@ -1,11 +1,12 @@
 {
   "app": {
-    "pokemon-zone": "神奇宝贝部落格",
-    "pokemon-paradise": "神奇宝贝乐园",
-    "forum": "讨论区",
-    "main-page": "主页",
-    "wiki": "百科",
-    "incompatible-browser": "您的浏览器不支持神奇宝贝乐园，浏览器最低要求为："
+    "pokemon-zone": "神奇宝贝部落格"
+    ,"pokemon-paradise": "神奇宝贝乐园"
+    ,"forum": "讨论区"
+    ,"main-page": "主页"
+    ,"wiki": "百科"
+    ,"incompatible-browser": "您的浏览器不支持神奇宝贝乐园，浏览器最低要求为："
+    ,"currency": "Poké"
   }
   ,"menu": {
     "party": "神奇宝贝"
@@ -60,12 +61,16 @@
     ,"gift-done": "成功向 __trainer__ 赠送了 __number__ 个 __item__。"
     ,"hold-done": "__pokemon__ 成功带上了 __item__。"
     ,"take-done": "从 __pokemon__ 取下了 __item__。"
+    ,"gift-trainer": "赠送给"
+    ,"gift-number": "数量"
     ,"storage-sort": "排列神奇宝贝"
     ,"storage-sort-time": "按收服时间排列"
     ,"storage-sort-level": "按等级排列"
     ,"storage-sort-dex": "按图鉴编号排列"
     ,"storage-sort-confirm": "排列神奇宝贝会将所有寄存箱中的神奇宝贝重新排列，确定要继续吗？"
-    ,"pokemart-empty": "目前友好商店暂时没有 __pocket__ 出售，请耐心等待 :-)"
+    ,"pokemart-empty": "目前友好商店暂时没有__pocket__出售，请耐心等待 :-)"
+    ,"buy-item": "购买道具"
+    ,"buy-done": "成功购买了 __number__ 个 __item__。"
   }
   ,"type": {
     "normal": "一般"

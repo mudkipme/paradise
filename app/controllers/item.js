@@ -47,13 +47,14 @@ exports.gift = function(req, res){
   var number = parseInt(req.body.number);
   var trainerName = req.body.trainer;
 
-  if (!req.trainer.hasItem(itemId, number)) {
-    return res.json(403, {error: 'NO_ENOUGH_ITEM_IN_BAG'});
-  }
+  if (number <= 0)
+    return res.json(400, {error: 'INVAILD_ITEM_NUMBER'});
 
-  if (trainerName == req.trainer.name) {
+  if (!req.trainer.hasItem(itemId, number))
+    return res.json(403, {error: 'NO_ENOUGH_ITEM_IN_BAG'});
+
+  if (trainerName == req.trainer.name)
     return res.json(400, {error: 'CANNOT_GIFT_SELF'});
-  }
   
   Trainer.findOne({ name: trainerName })
   .exec(function(err, trainer){
@@ -70,6 +71,40 @@ exports.gift = function(req, res){
         id: item.id
         ,item: results[0]
         ,number: req.trainer.hasItem(itemId)
+      });
+    });
+  });
+};
+
+// Buy items
+exports.buy = function(req, res){
+  var itemId = parseInt(req.params.itemId);
+  var number = parseInt(req.body.number);
+
+  if (number <= 0)
+    return res.json(400, {error: 'INVAILD_ITEM_NUMBER'});
+
+  Item(itemId, function(err, item){
+    if (err) return res.json(500, {error: err.message});
+
+    var requiredMoney = number * config.pokemart[item.name];
+
+    if (!requiredMoney)
+      return res.json(403, {error: 'CANNOT_BUY_THIS_ITEM'});
+
+    if (req.member.money < requiredMoney)
+      return res.json(403, {error: 'NO_ENOUGH_MONEY'});
+
+    async.series([
+      req.trainer.addItem.bind(req.trainer, itemId, number)
+      ,req.member.addMoney.bind(req.member, -requiredMoney)
+    ], function(err, results){
+      if (err) return res.json(500, {error: err.message});
+      res.json({
+        id: item.id
+        ,item: item
+        ,price: config.pokemart[item.name]
+        ,number: req.trainer.hasItem(item.id)
       });
     });
   });
