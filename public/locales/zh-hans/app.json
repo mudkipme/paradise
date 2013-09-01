@@ -71,6 +71,8 @@
     ,"pokemart-empty": "目前友好商店暂时没有__pocket__出售，请耐心等待 :-)"
     ,"buy-item": "购买道具"
     ,"buy-done": "成功购买了 __number__ 个 __item__。"
+    ,"buy-has-number": "拥有数量"
+    ,"buy-number": "购买数量"
   }
   ,"type": {
     "normal": "一般"
