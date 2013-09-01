@@ -113,7 +113,9 @@ exports.sort = function(req, res){
   req.trainer.populate('storagePokemon.pokemon', function(err){
     if (err) res.json(500, { error: err.message });
 
-    var sortedList = _.sortBy(req.trainer.storagePokemon, sortBy);
+    var sortedList = _.sortBy(req.trainer.storagePokemon, function(sp){
+      return sp.pokemon[sortBy];
+    });
     if (sortable[sortBy] === false) {
       sortedList.reverse();
     }

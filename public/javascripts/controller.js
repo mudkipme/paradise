@@ -40,7 +40,8 @@ define([
     }
 
     ,pokeMart: function(){
-      App.mainRegion.show(new PokeMartView);
+      App.mainRegion.show(new PokeMartView({collection: App.pokeMart}));
+      App.pokeMart.fetch();
     }
 
     ,storage: function(){

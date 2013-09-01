@@ -1,0 +1,11 @@
+<% _.each(_.range(0, Math.ceil(items.length / 2)), function(line){ %>
+  <div class="shelf-line">
+    <% _.each(items.slice(line * 2, line * 2 + 2), function(item){ %>
+      <div class="shelf-item">
+        <div class="item-img" style="background-image: url(<%= PARADISE.imgBase %>/items-dream/<%= item.item.name %>.png)"></div>
+        <div class="item-name"><%= t('item:'+item.item.name) %></div>
+      </div>
+    <% }) %>
+    <div class="platform"></div>
+  </div>
+<% }) %>

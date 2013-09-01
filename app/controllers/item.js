@@ -5,9 +5,26 @@
 
 // dependencies
 var async = require('async');
+var _ = require('underscore');
 var Item = require('../models/item');
 var Trainer = require('../models/trainer');
-var _ = require('underscore');
+var config = require('../../config.json');
+
+// List all items in Poké Mart
+exports.list = function(req, res){
+  async.mapSeries(_.keys(config.pokemart), Item, function(err, result){
+    if (err) return res.json(500, { error: err.message });
+
+    res.json(_.map(result, function(item){
+      return {
+        id: item.id
+        ,item: item
+        ,price: config.pokemart[item.name]
+        ,number: req.trainer.hasItem(item.id)
+      };
+    }));
+  });
+};
 
 // Get item info
 exports.get = function(req, res){

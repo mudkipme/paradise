@@ -3,10 +3,12 @@ define([
   ,'underscore'
   ,'marionette'
   ,'i18next'
+  ,'collections/pokemart'
+  ,'views/shelf'
   ,'text!templates/pokemart.html'
-], function($, _, Marionette, i18n, pokeMartTemplate){
+], function($, _, Marionette, i18n, PokeMart, ShelfView, pokeMartTemplate){
 
-  var PokeMartView = Marionette.ItemView.extend({
+  var PokeMartView = Marionette.Layout.extend({
     id: 'poke-mart-view'
 
     ,template: _.template(pokeMartTemplate)
@@ -14,6 +16,16 @@ define([
 
     ,ui: {
       clerkEye: '.clerk .clerk-eye'
+      ,shelves: '.shelves'
+    }
+
+    ,events: {
+      'click .shelves li': 'openShelf'
+      ,'click': 'closeShelf'
+    }
+
+    ,regions: {
+      shelf: '.shelf-container'
     }
 
     ,onRender: function(){
@@ -34,6 +46,38 @@ define([
 
     ,onBeforeClose: function(){
       clearTimeout(this.blink);
+    }
+
+    ,openShelf: function(e){
+      e.stopPropagation();
+
+      var pocket = $(e.currentTarget).data('pocket');
+      var shelf = this.collection.filter(function(item){
+        return item.get('item').pocket == pocket;
+      });
+      if (shelf.length == 0) {
+        this.talk(i18n.t('no-item', {pocket: i18n.t('action.pokemart-empty')}));
+        return;
+      }
+
+      this.shelf.show(new ShelfView({
+        collection: new PokeMart(shelf)
+        ,pocket: pocket
+        ,pokeMart: this
+      }));
+    }
+
+    ,closeShelf: function(e){
+      var shelf = this.shelf;
+      if (shelf.currentView) {
+        shelf.currentView.$el.transition({opacity: 0}).promise().done(function(){
+          shelf.close();
+        });
+      }
+    }
+
+    ,talk: function(text){
+
     }
   });
 

@@ -44,6 +44,7 @@ module.exports = function(app){
     , myPokemon, pokemon.sendPokemonCenter);
 
   // Item actions
+  app.get('/api/item', defaults, item.list);
   app.get('/api/item/:itemId', defaults, item.get);
   app.post('/api/item/:itemId/gift', defaults, item.gift);
 
