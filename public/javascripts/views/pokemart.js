@@ -55,16 +55,14 @@ define([
       e.stopPropagation();
 
       var pocket = $(e.currentTarget).data('pocket');
-      var shelf = this.collection.filter(function(item){
-        return item.get('item').pocket == pocket;
-      });
-      if (shelf.length == 0) {
+      if (this.collection.filterPocket(pocket).length == 0) {
         this.talk(i18n.t('action.pokemart-empty', {pocket: i18n.t('pocket.' + pocket)}), true);
         return;
       }
       this.hideTalk();
       this.shelf.show(new ShelfView({
-        collection: new PokeMart(shelf)
+        collection: this.collection
+        ,pocket: pocket
         ,pokeMart: this
       }));
     }

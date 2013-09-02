@@ -6,11 +6,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link href="stylesheets/main.css" rel="stylesheet" />
+    <link href="/stylesheets/main.css" rel="stylesheet" />
     <link rel="apple-touch-icon-precomposed" href="/images/apple-icon.png" />
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/images/apple-icon-ipad.png" />
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/images/apple-icon.png" />
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/images/apple-icon-ipad.png" />
+    <link rel="apple-touch-startup-image" href="/images/apple-startup.png" media="(device-width: 320px) and (device-height: 480px)" />
+    <link rel="apple-touch-startup-image" href="/images/apple-startup-iphone5.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" />
+    <link rel="apple-touch-startup-image" href="/images/apple-startup-ipad-portrait.png" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait)" />
+    <link rel="apple-touch-startup-image" href="/images/apple-startup-ipad.png" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape)" />
+
     <script>
       if (!("ontouchstart" in document.documentElement)) {
         document.documentElement.className += " no-touch";
@@ -21,7 +26,7 @@
         ,me: <%- JSON.stringify(me) -%>
       };
     </script>
-    <script data-main="javascripts/main" src="components/requirejs/require.js"></script>
+    <script data-main="/javascripts/main" src="/components/requirejs/require.js"></script>
   </head>
   <body>
     

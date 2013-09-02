@@ -3,7 +3,7 @@
     <%= price %> <%= t('app.currency') %>
   </p>
   <p>
-    <%= t('action.buy-has-number') %>: <span class="number" data-number="<%= number || 0 %>"><%= number || 0 %></span>
+    <%= t('action.buy-has-number') %>: <span class="number"><%= number || 0 %></span>
   </p>
   <div class="form-group">
     <input type="number" class="form-control item-buy-number" placeholder="<%= t('action.buy-number') %>" autofocus="" required="" min="1" pattern="[0-9]*" />

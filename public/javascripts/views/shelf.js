@@ -29,6 +29,15 @@ define([
       shelfItems: '.shelf-item'
     }
 
+    ,serializeData: function(){
+      var pocket = this.collection.filterPocket(this.options.pocket);
+      return {
+        items: _.map(pocket, function(item){
+          return item.toJSON();
+        })
+      };
+    }
+
     ,initialize: function(options){
       this.pokeMart = options.pokeMart;
     }
@@ -124,7 +133,7 @@ define([
         if (isNaN(number) || number < 0) {
           number = 0;
         }
-        tip.find('.number').text( tip.find('.number').data('number') + number );
+        tip.find('.number').text( item.get('number') + number );
       });
     }
 
