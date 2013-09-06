@@ -5,6 +5,7 @@
 
 // dependencies
 var async = require('async');
+var _ = require('underscore');
 var db = require('../common').baseData;
 
 var itemCache = {};
@@ -13,54 +14,36 @@ var itemCache = {};
 var Item = function(identifier, cb) {
   if (itemCache[identifier]) return cb(null, itemCache[identifier]);
 
-  var item = Object.create(itemCache), raw;
+  var item = Object.create(itemProto), raw;
 
   async.waterfall([
-    function(next){
-      db.all('SELECT * FROM items WHERE '
-        + (isNaN(identifier) ? 'identifier = ?' : 'id = ?')
-        , [identifier], next);
-    }
+    db.all.bind(db, 'SELECT * FROM items WHERE ' + (isNaN(identifier) ? 'identifier = ?' : 'id = ?')
+        ,[identifier])
     ,function(rows, next){
       if (!rows.length) return next(new Error('ITEM_NOT_FOUND'));
 
       raw = rows[0];
       item.id = raw.id;
       item.name = raw.identifier;
+      item.effects = [];
 
-      db.all('SELECT item_flag_id FROM item_flag_map WHERE item_id = ?', [item.id], next);
+      db.all('SELECT effect_type, param_1, param_2, param_3, is_default FROM item_effects WHERE item_id = ?', [item.id], next);
     }
     ,function(rows, next){
-      rows.forEach(function(row) {
-        switch (row.item_flag_id) {
-          case 1:
-            item.countable = true;
-            break;
-          case 2:
-            item.consumable = true;
-            break;
-          case 3:
-            item.usableOverworld = true;
-            break;
-          case 4:
-            item.usebleInBattle = true;
-            break;
-          case 5:
-            item.holdable = true;
-            break;
-          case 7:
-            item.holdableActive = true;
-            break;
-        }
+      _.each(rows, function(row){
+        item.effects.push(row);
       });
 
-      db.all('SELECT item_categories.identifier AS category, item_pockets.identifier AS pocket FROM item_categories JOIN item_pockets ON item_categories.pocket_id = item_pockets.id WHERE item_categories.id = ?'
+      item.usable = _.filter(item.effects, function(effect){
+        return _.contains(Item.usableEffects, effect.effect_type);
+      }).length != 0;
+
+      db.all('SELECT item_pockets.identifier AS pocket FROM item_categories JOIN item_pockets ON item_categories.pocket_id = item_pockets.id WHERE item_categories.id = ?'
         ,[raw.category_id], next);
     }
     ,function(rows, next){
       if (!rows.length) return next(new Error('ITEM_CATEGORY_NOT_FOUND'));
 
-      item.category = rows[0].category;
       item.pocket = rows[0].pocket;
       next();
     }
@@ -74,45 +57,14 @@ var Item = function(identifier, cb) {
 
 var itemProto = {
   use: function(pokemon, callback){
-    if (!this.usableOverworld) return callback(new Error('ITEM_NOT_USABLE'));
+    if (!this.usable) return callback(new Error('ITEM_NOT_USABLE'));
 
-    switch (this.category) {
-      case 'evolution':
-        break;
-      case 'vitamins':
-        break;
-      case 'healing':
-        break;
-      default:
-        callback(new Error('ITEM_NOT_USABLE'));
-        break;
-    }
   }
   ,hold: function(pokemon, battleStat, callback){
-    if (!this.holdable) return callback(null, battleStat);
 
-    switch (this.category) {
-      case 'evolution':
-        break;
-      case 'held-items':
-        break;
-      case 'effort-training':
-        break;
-      case 'bad-held-items':
-        break;
-      case 'training':
-        break;
-      case 'plates':
-        break;
-      case 'species-specific':
-        break;
-      case 'type-enhancement':
-        break;
-      default:
-        callback(null, battleStat);
-        break;
-    }
   }
 };
+
+Item.usableEffects = ['hp', 'happiness', 'effort', 'level', 'evolution', 'forme'];
 
 module.exports = Item;

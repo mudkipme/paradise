@@ -4,7 +4,7 @@
 <p class="description"><%= t('item:description.'+item.name) %></p>
 
   <div class="actions btn-group">
-    <% if (item.usableOverworld) { %>
+    <% if (item.usable) { %>
       <button class="btn btn-use"><%= t('action.use') %></button>
     <% } %>
     <% if (!_.contains(['machines', 'key'], item.pocket)) { %>

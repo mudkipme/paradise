@@ -95,10 +95,21 @@ exports.buy = function(req, res){
     if (req.member.money < requiredMoney)
       return res.json(403, {error: 'NO_ENOUGH_MONEY'});
 
-    async.series([
+    var actions = [
       req.trainer.addItem.bind(req.trainer, itemId, number)
       ,req.member.addMoney.bind(req.member, -requiredMoney)
-    ], function(err, results){
+    ];
+
+    // Gift a Permier Ball when buying more than 10 Poké Balls
+    if (item.name == 'poke-ball' && number >= 10) {
+      actions.push(function(next){
+        Item('premier-ball', function(err, premier){
+          req.trainer.addItem(premier, 1, next);
+        });
+      });
+    }
+
+    async.series(actions, function(err, results){
       if (err) return res.json(500, {error: err.message});
       res.json({
         id: item.id

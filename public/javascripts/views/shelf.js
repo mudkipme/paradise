@@ -140,10 +140,17 @@ define([
     // Finish buying an item
     ,buyDone: function(item, number){
       var me = this;
-      var item = i18n.t('item:' + item.get('item').name);
-      me.pokeMart.talk(
-        i18n.t('action.buy-done', {item: item, number: number})
-        , true, 'success');
+      var itemName = i18n.t('item:' + item.get('item').name);
+      var message = i18n.t('action.buy-done', {item: itemName, number: number});
+
+      if (item.get('item').name == 'poke-ball' && number >= 10) {
+        message += i18n.t('action.buy-done-gift', {
+          item: i18n.t('item:premier-ball')
+          ,number: 1
+        });
+      }
+
+      me.pokeMart.talk(message, true, 'success');
       me.disableDesc = true;
       me.descTimer = setTimeout(function(){
         me.disableDesc = false;
