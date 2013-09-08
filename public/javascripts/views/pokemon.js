@@ -71,6 +71,11 @@ define([
         }
         return url + '.png';
       }
+
+      ,pokemonName: function(){
+        var pokemon = this.pokemon;
+        return pokemon.nickname || i18n.t('pokemon:'+pokemon.species.name)
+      }
     }
 
     // Wrap model data to avoid undefined error

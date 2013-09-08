@@ -74,6 +74,16 @@
     ,"buy-done-gift": "同时获赠 __number__ 个 __item__。"
     ,"buy-has-number": "拥有数量"
     ,"buy-number": "购买数量"
+    ,"use-done": "__pokemon__ 使用了 __item__。"
+  }
+  ,"events": {
+    "level-up": "__pokemon__ 等级上升到了 __level__ ！"
+    ,"happiness": "__pokemon__ 和你更亲近一点了！"
+    ,"hp": "__pokemon__ 回复了 __hp__ 点 HP！"
+    ,"effort": "__pokemon__ 的 __stat__ 基础得点提升了！"
+    ,"evolution": "__pokemon__ 进化成为了 __evolution__ ！"
+    ,"experience": "__pokemon__ 获得了 __experience__ 点经验值！"
+    ,"connector": " 和 "
   }
   ,"type": {
     "normal": "一般"
@@ -143,6 +153,7 @@
     ,"ONE_POKEMON_LEFT": "您的队伍中只有一只神奇宝贝。"
     ,"CANNOT_GIFT_SELF": "不能向自己赠送道具。"
     ,"TRAINER_NOT_FOUND": "无法找到这个训练家。"
+    ,"ITEM_NOT_SUITABLE_TO_USE": "神奇宝贝使用这个道具没有效果。"
   }
   ,"modal": {
     "title": "提示信息"

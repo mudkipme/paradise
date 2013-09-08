@@ -13,7 +13,7 @@ define([
     className: 'storage-pokemon-view'
     ,model: Pokemon
 
-    ,template: _.template('<img class="sprite" src="<%= spriteUrl() %>" alt="<%- pokemon.nickname || t(\'pokemon:\'+pokemon.species.name) %>" draggable="false" />')
+    ,template: _.template('<img class="sprite" src="<%= spriteUrl() %>" alt="<%- pokemonName() %>" draggable="false" />')
     ,templateHelpers: PokemonView.prototype.templateHelpers
     ,serializeData: PokemonView.prototype.serializeData
 

@@ -140,17 +140,22 @@ PokemonSchema.virtual('expNextLevel').get(function(){
 PokemonSchema.methods.onLevelUp = function(level, options, callback){
   if (!callback) { callback = options; options = null; }
 
-  var events = {level: level}, me = this;
+  var events = {type: 'level', value: level}, me = this;
   var happiness = me.happiness < 100 ? 5 : (me.happiness < 200 ? 3 : 2);
 
-  async.series([
-    // Gain friendship
-    me.gainHappiness.bind(me, happiness)
+  // Gain friendship
+  var actions = [ me.gainHappiness.bind(me, happiness) ];
 
-    // Evolution
-  ], function(err, results){
+  // Evolution
+  if (level == me.level) {
+    actions.push(function(next){
+      next();
+    });
+  }
+
+  async.series(actions, function(err, results){
     if (err) return callback(err);
-    events = _.flatten([].concat(events, results));
+    events = _.compact(_.flatten([].concat(events, results)));
     callback(null, events);
   });
 };
@@ -180,17 +185,18 @@ PokemonSchema.methods.gainExperience = function(exp, options, callback){
 
   if (me.experience == currentExperience) return callback(null);
 
-  var events = { experience: me.experience - currentExperience };
+  var events = {type: 'experience', value: me.experience - currentExperience};
 
   me.save(function(err){
     if (err) return callback(err);
 
     // Level up events
-    async.times(me.level - currentLevel
+    async.mapSeries(
+      _.range(currentLevel + 1, me.level + 1)
       ,me.onLevelUp.bind(me, options)
       ,function(err, results){
         if (err) return callback(err);
-        events = _.flatten([].concat(events, results));
+        events = _.compact(_.flatten([].concat(events, results)));
         callback(null, events);
       });
   });
@@ -229,7 +235,7 @@ PokemonSchema.methods.gainHappiness = function(happiness, callback){
 
   this.save(function(err){
     if (err) return callback(err);
-    callback(null, {happiness: happiness});
+    callback(null, {type: 'happiness', value: happiness});
   });
 };
 
@@ -242,9 +248,9 @@ PokemonSchema.methods.gainHP = function(hp, callback){
   var recoveredHp = hp < this.lostHp ? hp : this.lostHp;
   this.lostHp -= recoveredHp;
 
-  me.save(function(err){
+  this.save(function(err){
     if (err) return callback(err);
-    callback(null, {hp: recoveredHp});
+    callback(null, {type: 'hp', value: recoveredHp});
   });
 };
 
@@ -255,7 +261,8 @@ PokemonSchema.methods.gainEffort = function(effort, callback){
   var me = this,
     currentEffort = _.reduce(me.effort, function(memo, num){
       return memo + num;
-    });
+    }),
+    prevEffort = currentEffort;
 
   _.each(me.effort, function(value, key){
     effort[key] = effort[key] || 0;
@@ -274,11 +281,18 @@ PokemonSchema.methods.gainEffort = function(effort, callback){
 
     me.effort[key] += effort[key];
     currentEffort += effort[key];
+
+    if (!effort[key]) {
+      delete effort[key];
+    }
   });
+
+  if (prevEffort == currentEffort)
+    return callback(null);
 
   me.save(function(err){
     if (err) return callback(err);
-    callback(null, {effort: effort});
+    callback(null, {type: 'effort', value: effort});
   });
 };
 
@@ -292,7 +306,7 @@ PokemonSchema.methods.changeForme = function(formIdentifier, callback){
     me._species = species;
     me.save(function(err){
       if (err) return callback(err);
-      callback(null, {forme: me.formIdentifier});
+      callback(null, {type: 'forme', value: me.formIdentifier});
     });
   });
 };

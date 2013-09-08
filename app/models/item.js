@@ -27,10 +27,10 @@ var Item = function(identifier, cb) {
       item.name = raw.identifier;
       item.effects = [];
 
-      db.all('SELECT effect_type, param_1, param_2, param_3, is_default FROM item_effects WHERE item_id = ? ORDER BY is_default DESC', [item.id], next);
+      db.all('SELECT effect_type, param_1, param_2, param_3, is_default FROM item_effects WHERE item_id = ?', [item.id], next);
     }
     ,function(rows, next){
-      item.effects = rows;
+      item.effects = _.sortBy(rows, 'is_default').reverse();
       item.usable = item._usableEffects().length != 0;
 
       db.all('SELECT item_pockets.identifier AS pocket FROM item_categories JOIN item_pockets ON item_categories.pocket_id = item_pockets.id WHERE item_categories.id = ?'
@@ -66,6 +66,7 @@ var parseCondition = function(pokemon, condition){
 var useEffect = {
   // Gain HP
   hp: function(pokemon, hp){
+    hp = parseInt(hp);
     return pokemon.gainHP.bind(pokemon, hp);
   }
 
@@ -74,6 +75,7 @@ var useEffect = {
     var param = happiness.split(',');
     happiness = pokemon.happiness < 100 ? param[0]
       : (pokemon.happiness < 200 ? param[1] : param[2]);
+    happiness = parseInt(happiness);
 
     // Type-specified Gummis
     if (condition) {
@@ -92,6 +94,7 @@ var useEffect = {
   // Gain Base Stats
   ,effort: function(pokemon, stat, effort, condition){
     var matches, max;
+    effort = parseInt(effort);
     if (matches = condition.match(/^max-(\d+)/)) {
       max = parseInt(matches[1]);
       if (pokemon.effort[stat] >= max) {
@@ -101,7 +104,7 @@ var useEffect = {
         effort = max - pokemon.effort[stat];
       }
     }
-    return pokemon.gainEffort.bind(pokemon, _.object(stat, effort));
+    return pokemon.gainEffort.bind(pokemon, _.object([stat], [effort]));
   }
 
   // Level up
@@ -142,14 +145,14 @@ var itemProto = {
 
       fn(function(err, events){
         // Fail to use if the Pokémon isn't suitable
-        if (!_.flatten(events).length && effect.is_default)
+        if (!_.compact(_.flatten(events)).length && effect.is_default)
           return next(new Error('ITEM_NOT_SUITABLE_TO_USE'));
 
         next(null, events);
       });
     }, function(err, results){
       if (err) return callback(err);
-      callback(null, _.flatten(results));
+      callback(null, _.compact(_.flatten(results)));
     });
   }
 

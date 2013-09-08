@@ -20,10 +20,6 @@ define([
       'click a': 'selectPokemon'
     }
 
-    ,initialize: function(options){
-      this.button = options.button;
-    }
-
     ,selectPokemon: function(e){
       e.preventDefault();
       var index = $(e.target).index();

@@ -169,3 +169,27 @@ exports.sendPokemonCenter = function(req, res){
     res.json(req.pokemon);
   });
 };
+
+// Use items
+exports.useItem = function(req, res){
+  var itemId = parseInt(req.body.itemId);
+
+  if (!req.trainer.hasItem(itemId))
+    return res.json(403, {error: 'NO_ENOUGH_ITEM_IN_BAG'});
+
+  Item(itemId, function(err, item){
+    if (err) return res.json(500, {error: err.message});
+
+    async.series([
+      item.use.bind(item, req.pokemon)
+      ,req.trainer.removeItem.bind(req.trainer, itemId, 1)
+    ], function(err, results){
+      if (err) return res.json(403, {error: err.message});
+
+      res.json({
+        pokemon: req.pokemon
+        ,events: _.compact(_.flatten(results[0]))
+      });
+    });
+  });
+};

@@ -66,6 +66,22 @@ define([
       });
     }
 
+    ,useItem: function(item){
+      var me = this;
+      var oldPokemon = me.toJSON();
+      me.sync(null, me, {
+        url: me.url() + '/use-item'
+        ,type: 'POST'
+        ,data: {itemId: item.get('item').id}
+        ,processData: true
+        ,success: function(data){
+          me.set(data.pokemon);
+          item.trigger('use', me, data.events, oldPokemon);
+          item.collection.fetch();
+        }
+      });
+    }
+
     ,takeItem: function(){
       var me = this, item = me.get('holdItem');
       me.sync(null, me, {

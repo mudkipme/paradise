@@ -7,7 +7,7 @@ define([
   ,'util'
 ], function($, _, Marionette, i18n, alertTemplate){
 
-  var AlertView = Marionette.ItemView.extend({
+  var AlertView = Marionette.Layout.extend({
     className: 'alert alert-dismissable fade in'
 
     ,template: _.template(alertTemplate)
@@ -19,9 +19,17 @@ define([
       }
     }
 
+    ,regions: {
+      subView: '.alert-subview'
+    }
+
     ,onRender: function(){
       this.$el.addClass('alert-' + (this.options.type || 'warning'));
       this.$el.alert();
+
+      if (this.options.view) {
+          this.subView.show(this.options.view);
+      }
     }
   });
 

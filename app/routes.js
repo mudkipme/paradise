@@ -40,6 +40,7 @@ module.exports = function(app){
   app.patch('/api/pokemon/:pokemonId', myPokemon, pokemon.put);
   app.post('/api/pokemon/:pokemonId/hold-item', myPokemon, pokemon.holdItem);
   app.post('/api/pokemon/:pokemonId/take-item', myPokemon, pokemon.takeItem);
+  app.post('/api/pokemon/:pokemonId/use-item', myPokemon, pokemon.useItem);
   app.post('/api/pokemon/:pokemonId/send-pokemon-center'
     , myPokemon, pokemon.sendPokemonCenter);
 
@@ -48,8 +49,7 @@ module.exports = function(app){
   app.get('/api/item/:itemId', defaults, item.get);
   app.post('/api/item/:itemId/gift', defaults, item.gift);
   app.post('/api/item/:itemId/buy', defaults, item.buy);
-  app.post('/api/item/:itemId/use/:pokemonId', myPokemon, item.use);
-
+  
   // Storage actions
   app.get('/api/storage/:boxId', defaults, storage.get);
   app.put('/api/storage/:boxId', defaults, storage.put);

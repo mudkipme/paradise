@@ -6,10 +6,11 @@ define([
   ,'vent'
   ,'models/item'
   ,'views/party-popover'
+  ,'views/pokemon-events'
   ,'text!templates/item.html'
   ,'text!templates/item-gift.html'
   ,'util'
-], function($, _, Marionette, i18n, vent, Item, PartyPopoverView, itemTemplate, itemGiftTemplate){
+], function($, _, Marionette, i18n, vent, Item, PartyPopoverView, PokemonEventsView, itemTemplate, itemGiftTemplate){
 
   var ItemView = Marionette.ItemView.extend({
     className: 'item-view'
@@ -17,6 +18,7 @@ define([
 
     ,ui: {
       'description': '.description'
+      ,'use': '.btn-use'
       ,'gift': '.btn-gift'
       ,'hold': '.btn-hold'
       ,'number': '.number span'
@@ -25,13 +27,15 @@ define([
     ,events: {
       'submit .gift-form': 'giftSubmit'
       ,'selectPokemon .btn-hold': 'holdItem'
-      ,'shown.bs.popover .btn-hold': 'showPartyPopover'
+      ,'selectPokemon .btn-use': 'useItem'
+      ,'shown.bs.popover .actions button': 'showPartyPopover'
     }
 
     ,modelEvents: {
       'change:number': 'changeNumber'
       ,'gift': 'giftDone'
       ,'hold': 'holdDone'
+      ,'use': 'useDone'
     }
 
     ,template: _.template(itemTemplate)
@@ -43,8 +47,14 @@ define([
       me.listenTo(vent, 'windowResize', me.ellipsisDesc);
       me.listenTo(vent, 'popover', me.hidePopover);
 
+      me.partyPopover = new PartyPopoverView({
+        collection: require('app').trainer.party
+      });
+      me.partyPopover.render();
+
       var popoverOpts = {
         html: true
+        ,content: me.partyPopover.el
         ,container: me.el
         ,placement: 'bottom'
       };
@@ -56,21 +66,9 @@ define([
         }
       }, popoverOpts));
 
-      me.ui.hold.popover(_.defaults({
-        content: function(){
-          if (!me.partyPopover) {
-            me.partyPopover = new PartyPopoverView({
-              collection: require('app').trainer.party
-              ,button: me.ui.hold
-            });
-            require('app').trainer.fetch();
-            me.partyPopover.render();
-          } else {
-            me.partyPopover.button = me.ui.hold;
-          }
-          return me.partyPopover.el;
-        }
-      }, popoverOpts));
+
+      me.ui.hold.popover(popoverOpts);
+      me.ui.use.popover(popoverOpts);
     }
 
     ,onShow: function(){
@@ -78,9 +76,9 @@ define([
     }
 
     ,showPartyPopover: function(e){
-      if (this.partyPopover) {
-        this.partyPopover.delegateEvents();
-      }
+      this.partyPopover.delegateEvents();
+      this.partyPopover.button = $(e.currentTarget);
+      require('app').trainer.fetch();
     }
 
     ,onClose: function(){
@@ -108,9 +106,9 @@ define([
     }
 
     ,hidePopover: function(e){
-      _.each([this.ui.gift, this.ui.hold], function(button){
-        if (button.get(0) !== e.target) {
-          var popover = button.data('bs.popover');
+      this.$('.actions button').each(function(i, button){
+        if (button !== e.target) {
+          var popover = $(button).data('bs.popover');
           popover && popover.leave(popover);
         }
       });
@@ -137,15 +135,37 @@ define([
       this.ui.hold.popover('hide');
     }
 
+    ,useItem: function(e, pokemon){
+      pokemon.useItem(this.model);
+      this.ui.use.popover('hide');
+    }
+
     ,holdDone: function(pokemon){
       var item = i18n.t('item:' + this.model.get('item').name);
-      var pokemon = _.escape(pokemon.get('nickname'))
+      var pokemonName = _.escape(pokemon.get('nickname'))
         || i18n.t('pokemon:' + pokemon.get('species').name);
 
       vent.trigger('alert', {
         type: 'success'
         ,title: i18n.t('action.hold-item')
-        ,content: i18n.t('action.hold-done', {pokemon: pokemon, item: item})
+        ,content: i18n.t('action.hold-done', {pokemon: pokemonName, item: item})
+      });
+    }
+
+    ,useDone: function(pokemon, events, oldPokemon){
+      var item = i18n.t('item:' + this.model.get('item').name);
+      var pokemonName = _.escape(oldPokemon.nickname)
+        || i18n.t('pokemon:' + oldPokemon.species.name);
+
+      vent.trigger('alert', {
+        type: 'success'
+        ,title: i18n.t('action.use-item')
+        ,content: i18n.t('action.use-done', {pokemon: pokemonName, item: item})
+        ,view: new PokemonEventsView({
+          model: pokemon
+          ,pokemonEvents: events
+          ,oldPokemon: oldPokemon
+        })
       });
     }
 
