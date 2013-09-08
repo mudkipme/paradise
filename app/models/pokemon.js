@@ -8,9 +8,7 @@ var Species = require('./species');
 var Nature = require('./nature');
 var Item = require('./item');
 
-/**
- * Gender values
- */
+// Gender values
 var Gender = { female: 1, male: 2, genderless: 3 };
 
 var PokemonSchema = new Schema({
@@ -63,17 +61,13 @@ _.each(['species', 'nature', 'pokeBall', 'holdItem'], function(key){
   });
 });
 
-/**
- * Shorter ID String
- */
+// Shorter ID String
 PokemonSchema.virtual('displayId').get(function(){
   var md5 = crypto.createHash('md5');
   return md5.update(this.id.toString()).digest("hex").toString().substr(-6);
 });
 
-/**
- * Pokémon Stats
- */
+// Pokémon Stats
 PokemonSchema.virtual('stats').get(function(){
   if (!this._inited || this.isEgg) return false;
 
@@ -113,6 +107,7 @@ PokemonSchema.virtual('stats').get(function(){
   return stats;
 });
 
+// Caculate the rest time in Pokémon Center
 PokemonSchema.virtual('pokemonCenterTime').get(function(){
   if (!this.pokemonCenter) return 0;
 
@@ -140,82 +135,120 @@ PokemonSchema.virtual('expNextLevel').get(function(){
   }
 });
 
-/**
- * 神奇宝贝升级时的操作
- */
-PokemonSchema.methods.onLevelUp = function(callback){
-  // Gain happiness
-  // Evolution
+// Events happened when Pokémon level up
+// Options includes the battle stats like location
+PokemonSchema.methods.onLevelUp = function(level, options, callback){
+  if (!callback) { callback = options; options = null; }
+
+  var events = {level: level}, me = this;
+  var happiness = me.happiness < 100 ? 5 : (me.happiness < 200 ? 3 : 2);
+
+  async.series([
+    // Gain friendship
+    me.gainHappiness.bind(me, happiness)
+
+    // Evolution
+  ], function(err, results){
+    if (err) return callback(err);
+    events = _.flatten([].concat(events, results));
+    callback(null, events);
+  });
 };
 
 // Gain experience
-PokemonSchema.methods.gainExperience = function(exp, callback){
-  if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+// The callback(err, events) contains all events happened by
+// gain the given experience, including experience achieved,
+// level up, evolution, etc.
+PokemonSchema.methods.gainExperience = function(exp, options, callback){
+  if (!callback) { callback = options; options = null; }
 
-  this.initData(function(err, me){
+  var me = this;
+  if (!me._inited) return callback(new Error('ERR_NOT_INITED'));
+  if (me.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+
+  var maxExp = me.species.maxExperience(),
+    currentLevel = me.level,
+    currentExperience = me.experience;
+  if (me.experience >= maxExp) return callback(null, 0);
+
+  me.experience = Math.min(me.experience + exp, maxExp);
+
+  // Reset the current level
+  me.level = _.find(_.range(currentLevel, 100), function(level){
+    return me.experience < me.species.experience(level + 1);
+  }) || 100;
+
+  if (me.experience == currentExperience) return callback(null);
+
+  var events = { experience: me.experience - currentExperience };
+
+  me.save(function(err){
     if (err) return callback(err);
 
-    var maxExp = me.species.maxExperience(),
-      currentLevel = me.level,
-      currentExperience = me.experience;
-    if (me.experience >= maxExp) return callback(null, 0);
-
-    me.experience = Math.min(me.experience + exp, maxExp);
-
-    me.level = _.find(_.range(currentLevel, 101), function(level){
-      if (me.experience >= me.species.experience(level)
-        && me.experience < me.species.experience(level + 1))
-          return level;
-    });
-
-    // 判断升级事件
-    async.times(me.level - currentLevel, function(n, next){
-      me.onLevelUp(next);
-    }, function(err){
-      if (err) return callback(err);
-
-      me.save(function(err){
+    // Level up events
+    async.times(me.level - currentLevel
+      ,me.onLevelUp.bind(me, options)
+      ,function(err, results){
         if (err) return callback(err);
-        callback(null, me.experience - currentExperience);
+        events = _.flatten([].concat(events, results));
+        callback(null, events);
       });
-    });
   });
 };
 
-/**
- * Level up this Pokémon
- */
+// Level up this Pokémon
 PokemonSchema.methods.levelUp = function(callback){
-  if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+  var me = this;
+  if (!me._inited) return callback(new Error('ERR_NOT_INITED'));
+  if (me.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+  
+  if (me.level >= 100) return callback(null);
+  me.level += 1;
+  me.experience = me.species.experience(me.level);
 
-  this.initData(function(err, me) {
+  me.save(function(err){
     if (err) return callback(err);
-    if (me.level >= 100) return callback(new Error('ERR_POKEMON_MAX_EXP'));
-    me.experience = me.species.experience(level + 1);
-    me.level += 1;
-    me.onLevelUp(function(err) {
-      if (err) return callback(err);
-      me.save(callback);
-    });
+    me.onLevelUp(me.level, callback);
   });
 };
 
-/**
- * Gain happiness
- */
+// Gain friendship
 PokemonSchema.methods.gainHappiness = function(happiness, callback){
   if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
   if (this.happiness >= 255) return callback(null);
 
-  var currentHappiness = this.happiness;
-  this.happiness = Math.min(this.happiness + happiness, 255);
+  if (this.happiness + happiness > 255) {
+    happiness = 255 - this.happiness;
+  }
 
-  me.save(callback);
+  if (this.happiness + happiness < 0) {
+    happiness = -this.happiness;
+  }
+
+  this.happiness += happiness;
+
+  this.save(function(err){
+    if (err) return callback(err);
+    callback(null, {happiness: happiness});
+  });
 };
 
-/**
- * Gain effort values
- */
+// Gain HP
+PokemonSchema.methods.gainHP = function(hp, callback){
+  if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+  if (this.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
+  if (!this.lostHp) return callback(null);
+
+  var recoveredHp = hp < this.lostHp ? hp : this.lostHp;
+  this.lostHp -= recoveredHp;
+
+  me.save(function(err){
+    if (err) return callback(err);
+    callback(null, {hp: recoveredHp});
+  });
+};
+
+// Gain effort values
 PokemonSchema.methods.gainEffort = function(effort, callback){
   if (!_.isObject(effort)) return callback(new Error('ERR_INVALID_PARAM'));
 
@@ -224,23 +257,47 @@ PokemonSchema.methods.gainEffort = function(effort, callback){
       return memo + num;
     });
 
-  _.each(me.effort, function(value, key) {
-    var e = effort[key] || 0;
-    me.effort[key] = Math.min( me.effort[key] + e, 255 );
-    currentEffort += me.effort[key] - value;
+  _.each(me.effort, function(value, key){
+    effort[key] = effort[key] || 0;
 
-    if (currentEffort >= 510) {
-      me.effort[key] -= currentEffort - 510;
-      return false;
+    if (value + effort[key] > 255) {
+      effort[key] = 255 - value;
     }
+
+    if (value + effort[key] < 0) {
+      effort[key] = -value;
+    }
+
+    if (currentEffort + effort[key] > 510) {
+      effort[key] = 510 - currentEffort;
+    }
+
+    me.effort[key] += effort[key];
+    currentEffort += effort[key];
   });
 
-  me.save(callback);
-}
+  me.save(function(err){
+    if (err) return callback(err);
+    callback(null, {effort: effort});
+  });
+};
 
-/**
- * Set hold item
- */
+// Change Forme
+PokemonSchema.methods.changeForme = function(formIdentifier, callback){
+  var me = this;
+  Species(me.speciesNumber, formIdentifier, function(err, species){
+    if (err) return callback(err);
+
+    me.formIdentifier = species.formIdentifier;
+    me._species = species;
+    me.save(function(err){
+      if (err) return callback(err);
+      callback(null, {forme: me.formIdentifier});
+    });
+  });
+};
+
+// Set hold item
 PokemonSchema.methods.setHoldItem = function(item, callback){
   if (item) {
     if (!item.holdable) return callback(new Error('ITEM_NOT_HOLDABLE'));
@@ -254,9 +311,7 @@ PokemonSchema.methods.setHoldItem = function(item, callback){
   this.save(callback);
 };
 
-/**
- * Init data of this Pokémon
- */
+// Init data of this Pokémon
 PokemonSchema.methods.initData = function(callback){
   var me = this;
   if (me._inited) return callback(null, me);
