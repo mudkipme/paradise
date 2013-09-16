@@ -149,7 +149,7 @@ PokemonSchema.methods.onLevelUp = function(level, options, callback){
   // Evolution
   if (level == me.level) {
     actions.push(function(next){
-      next();
+      me.evolve('level-up', next);
     });
   }
 
@@ -363,6 +363,107 @@ PokemonSchema.methods.initData = function(callback){
     me._holdItem = results.holdItem;
     me._inited = true;
     callback(null, me);
+  });
+};
+
+// Evolve this Pokémon
+// Options:
+// * item
+// * location
+// * relatedPokemon
+PokemonSchema.methods.evolve = function(trigger, options, callback){
+  if (!callback) {
+    callback = options;
+    options = {};
+  }
+  var me = this;
+  if (!me._inited) return callback(new Error('ERR_NOT_INITED'));
+
+  var resultNumber = null;
+
+  if (me.trainer && !me.populated('trainer')) {
+    me.populate('trainer', function(err){
+      if (err) return callback(err);
+      me.trainer.populate('party', 'speciesNumber', function(err){
+        if (err) return callback(err);
+        me.evolve(trigger, options, callback);
+      });
+    });
+    return;
+  }
+
+  _.each(me.species.evolutions, function(ev){
+    if (ev.trigger != trigger) {
+      return;
+    }
+    if (ev.trigger_item_id && (!options.item || ev.trigger_item_id != options.item.id))
+      return;
+    if (ev.minimum_level && me.level < ev.minimum_level)
+      return;
+    if (ev.gender_id && me.gender != ev.gender_id)
+      return;
+    if (ev.location_id && (!options.location || ev.location_id != options.location.id))
+      return;
+    if (ev.held_item_id && me.holdItemId != ev.held_item_id)
+      return;
+    if (ev.time_of_day) {
+      if (!me.trainer) return;
+      var timeOfDay = me.trainer.timeOfDay;
+      if (ev.time_of_day == 'night' && timeOfDay != 'night') return;
+      if (ev.time_of_day != 'night' && timeOfDay == 'night') return;
+    }
+    // Temporary solution for evolve by learning a move
+    if (ev.known_move_id == 102
+      && !(me.speciesNumber == 439 && me.level >= 15)
+      && !(me.speciesNumber == 438 && me.level >= 33))
+      return;
+    if (ev.known_move_id == 458 && me.level < 32)
+      return;
+    if (ev.known_move_id == 205 && me.level < 33)
+      return;
+    if (ev.known_move_id == 246
+      && !(ev.evolved_species_id == 465 && me.level >= 40)
+      && !(ev.evolved_species_id == 469 && me.level >= 33)
+      && !(ev.evolved_species_id == 473 && me.level >= 45))
+      return;
+    if (ev.minimum_happiness && me.happiness < ev.minimum_happiness)
+      return;
+    // Will add Contest-related stuff in future
+    if (ev.minimum_beauty)
+      return;
+    if (ev.relative_physical_stats !== null) {
+      var stats = me.stats;
+      if (ev.relative_physical_stats == 1 && !stats.attack > stats.defense)
+        return;
+      if (ev.relative_physical_stats == -1 && !stats.attack < stats.defense)
+        return;
+      if (ev.relative_physical_stats === 0 && stats.attack != stats.defense)
+        return;
+    }
+    if (ev.party_species_id && (!me.trainer || !_.find(me.trainer.party
+        ,function(pokemon){ return pokemon.speciesNumber == pokemon.party_species_id })
+      ))
+      return;
+    if (ev.trade_species_id && (!options.relatedPokemon
+     || options.relatedPokemon.speciesNumber != ev.trade_species_id))
+      return;
+
+    resultNumber = ev.evolved_species_id;
+    return false;
+  });
+
+  if (!resultNumber) return callback(null);
+
+  // Evolve this Pokémon
+  me.speciesNumber = resultNumber;
+  Species(me.speciesNumber, me.formIdentifier, function(err, species){
+    if (err) return callback(err);
+    me._species = species;
+    me.formIdentifier = species.formIdentifier;
+    me.save(function(err){
+      if (err) return callback(err);
+      callback(null, {type: 'evolution', value: me.species.name});
+    });
   });
 };
 

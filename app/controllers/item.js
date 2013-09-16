@@ -68,7 +68,7 @@ exports.gift = function(req, res){
     ], function(err, results){
       if (err) return res.json(500, {error: err.message});
       res.json({
-        id: item.id
+        id: itemId
         ,item: results[0]
         ,number: req.trainer.hasItem(itemId)
       });

@@ -14,6 +14,8 @@
         <%- t('events.evolution', {pokemon: old.pokemonName(), evolution: pokemonName()}) %>
       <% } else if (event.type == 'experience') { %>
         <%- t('events.experience', {pokemon: old.pokemonName(), experience: event.value}) %>
+      <% } else if (event.type == 'forme') { %>
+        <%- t('events.forme', {pokemon: old.pokemonName(), forme: t('forme.' + event.value)}) %>
       <% } %>
     </li>
   <% }) %>

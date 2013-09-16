@@ -63,6 +63,35 @@ TrainerSchema.virtual('storageNum').get(function(){
   }
 });
 
+// Get current season
+TrainerSchema.virtual('season').get(function(){
+  var now = new time.Date();
+  var seasons = ['spring', 'summer', 'autumn', 'winter'];
+  now.setTimezone(this.realWorld.timezoneId);
+  return seasons[now.getMonth() % 4];
+});
+
+// Get current time of day
+TrainerSchema.virtual('timeOfDay').get(function(){
+  var split = {
+    spring: [5, 20]
+    ,summer: [4, 21]
+    ,autumn: [6, 20]
+    ,winter: [7, 19]
+  };
+  var now = new time.Date(), season = this.season;
+  now.setTimezone(this.realWorld.timezoneId);
+
+  var hour = now.getHours();
+  if (hour >= split[season][0] && hour < 10) {
+    return 'morning';
+  } else if (hour >= 10 && hour < split[season][1]) {
+    return 'day';
+  } else {
+    return 'night';
+  }
+});
+
 TrainerSchema.methods.setPokedexSeen = function(speciesNumber) {
   if (!this._pokedexSeen) {
     this._pokedexSeen = new BitArray(Species.max, this.pokedexSeenHex);

@@ -114,7 +114,7 @@ var useEffect = {
 
   // Evolve
   ,evolution: function(pokemon){
-
+    return pokemon.evolve.bind(pokemon, 'use-item', {item: this});
   }
 
   // Change Forme

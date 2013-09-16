@@ -83,7 +83,11 @@
     ,"effort": "__pokemon__ 的 __stat__ 基础得点提升了！"
     ,"evolution": "__pokemon__ 进化成为了 __evolution__ ！"
     ,"experience": "__pokemon__ 获得了 __experience__ 点经验值！"
+    ,"forme": "__pokemon__ 变换成为__forme__型态！"
     ,"connector": " 和 "
+  }
+  ,"forme": {
+    "sky": "天空"
   }
   ,"type": {
     "normal": "一般"
