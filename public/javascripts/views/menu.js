@@ -29,8 +29,11 @@ define([
     }
 
     ,update: function(router, route){
+      var path = _.invert(router.appRoutes)[route];
+      path = path && path.split('/')[0];
+      
       this.$('.selected').removeClass('selected');
-      this.$('a[href="/' + _.invert(router.appRoutes)[route] + '"]')
+      this.$('a[href="/' + path + '"]')
       .addClass('selected')
       .closest('.collapse')
       .prev().trigger('click');

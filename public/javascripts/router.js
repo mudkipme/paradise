@@ -8,6 +8,8 @@ define([
       ,'bag': 'bag'
       ,'pokemart': 'pokeMart'
       ,'storage': 'storage'
+      ,'world': 'world'
+      ,'world/:region': 'region'
     }
   });
 });

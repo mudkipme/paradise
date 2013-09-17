@@ -7,7 +7,9 @@ define([
   ,'views/bag'
   ,'views/pokemart'
   ,'views/storage'
-], function(Marionette, vent, MenuView, HomeView, PartyView, BagView, PokeMartView, StorageView){
+  ,'views/world'
+], function(Marionette, vent, MenuView, HomeView, PartyView
+  , BagView, PokeMartView, StorageView, WorldView){
 
   // Avoid circular dependencies
   var App = null;
@@ -47,6 +49,14 @@ define([
     ,storage: function(){
       App.mainRegion.show(new StorageView({collection: App.trainer.storage}));
       App.trainer.storage.fetch({reset: true});
+    }
+
+    ,world: function(){
+      App.mainRegion.show(new WorldView);
+    }
+
+    ,region: function(region){
+      alert(region);
     }
   });
 });
