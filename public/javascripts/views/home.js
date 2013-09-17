@@ -125,13 +125,12 @@ define([
       var group = new Kinetic.Group({name: 'angle_' + beginAngle});
 
       var shape = new Kinetic.Shape({
-        drawFunc: function(canvas){
-          var ctx = canvas.getContext();
+        drawFunc: function(ctx){
           ctx.beginPath();
           ctx.arc(opt.width / 2, opt.height / 2, opt.centerRadius, beginAngle, beginAngle - opt.bigAngle, true);
           ctx.arc(opt.width / 2, opt.height / 2, opt.width / 2, beginAngle - opt.bigAngle, beginAngle, false);
           ctx.closePath();
-          canvas.fillStroke(this);
+          ctx.fillStrokeShape(this);
         },
         fill: data.color,
         stroke: data.stroke || opt.stroke,

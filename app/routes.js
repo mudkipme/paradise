@@ -5,6 +5,7 @@ var trainer = require('./controllers/trainer');
 var pokemon = require('./controllers/pokemon');
 var item = require('./controllers/item');
 var storage = require('./controllers/storage');
+var admin = require('./controllers/admin');
 
 // Middlewares
 var auth = require('./middlewares/authentication');
@@ -13,6 +14,7 @@ var pm = require('./middlewares/pokemon-middleware');
 var defaults = [auth.login, auth.trainer, auth.locale];
 var isSelf = [auth.login, auth.trainer, auth.isSelf];
 var myPokemon = [auth.login, auth.trainer, pm.myPokemon];
+var isAdmin = [auth.login, auth.isAdmin];
 
 module.exports = function(app){
   app.get('/', defaults, index.index);
@@ -56,4 +58,7 @@ module.exports = function(app){
   app.patch('/api/storage/:boxId', defaults, storage.put);
   app.post('/api/storage/move', defaults, storage.move);
   app.post('/api/storage/sort', defaults, storage.sort);
+
+  // Admin
+  app.post('/api/admin/event-pokemon', isAdmin, admin.eventPokemon);
 };

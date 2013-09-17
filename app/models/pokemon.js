@@ -528,7 +528,8 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
       originalTrainer: opts.originalTrainer || null,
       birthDate: opts.birthDate || new Date(),
       father: opts.father || null,
-      mother: opts.mother || null
+      mother: opts.mother || null,
+      holdItemId: opts.holdItemId || (opts.holdItem && opts.holdItem.id) || null
     });
 
     callback(null, pokemon);

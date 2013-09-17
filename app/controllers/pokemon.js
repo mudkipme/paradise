@@ -36,7 +36,7 @@ exports.release = function(req, res){
     if (!partyNum(req)) return res.json(403, { error: 'ONE_POKEMON_LEFT' });
     req.trainer.party.splice(pos.position, 1);
   } else {
-    req.trainer.storage[pos.boxId].pokemon.set(pos.position, null);
+    req.trainer.storagePokemon.pull(pos._id);
   }
 
   req.pokemon.trainer = null;
@@ -137,6 +137,7 @@ exports.holdItem = function(req, res){
     async.series(actions, function(err){
       if (err) return res.json(500, { error: err.message });
       res.json(req.pokemon);
+      io.emit(req, 'pokemon:change', req.pokemon);
     });
   });
 };
@@ -152,6 +153,7 @@ exports.takeItem = function(req, res){
   ], function(err){
     if (err) return res.json(500, { error: err.message });
     res.json(req.pokemon);
+    io.emit(req, 'pokemon:change', req.pokemon);
   });
 };
 
@@ -167,6 +169,7 @@ exports.sendPokemonCenter = function(req, res){
   req.pokemon.pokemonCenter = new Date();
   req.pokemon.save(function(){
     res.json(req.pokemon);
+    io.emit(req, 'pokemon:change', req.pokemon);
   });
 };
 
@@ -190,6 +193,8 @@ exports.useItem = function(req, res){
         pokemon: req.pokemon
         ,events: _.compact(_.flatten(results[0]))
       });
+
+      io.emit(req, 'pokemon:change', req.pokemon);
     });
   });
 };

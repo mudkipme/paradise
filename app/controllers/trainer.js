@@ -10,6 +10,7 @@ var io = require('../io');
 var Trainer = require('../models/trainer');
 var Pokemon = require('../models/pokemon');
 var Item = require('../models/item');
+var Location = require('../models/location');
 
 // Get trainer's information
 exports.get = function(req, res){
@@ -49,19 +50,13 @@ exports.post = function(req, res){
 
   async.series({
     // Receive the Pokemon from lab
-    pokemon: function(next){
-      Pokemon.createPokemon({
-        speciesNumber: parseInt(req.body.speciesNumber)
-      }, next);
-    },
+    pokemon: Pokemon.createPokemon.bind(Pokemon, {
+      speciesNumber: parseInt(req.body.speciesNumber)
+    })
     // Get a Poké Ball
-    pokeBall: function(next){
-      Item('poke-ball', next);
-    },
+    ,pokeBall: async.apply(Item, 'poke-ball')
     // Get the starter town
-    location: function(next){
-      next(null, { name: 'pallet-town' });
-    }
+    ,location: async.apply(Location, 'pallet-town')
   }, function(err, ret){
     if (err) return res.json(500, { error: err.message });
     trainer.catchPokemon(ret.pokemon, ret.pokeBall, ret.location, function(err){

@@ -1,4 +1,6 @@
-<img class="sprite" src="<%= old.spriteUrl() %>" alt="<%- old.pokemonName() %>" />
+<div class="sprite-container" data-before="<%- old.spriteUrl() %>" data-after="<%- spriteUrl() %>">
+  <img class="sprite" src="<%- old.spriteUrl() %>" alt="<%- old.pokemonName() %>" />
+</div>
 <ul>
   <% _.each(events, function(event){ %>
     <li class="event">
@@ -11,7 +13,7 @@
       <% } else if (event.type == 'effort') { %>
         <%- t('events.effort', {pokemon: old.pokemonName(), stat: _.map(_.keys(event.value), function(stat){ return t('stat.'+stat) }).join(t('events.connector'))}) %>
       <% } else if (event.type == 'evolution') { %>
-        <%- t('events.evolution', {pokemon: old.pokemonName(), evolution: pokemonName()}) %>
+        <%- t('events.evolution', {pokemon: old.pokemonName(), evolution: t('pokemon:' + pokemon.species.name) }) %>
       <% } else if (event.type == 'experience') { %>
         <%- t('events.experience', {pokemon: old.pokemonName(), experience: event.value}) %>
       <% } else if (event.type == 'forme') { %>

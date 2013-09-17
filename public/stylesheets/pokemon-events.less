@@ -1,11 +1,20 @@
 .pokemon-events-view {
   text-align: center;
 
-  .sprite {
-    display: block;
-    margin: 0 auto;
-    height: 96px;
+  .sprite-container {
     width: 96px;
+    height: 96px;
+    margin: 0 auto;
+    position: relative;
+
+    > * {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 96px;
+      width: 96px;
+    }
   }
 
   ul {

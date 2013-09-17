@@ -11,11 +11,16 @@ define([
   $.loadImage = function(src){
     return $.Deferred(function(deferred){
       var img = new Image();
+      img.crossOrigin = "Anonymous";
       img.onload = function(){
         img.onload = null;
         deferred.resolve(img);
       };
       img.src = src;
+      if (img.complete || img.complete === undefined) {
+        img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+        img.src = src;
+      }
     }).promise();
   };
 

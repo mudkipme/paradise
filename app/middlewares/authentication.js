@@ -9,7 +9,7 @@ var Trainer = require('../models/trainer.js');
 /**
  * Login to the forum
  */
-exports.login = function(req, res, next) {
+exports.login = function(req, res, next){
   Member.getLogin(req, function(err, member){
     if (err) {
       if (err.message == 'NOT_LOGINED' && !req.path.match(/^\/api/)) {
@@ -25,7 +25,7 @@ exports.login = function(req, res, next) {
 /**
  * Get trainer data
  */
-exports.trainer = function(req, res, next) {
+exports.trainer = function(req, res, next){
   if (!req.member) return next();
 
   Trainer.findByName(req.member.username, function(err, trainer){
@@ -40,7 +40,7 @@ exports.trainer = function(req, res, next) {
 /**
  * Set the correct locale
  */
-exports.locale = function(req, res, next) {
+exports.locale = function(req, res, next){
   var locale = config.app.defaultLanguage;
   if (req.trainer && req.trainer.language) {
     locale = req.trainer.language;
@@ -59,7 +59,7 @@ exports.locale = function(req, res, next) {
 /**
  * Limit request 
  */
-exports.isSelf = function(req, res, next) {
+exports.isSelf = function(req, res, next){
   if (req.trainer && req.params.name == req.trainer.name) {
     next();
   } else {
@@ -67,6 +67,13 @@ exports.isSelf = function(req, res, next) {
   }
 };
 
+exports.isAdmin = function(req, res, next){
+  if (req.member.isAdmin) {
+    next();
+  } else {
+    res.json(403, { error: 'PERMISSION_DENIED' });
+  }
+}
 
 // Socket.io authorization
 exports.sio = function(data, next){
