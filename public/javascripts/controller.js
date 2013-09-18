@@ -8,8 +8,9 @@ define([
   ,'views/pokemart'
   ,'views/storage'
   ,'views/world'
+  ,'views/region'
 ], function(Marionette, vent, MenuView, HomeView, PartyView
-  , BagView, PokeMartView, StorageView, WorldView){
+  , BagView, PokeMartView, StorageView, WorldView, RegionView){
 
   // Avoid circular dependencies
   var App = null;
@@ -56,7 +57,7 @@ define([
     }
 
     ,region: function(region){
-      alert(region);
+      App.mainRegion.show(new RegionView({region: region}));
     }
   });
 });

@@ -1,0 +1,83 @@
+#region-view {
+  .region {
+    width: 100%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    position: relative;
+
+    .location {
+      position: absolute;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    .town {
+      width: 24px;
+      height: 24px;
+      margin-left: -12px;
+      margin-top: -12px;
+      background: #2184a5;
+      border: 4px solid #ffbd31;
+      border-radius: 12px;
+    }
+
+    .spot {
+      width: 12px;
+      height: 12px;
+      margin-left: -6px;
+      margin-top: -6px;
+      background: #008442;
+      border: 2px solid #94c621;
+      border-radius: 6px;
+    }
+
+    .route {
+      background: #ffbd31;
+      border-radius: 2px;
+      .box-shadow(2px 2px 4px rgba(0,0,0,0.75));
+    }
+
+    .route-vertical {
+      margin-left: -2px;
+      width: 4px;
+    }
+
+    .route-horizontal {
+      margin-top: -2px;
+      height: 4px;
+    }
+  }
+  .region-kanto {
+    padding-top: 66.0441426%;
+    background-image: url(../images/world/kanto.jpg);
+  }
+  .region-johto {
+    padding-top: 67.1454219%;
+    background-image: url(../images/world/johto.jpg);
+  }
+  .region-hoenn {
+    padding-top: 59.3639576%;
+    background-image: url(../images/world/hoenn.jpg);
+  }
+  .region-sinnoh {
+    padding-top: 70.0787402%;
+    background-image: url(../images/world/sinnoh.jpg);
+  }
+  .region-unova {
+    padding-top: 65.625%;
+    background-image: url(../images/world/unova.jpg);
+  }
+}
+
+@media (max-width: 767px) {
+  #region-view {
+    .region .town {
+      width: 18px;
+      height: 18px;
+      border-width: 3px;
+      margin-top: -9px;
+      margin-left: -9px;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+<div class="region region-<%= region %>">
+  <div class="routes">
+    <% _.each(map.routes, function(route){ %>
+      <% if (route.direction == 'vertical') { %>
+        <div class="location route route-vertical" style="height: <%= Math.abs(route.y2-route.y1)/map.height*100 %>%; top: <%= Math.min(route.y2,route.y1)/map.height*100 %>%; left: <%= route.x/map.width*100 %>%;" title="<%- t('location:'+route.name) %>" data-location="<%- route.name %>" data-placement="auto right"></div>
+      <% } else { %>
+        <div class="location route route-horizontal" style="width: <%= Math.abs(route.x2-route.x1)/map.width*100 %>%; left: <%= Math.min(route.x2,route.x1)/map.width*100 %>%; top: <%= route.y/map.height*100 %>%;" title="<%- t('location:'+route.name) %>" data-location="<%- route.name %>"></div>
+      <% } %>
+    <% }) %>
+  </div>
+  <div class="towns">
+    <% _.each(map.towns, function(town){ %>
+      <div class="location town" style="left: <%= town.x/map.width*100 %>%; top: <%= town.y/map.height*100 %>%;" title="<%- t('location:'+town.name) %>" data-location="<%- town.name %>"></div>
+    <% }) %>
+  </div>
+  <div class="spots">
+    <% _.each(map.spots, function(spot){ %>
+      <div class="location spot" style="left: <%= spot.x/map.width*100 %>%; top: <%= spot.y/map.height*100 %>%;" title="<%- t('location:'+spot.name) %>" data-location="<%- spot.name %>"></div>
+    <% }) %>
+  </div>
+</div>

@@ -78,6 +78,7 @@ define([
       ,fallbackLng: false
       ,load: 'current'
       ,lowerCaseLng: true
+      ,resGetPath: '/locales/__lng__/__ns__.json'
       ,ns: {
         namespaces: ['app', 'pokemon', 'item', 'location']
         ,defaultNs: 'app'
