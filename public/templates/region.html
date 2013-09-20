@@ -3,8 +3,10 @@
     <% _.each(map.routes, function(route){ %>
       <% if (route.direction == 'vertical') { %>
         <div class="location route route-vertical" style="height: <%= Math.abs(route.y2-route.y1)/map.height*100 %>%; top: <%= Math.min(route.y2,route.y1)/map.height*100 %>%; left: <%= route.x/map.width*100 %>%;" title="<%- t('location:'+route.name) %>" data-location="<%- route.name %>" data-placement="auto right"></div>
-      <% } else { %>
+      <% } else if (route.direction == 'horizontal') { %>
         <div class="location route route-horizontal" style="width: <%= Math.abs(route.x2-route.x1)/map.width*100 %>%; left: <%= Math.min(route.x2,route.x1)/map.width*100 %>%; top: <%= route.y/map.height*100 %>%;" title="<%- t('location:'+route.name) %>" data-location="<%- route.name %>"></div>
+      <% } else { %>
+        <div class="location route route-horizontal" style="width: <%= Math.sqrt(Math.pow((route.x2-route.x1),2)+Math.pow((route.y2-route.y1),2))/map.width*100 %>%; left: <%= ((route.x2+route.x1)/2-Math.sqrt(Math.pow((route.x2-route.x1),2)+Math.pow((route.y2-route.y1),2))/2)/map.width*100 %>%; top: <%= (route.y2+route.y1)/2/map.height*100 %>%; -webkit-transform: rotate(<%= Math.atan((route.y1-route.y2)/(route.x1-route.x2))*180/Math.PI %>deg); -ms-transform: rotate(<%= Math.atan((route.y1-route.y2)/(route.x1-route.x2))*180/Math.PI %>deg); transform: rotate(<%= Math.atan((route.y1-route.y2)/(route.x1-route.x2))*180/Math.PI %>deg);" title="<%- t('location:'+route.name) %>" data-location="<%- route.name %>"></div>
       <% } %>
     <% }) %>
   </div>
