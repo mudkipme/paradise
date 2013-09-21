@@ -261,13 +261,6 @@ define([], function(){
           ,y2: 256
         }
         ,{
-          name: 'kanto-route-22'
-          ,direction: 'horizontal'
-          ,y: 191
-          ,x1: 248
-          ,x2: 151
-        }
-        ,{
           name: 'kanto-route-23'
           ,direction: 'vertical'
           ,x: 151
@@ -289,13 +282,6 @@ define([], function(){
           ,x2: 519
         }
         ,{
-          name: 'kanto-route-26'
-          ,direction: 'vertical'
-          ,x: 151
-          ,y1: 191
-          ,y2: 289
-        }
-        ,{
           name: 'kanto-route-27'
           ,direction: 'horizontal'
           ,y: 289
@@ -308,6 +294,20 @@ define([], function(){
           ,y: 191
           ,x1: 69
           ,x2: 151
+        }
+        ,{
+          name: 'kanto-route-22'
+          ,direction: 'horizontal'
+          ,y: 191
+          ,x1: 248
+          ,x2: 151
+        }
+        ,{
+          name: 'kanto-route-26'
+          ,direction: 'vertical'
+          ,x: 151
+          ,y1: 191
+          ,y2: 289
         }
       ]
     }
@@ -1077,10 +1077,470 @@ define([], function(){
       width: 508
       ,height: 356
       ,towns: [
+        {
+          name: 'twinleaf-town'
+          ,x: 67
+          ,y: 326
+        }
+        ,{
+          name: 'sandgem-town'
+          ,x: 105
+          ,y: 297
+        }
+        ,{
+          name: 'jubilife-city'
+          ,x: 105
+          ,y: 254
+        }
+        ,{
+          name: 'oreburgh-city'
+          ,x: 183
+          ,y: 254
+        }
+        ,{
+          name: 'floaroma-town'
+          ,x: 105
+          ,y: 200
+        }
+        ,{
+          name: 'eterna-city'
+          ,x: 183
+          ,y: 142
+        }
+        ,{
+          name: 'hearthome-city'
+          ,x: 267
+          ,y: 223
+        }
+        ,{
+          name: 'solaceon-town'
+          ,x: 315
+          ,y: 198
+        }
+        ,{
+          name: 'veilstone-city'
+          ,x: 400
+          ,y: 180
+        }
+        ,{
+          name: 'pastoria-city'
+          ,x: 347
+          ,y: 296
+        }
+        ,{
+          name: 'celestic-town'
+          ,x: 267
+          ,y: 142
+        }
+        ,{
+          name: 'canalave-city'
+          ,x: 43
+          ,y: 254
+        }
+        ,{
+          name: 'snowpoint-city'
+          ,x: 223
+          ,y: 27
+        }
+        ,{
+          name: 'sunyshore-city'
+          ,x: 466
+          ,y: 259
+        }
+        ,{
+          name: 'sinnoh-pokemon-league'
+          ,x: 466
+          ,y: 155
+        }
+        ,{
+          name: 'fight-area'
+          ,x: 347
+          ,y: 103
+        }
+        ,{
+          name: 'survival-area'
+          ,x: 347
+          ,y: 60
+        }
+        ,{
+          name: 'resort-area'
+          ,x: 432
+          ,y: 119
+        }
       ]
       ,spots: [
+        {
+          name: 'lake-verity'
+          ,x: 43
+          ,y: 295
+        }
+        ,{
+          name: 'oreburgh-gate'
+          ,x: 156
+          ,y: 254
+        }
+        ,{
+          name: 'oreburgh-mine'
+          ,x: 183
+          ,y: 277
+        }
+        ,{
+          name: 'ravaged-path'
+          ,x: 105
+          ,y: 227
+        }
+        ,{
+          name: 'valley-windworks'
+          ,x: 136
+          ,y: 200
+        }
+        ,{
+          name: 'eterna-forest'
+          ,x: 144
+          ,y: 169
+        }
+        ,{
+          name: 'old-chateau'
+          ,x: 159
+          ,y: 142
+        }
+        ,{
+          name: 'wayward-cave'
+          ,x: 183
+          ,y: 223
+        }
+        ,{
+          name: 'lost-tower'
+          ,x: 315
+          ,y: 223
+        }
+        ,{
+          name: 'solaceon-ruins'
+          ,x: 340
+          ,y: 200
+        }
+        ,{
+          name: 'lake-valor'
+          ,x: 388
+          ,y: 249
+        }
+        ,{
+          name: 'great-marsh'
+          ,x: 347
+          ,y: 272
+        }
+        ,{
+          name: 'trophy-garden'
+          ,x: 267
+          ,y: 296
+        }
+        ,{
+          name: 'fuego-ironworks'
+          ,x: 105
+          ,y: 166
+        }
+        ,{
+          name: 'iron-island'
+          ,x: 97
+          ,y: 129
+        }
+        ,{
+          name: 'lake-acuity'
+          ,x: 199
+          ,y: 13
+        }
+        ,{
+          name: 'stark-mountain'
+          ,x: 390
+          ,y: 25
+        }
+        ,{
+          name: 'turnback-cave'
+          ,x: 424
+          ,y: 224
+        }
+        ,{
+          name: 'fullmoon-island'
+          ,x: 76
+          ,y: 39
+        }
+        ,{
+          name: 'new-island'
+          ,x: 105
+          ,y: 39
+        }
       ]
       ,routes: [
+        {
+          name: 'sinnoh-route-201'
+          ,direction: 'horizontal'
+          ,y: 326
+          ,x1: 67
+          ,x2: 105
+        }
+        ,{
+          name: 'sinnoh-route-201'
+          ,direction: 'vertical'
+          ,x: 105
+          ,y1: 326
+          ,y2: 297
+        }
+        ,{
+          name: 'sinnoh-route-202'
+          ,direction: 'vertical'
+          ,x: 105
+          ,y1: 297
+          ,y2: 254
+        }
+        ,{
+          name: 'sinnoh-route-203'
+          ,direction: 'horizontal'
+          ,y: 254
+          ,x1: 105
+          ,x2: 183
+        }
+        ,{
+          name: 'sinnoh-route-204'
+          ,direction: 'vertical'
+          ,x: 105
+          ,y1: 254
+          ,y2: 200
+        }
+        ,{
+          name: 'sinnoh-route-205'
+          ,direction: 'diagonal'
+          ,x1: 105
+          ,x2: 183
+          ,y1: 200
+          ,y2: 142
+        }
+        ,{
+          name: 'mt-coronet'
+          ,direction: 'vertical'
+          ,x: 214
+          ,y1: 223
+          ,y2: 188
+        }
+        ,{
+          name: 'mt-coronet'
+          ,direction: 'diagonal'
+          ,x1: 214
+          ,x2: 223
+          ,y1: 188
+          ,y2: 177
+        }
+        ,{
+          name: 'sinnoh-route-206'
+          ,direction: 'vertical'
+          ,x: 183
+          ,y1: 254
+          ,y2: 142
+        }
+        ,{
+          name: 'sinnoh-route-207'
+          ,direction: 'horizontal'
+          ,y: 223
+          ,x1: 183
+          ,x2: 214
+        }
+        ,{
+          name: 'sinnoh-route-208'
+          ,direction: 'horizontal'
+          ,y: 223
+          ,x1: 214
+          ,x2: 264
+        }
+        ,{
+          name: 'sinnoh-route-209'
+          ,direction: 'horizontal'
+          ,y: 223
+          ,x1: 264
+          ,x2: 315
+        }
+        ,{
+          name: 'sinnoh-route-209'
+          ,direction: 'vertical'
+          ,x: 315
+          ,y1: 223
+          ,y2: 198
+        }
+        ,{
+          name: 'sinnoh-route-210'
+          ,direction: 'horizontal'
+          ,y: 142
+          ,x1: 315
+          ,x2: 267
+        }
+        ,{
+          name: 'sinnoh-route-210'
+          ,direction: 'vertical'
+          ,x: 315
+          ,y1: 198
+          ,y2: 142
+        }
+        ,{
+          name: 'sinnoh-route-211'
+          ,direction: 'horizontal'
+          ,y: 142
+          ,x1: 267
+          ,x2: 183
+        }
+        ,{
+          name: 'sinnoh-route-212'
+          ,direction: 'vertical'
+          ,x: 267
+          ,y1: 223
+          ,y2: 296
+        }
+        ,{
+          name: 'sinnoh-route-212'
+          ,direction: 'horizontal'
+          ,y: 296
+          ,x1: 267
+          ,x2: 347
+        }
+        ,{
+          name: 'sinnoh-route-213'
+          ,direction: 'horizontal'
+          ,y: 296
+          ,x1: 347
+          ,x2: 400
+        }
+        ,{
+          name: 'sinnoh-route-214'
+          ,direction: 'vertical'
+          ,x: 400
+          ,y1: 296
+          ,y2: 180
+        }
+        ,{
+          name: 'sinnoh-route-215'
+          ,direction: 'horizontal'
+          ,y: 180
+          ,x1: 400
+          ,x2: 315
+        }
+        ,{
+          name: 'sinnoh-route-217'
+          ,direction: 'vertical'
+          ,x: 180
+          ,y1: 91
+          ,y2: 27
+        }
+        ,{
+          name: 'sinnoh-route-216'
+          ,direction: 'horizontal'
+          ,y: 91
+          ,x1: 223
+          ,x2: 180
+        }
+        ,{
+          name: 'mt-coronet'
+          ,direction: 'vertical'
+          ,x: 223
+          ,y1: 177
+          ,y2: 91
+        }
+        ,{
+          name: 'sinnoh-route-217'
+          ,direction: 'horizontal'
+          ,y: 27
+          ,x1: 180
+          ,x2: 223
+        }
+        ,{
+          name: 'sinnoh-route-218'
+          ,direction: 'horizontal'
+          ,y: 254
+          ,x1: 105
+          ,x2: 43
+        }
+        ,{
+          name: 'sinnoh-route-219'
+          ,direction: 'vertical'
+          ,x: 105
+          ,y1: 326
+          ,y2: 342
+        }
+        ,{
+          name: 'sinnoh-route-220'
+          ,direction: 'horizontal'
+          ,y: 342
+          ,x1: 105
+          ,x2: 137
+        }
+        ,{
+          name: 'sinnoh-route-221'
+          ,direction: 'horizontal'
+          ,y: 342
+          ,x1: 137
+          ,x2: 183
+        }
+        ,{
+          name: 'sinnoh-route-222'
+          ,direction: 'horizontal'
+          ,y: 259
+          ,x1: 400
+          ,x2: 466
+        }
+        ,{
+          name: 'sinnoh-route-223'
+          ,direction: 'vertical'
+          ,x: 466
+          ,y1: 259
+          ,y2: 155
+        }
+        ,{
+          name: 'sinnoh-route-224'
+          ,direction: 'diagonal'
+          ,x1: 466
+          ,x2: 498
+          ,y1: 155
+          ,y2: 128
+        }
+        ,{
+          name: 'sinnoh-route-225'
+          ,direction: 'vertical'
+          ,x: 347
+          ,y1: 103
+          ,y2: 60
+        }
+        ,{
+          name: 'sinnoh-route-227'
+          ,direction: 'vertical'
+          ,x: 390
+          ,y1: 60
+          ,y2: 25
+        }
+        ,{
+          name: 'sinnoh-route-226'
+          ,direction: 'horizontal'
+          ,y: 60
+          ,x1: 347
+          ,x2: 414
+        }
+        ,{
+          name: 'sinnoh-route-228'
+          ,direction: 'vertical'
+          ,x: 414
+          ,y1: 103
+          ,y2: 60
+        }
+        ,{
+          name: 'sinnoh-route-230'
+          ,direction: 'horizontal'
+          ,y: 103
+          ,x1: 347
+          ,x2: 414
+        }
+        ,{
+          name: 'sinnoh-route-229'
+          ,direction: 'diagonal'
+          ,x1: 414
+          ,x2: 432
+          ,y1: 103
+          ,y2: 119
+        }
       ]
     }
 
@@ -1088,10 +1548,481 @@ define([], function(){
       width: 512
       ,height: 336
       ,towns: [
+        {
+          name: 'nuvema-town'
+          ,x: 463
+          ,y: 316
+        }
+        ,{
+          name: 'accumula-town'
+          ,x: 463
+          ,y: 276
+        }
+        ,{
+          name: 'striaton-city'
+          ,x: 455
+          ,y: 236
+        }
+        ,{
+          name: 'nacrene-city'
+          ,x: 405
+          ,y: 236
+        }
+        ,{
+          name: 'castelia-city'
+          ,x: 263
+          ,y: 259
+        }
+        ,{
+          name: 'nimbasa-city'
+          ,x: 263
+          ,y: 182
+        }
+        ,{
+          name: 'driftveil-city'
+          ,x: 147
+          ,y: 182
+        }
+        ,{
+          name: 'mistralton-city'
+          ,x: 79
+          ,y: 133
+        }
+        ,{
+          name: 'icirrus-city'
+          ,x: 147
+          ,y: 85
+        }
+        ,{
+          name: 'opelucid-city'
+          ,x: 263
+          ,y: 85
+        }
+        ,{
+          name: 'unova-pokemon-league'
+          ,x: 340
+          ,y: 30
+        }
+        ,{
+          name: 'lacunosa-town'
+          ,x: 379
+          ,y: 85
+        }
+        ,{
+          name: 'undella-town'
+          ,x: 447
+          ,y: 133
+        }
+        ,{
+          name: 'white-forest'
+          ,x: 379
+          ,y: 182
+        }
+        ,{
+          name: 'anville-town'
+          ,x: 13
+          ,y: 60
+        }
+        ,{
+          name: 'aspertia-city'
+          ,x: 28
+          ,y: 306
+        }
+        ,{
+          name: 'floccesy-town'
+          ,x: 66
+          ,y: 254
+        }
+        ,{
+          name: 'virbank-city'
+          ,x: 138
+          ,y: 254
+        }
+        ,{
+          name: 'lentimas-town'
+          ,x: 373
+          ,y: 133
+        }
+        ,{
+          name: 'humilau-city'
+          ,x: 470
+          ,y: 72
+        }
       ]
       ,spots: [
+        {
+          name: 'dreamyard'
+          ,x: 478
+          ,y: 236
+        }
+        ,{
+          name: 'wellspring-cave'
+          ,x: 429
+          ,y: 220
+        }
+        ,{
+          name: 'pinwheel-forest'
+          ,x: 387
+          ,y: 250
+        }
+        ,{
+          name: 'relic-castle'
+          ,x: 230
+          ,y: 208
+        }
+        ,{
+          name: 'lostlorn-forest'
+          ,x: 293
+          ,y: 169
+        }
+        ,{
+          name: 'cold-storage'
+          ,x: 148
+          ,y: 207
+        }
+        ,{
+          name: 'mistralton-cave'
+          ,x: 128
+          ,y: 141
+        }
+        ,{
+          name: 'chargestone-cave'
+          ,x: 84
+          ,y: 159
+        }
+        ,{
+          name: 'celestial-tower'
+          ,x: 107
+          ,y: 100
+        }
+        ,{
+          name: 'twist-mountain'
+          ,x: 143
+          ,y: 110
+        }
+        ,{
+          name: 'dragonspiral-tower'
+          ,x: 131
+          ,y: 62
+        }
+        ,{
+          name: 'moor-of-icirrus'
+          ,x: 176
+          ,y: 72
+        }
+        ,{
+          name: 'challengers-cave'
+          ,x: 234
+          ,y: 98
+        }
+        ,{
+          name: 'giant-chasm'
+          ,x: 417
+          ,y: 72
+        }
+        ,{
+          name: 'abundant-shrine'
+          ,x: 394
+          ,y: 153
+        }
+        ,{
+          name: 'floccesy-ranch'
+          ,x: 82
+          ,y: 236
+        }
+        ,{
+          name: 'virbank-complex'
+          ,x: 127
+          ,y: 276
+        }
+        ,{
+          name: 'castelia-sewers'
+          ,x: 312
+          ,y: 286
+        }
+        ,{
+          name: 'reversal-mountain'
+          ,x: 412
+          ,y: 133
+        }
+        ,{
+          name: 'clay-tunnel'
+          ,x: 143
+          ,y: 154
+        }
+        ,{
+          name: 'strange-house'
+          ,x: 396
+          ,y: 117
+        }
+        ,{
+          name: 'relic-passage'
+          ,x: 210
+          ,y: 236
+        }
+        ,{
+          name: 'seaside-cave'
+          ,x: 469
+          ,y: 105
+        }
       ]
       ,routes: [
+        {
+          name: 'unova-route-1'
+          ,direction: 'vertical'
+          ,x: 463
+          ,y1: 316
+          ,y2: 276
+        }
+        ,{
+          name: 'unova-route-2'
+          ,direction: 'diagonal'
+          ,x1: 463
+          ,x2: 455
+          ,y1: 276
+          ,y2: 236
+        }
+        ,{
+          name: 'unova-route-3'
+          ,direction: 'horizontal'
+          ,y: 236
+          ,x1: 455
+          ,x2: 405
+        }
+        ,{
+          name: 'skyarrow-bridge'
+          ,direction: 'diagonal'
+          ,x1: 405
+          ,x2: 263
+          ,y1: 236
+          ,y2: 259
+        }
+        ,{
+          name: 'desert-resort'
+          ,direction: 'horizontal'
+          ,y: 208
+          ,x1: 263
+          ,x2: 230
+        }
+        ,{
+          name: 'unova-route-4'
+          ,direction: 'vertical'
+          ,x: 263
+          ,y1: 259
+          ,y2: 182
+        }
+        ,{
+          name: 'unova-route-5'
+          ,direction: 'horizontal'
+          ,y: 182
+          ,x1: 263
+          ,x2: 216
+        }
+        ,{
+          name: 'driftveil-drawbridge'
+          ,direction: 'horizontal'
+          ,y: 182
+          ,x1: 216
+          ,x2: 147
+        }
+        ,{
+          name: 'unova-route-6'
+          ,direction: 'diagonal'
+          ,x1: 147
+          ,x2: 79
+          ,y1: 182
+          ,y2: 133
+        }
+        ,{
+          name: 'unova-route-7'
+          ,direction: 'diagonal'
+          ,x1: 79
+          ,x2: 147
+          ,y1: 133
+          ,y2: 85
+        }
+        ,{
+          name: 'unova-route-8'
+          ,direction: 'horizontal'
+          ,y: 85
+          ,x1: 147
+          ,x2: 192
+        }
+        ,{
+          name: 'tubeline-bridge'
+          ,direction: 'horizontal'
+          ,y: 85
+          ,x1: 192
+          ,x2: 229
+        }
+        ,{
+          name: 'unova-route-9'
+          ,direction: 'horizontal'
+          ,y: 85
+          ,x1: 229
+          ,x2: 263
+        }
+        ,{
+          name: 'unova-route-10'
+          ,direction: 'diagonal'
+          ,x1: 263
+          ,x2: 274
+          ,y1: 85
+          ,y2: 62
+        }
+        ,{
+          name: 'unova-route-10'
+          ,direction: 'diagonal'
+          ,x1: 314
+          ,x2: 340
+          ,y1: 62
+          ,y2: 30
+        }
+        ,{
+          name: 'unova-route-10'
+          ,direction: 'horizontal'
+          ,y: 62
+          ,x1: 274
+          ,x2: 314
+        }
+        ,{
+          name: 'unova-route-11'
+          ,direction: 'horizontal'
+          ,y: 85
+          ,x1: 263
+          ,x2: 300
+        }
+        ,{
+          name: 'village-bridge'
+          ,direction: 'horizontal'
+          ,y: 85
+          ,x1: 300
+          ,x2: 339
+        }
+        ,{
+          name: 'unova-route-12'
+          ,direction: 'horizontal'
+          ,y: 85
+          ,x1: 339
+          ,x2: 379
+        }
+        ,{
+          name: 'unova-route-13'
+          ,direction: 'diagonal'
+          ,x1: 379
+          ,x2: 447
+          ,y1: 85
+          ,y2: 133
+        }
+        ,{
+          name: 'unova-route-14'
+          ,direction: 'diagonal'
+          ,x1: 447
+          ,x2: 379
+          ,y1: 133
+          ,y2: 182
+        }
+        ,{
+          name: 'unova-route-15'
+          ,direction: 'horizontal'
+          ,y: 182
+          ,x1: 339
+          ,x2: 379
+        }
+        ,{
+          name: 'marvelous-bridge'
+          ,direction: 'horizontal'
+          ,y: 182
+          ,x1: 300
+          ,x2: 339
+        }
+        ,{
+          name: 'unova-route-16'
+          ,direction: 'horizontal'
+          ,y: 182
+          ,x1: 263
+          ,x2: 300
+        }
+        ,{
+          name: 'unova-route-18'
+          ,direction: 'horizontal'
+          ,y: 316
+          ,x1: 428
+          ,x2: 405
+        }
+        ,{
+          name: 'unova-route-17'
+          ,direction: 'horizontal'
+          ,y: 316
+          ,x1: 463
+          ,x2: 428
+        }
+        ,{
+          name: 'unova-route-19'
+          ,direction: 'vertical'
+          ,x: 28
+          ,y1: 306
+          ,y2: 266
+        }
+        ,{
+          name: 'unova-route-19'
+          ,direction: 'diagonal'
+          ,x1: 28
+          ,x2: 66
+          ,y1: 266
+          ,y2: 254
+        }
+        ,{
+          name: 'unova-route-20'
+          ,direction: 'horizontal'
+          ,y: 254
+          ,x1: 66
+          ,x2: 138
+        }
+        ,{
+          name: 'unova-route-21'
+          ,direction: 'vertical'
+          ,x: 469
+          ,y1: 105
+          ,y2: 72
+        }
+        ,{
+          name: 'unova-route-22'
+          ,direction: 'horizontal'
+          ,y: 72
+          ,x1: 469
+          ,x2: 417
+        }
+        ,{
+          name: 'unova-route-23'
+          ,direction: 'diagonal'
+          ,x1: 393
+          ,x2: 340
+          ,y1: 33
+          ,y2: 30
+        }
+        ,{
+          name: 'unova-route-23'
+          ,direction: 'vertical'
+          ,x: 393
+          ,y1: 72
+          ,y2: 33
+        }
+        ,{
+          name: 'unova-route-23'
+          ,direction: 'horizontal'
+          ,y: 72
+          ,x1: 417
+          ,x2: 393
+        }
+        ,{
+          name: 'undella-bay'
+          ,direction: 'diagonal'
+          ,x1: 447
+          ,x2: 469
+          ,y1: 133
+          ,y2: 105
+        }
       ]
     }
   };
