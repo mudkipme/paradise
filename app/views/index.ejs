@@ -22,7 +22,7 @@
         document.documentElement.className += " no-touch";
       }
       var PARADISE = {
-        imgBase: '<%= settings["img base"] %>'
+        imgBase: '<%= config.app.imgBase %>'
         ,locale: '<%= i18n.lng() %>'
         ,me: <%- JSON.stringify(me) -%>
       };
@@ -44,10 +44,47 @@
 
         <div class="collapse navbar-collapse navbar-52poke-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="http://bbs.52poke.com/"><%= t('app.forum') %></a></li>
+            <li class="hidden-sm"><a href="http://bbs.52poke.com/"><%= t('app.forum') %></a></li>
             <li><a href="http://www.52poke.com/"><%= t('app.main-page') %></a></li>
             <li><a href="http://wiki.52poke.com/"><%= t('app.wiki') %></a></li>
             <li class="active"><a href="/"><%= t('app.pokemon-paradise') %></a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= t('forum.apps') %> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <% _.each(config.bbs.apps, function(url, name){ %>
+                  <li><a href="<%= url %>"><%= t('forum.'+name) %></a></li>
+                <% }) %>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= t('forum.view') %> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="http://bbs.52poke.com/misc.php?p=viewnews"><%= t('forum.viewnews') %></a></li>
+                <li><a href="http://bbs.52poke.com/misc.php?p=top"><%= t('forum.viewtop') %></a></li>
+                <li><a href="http://bbs.52poke.com/userlist.php"><%= t('forum.userlist') %></a></li>
+                <li><a href="/search.php?keyword=<%= encodeURIComponent(member.username) %>&amp;method=or&amp;method1=2&amp;method2=7"><%= t('forum.my-topic') %></a></li>
+                <li><a href="/search.php?keyword=<%= encodeURIComponent(member.username) %>&amp;method=or&amp;method1=3&amp;method2=7"><%= t('forum.my-reply') %></a></li>
+              </ul>
+            </li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= me.name %> <span class="hide badge"></span> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-header"><%= t('app.msg') %></li>
+                <li><a href="/msg"><span class="badge pull-right hide"></span><%= t('app.my-msg') %></a></li>
+                <li><a href="http://bbs.52poke.com/messenger.php?job=receivebox"><%= t('forum.primsg') %></a></li>
+                <li class="divider"></li>
+                <li><a href="http://bbs.52poke.com/usercp.php"><%= t('forum.usercp') %></a></li>
+                <li><a href="http://bbs.52poke.com/profile.php"><%= t('forum.profile') %></a></li>
+                <li><a href="http://bbs.52poke.com/viewfav.php"><%= t('forum.viewfav') %></a></li>
+                <li><a href="http://bbs.52poke.com/misc.php?p=account"><%= t('forum.bind-account') %></a></li>
+                <li class="divider"></li>
+                <li><a href="http://bbs.52poke.com/login.php"><%= t('forum.re-login') %></a></li>
+                <li><a href="http://bbs.52poke.com/login.php?job=quit&amp;verify=<%= member.logHash %>"><%= t('forum.logout') %></a></li>
+              </ul>
+            </li>
           </ul>
         </div>
       </div>
@@ -65,9 +102,6 @@
           <li><a href="http://www.apple.com/ios/whats-new/#safari">Safari for iOS</a> 5</li>
           <li><a href="http://www.google.com/intl/en/chrome/browser/mobile/">Chrome for Mobile</a></li>
         </ul>
-      </div>
-      <div class="alert alert-warning">
-        <strong>✻</strong> 开发中画面，与神奇宝贝乐园正式版会有差异。
       </div>
       
       <div id="paradise-alert"></div>

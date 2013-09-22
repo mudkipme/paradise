@@ -17,7 +17,7 @@ exports.login = function(req, res, next){
       }
       return res.json(403, { error: err.message });
     }
-    req.member = member;
+    res.locals.member = req.member = member;
     next();
   });
 };

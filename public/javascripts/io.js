@@ -43,7 +43,7 @@ define([
     ,'storage:move': function(pokemon, options){
       App.trainer.storage.moveSet(pokemon, options);
     }
-    ,'storage:reset': function(pokemon, options){
+    ,'storage:reset': function(){
       App.trainer.set({'currentBox': 0});
       App.trainer.storage.fetch({reset: true});
     }

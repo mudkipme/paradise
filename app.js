@@ -11,6 +11,7 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var i18n = require('i18next');
+var _ = require('underscore');
 var config = require('./config.json');
 var common = require('./app/common');
 
@@ -34,7 +35,7 @@ i18n.init({
 app.set('port', process.env.PORT || config.app.port);
 app.set('views', __dirname + '/app/views');
 app.set('view engine', 'ejs');
-app.set('img base', config.app.imgBase);
+app.locals({ _: _, config: config });
 app.use(express.compress());
 app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
 app.use(express.logger('dev'));

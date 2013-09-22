@@ -1,3 +1,4 @@
+var crypto = require('crypto');
 var db = require('../common').mysqlConnection;
 
 var Member = function(){
@@ -13,6 +14,12 @@ var Member = function(){
 
   Object.defineProperty(me, 'isAdmin', {get: function(){
     return me._rawUserInfo['ugnum'] == 0;
+  }});
+
+  Object.defineProperty(me, 'logHash', {get: function(){
+    var md5 = crypto.createHash('md5');
+    return md5.update(me._rawUserInfo['pwd'] + me._rawUserInfo['userid'])
+      .digest("hex").toString().substr(0, 6);
   }});
 };
 

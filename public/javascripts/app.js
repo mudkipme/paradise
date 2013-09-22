@@ -134,6 +134,19 @@ define([
     io.start();
   });
 
+  // initialize message notification
+  App.addInitializer(function(){
+    if (!'Notification' in window)
+      return;
+
+    vent.on('io:msg:new', function(msg){
+      var notification = new Notification(i18n.t('app.pokemon-paradise'), {
+        body: i18n.t('msg.'+msg.type, msg.args)
+        ,icon: '/images/apple-icon-ipad.png'
+      });
+    });
+  });
+
   // After all initialize events
   App.on('initialize:after', function(){
     Backbone.history.start({pushState: true});
