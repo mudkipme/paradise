@@ -41,19 +41,22 @@ exports.trainer = function(req, res, next){
  * Set the correct locale
  */
 exports.locale = function(req, res, next){
-  var locale = config.app.defaultLanguage;
-  if (req.trainer && req.trainer.language) {
-    locale = req.trainer.language;
-  } else if (req.headers['accept-language']) {
-    // In this particular project, only Chinese variant would be detected.
-    // Otherwise fallback to defaultLanguage, like 52Poké Wiki.
-    var hasHans = req.headers['accept-language'].match(/zh-(hans|cn|sg|my)/i);
-    var hasHant = req.headers['accept-language'].match(/zh-(hant|tw|hk|mo)/i);
-    if (hasHans && !hasHant) locale = 'zh-hans';
-    if (!hasHans && hasHant) locale = 'zh-hant';
-  }
-  req.cookies.i18next = locale;
-  i18n.handle(req, res, next);
+  i18n.handle(req, res, function(){
+    var locale;
+    if (req.trainer && req.trainer.language) {
+      locale = req.trainer.language;
+    } else if (req.headers['accept-language']) {
+      var hasHans = req.headers['accept-language'].match(/zh-(hans|cn|sg|my)/i);
+      var hasHant = req.headers['accept-language'].match(/zh-(hant|tw|hk|mo)/i);
+      if (hasHans && !hasHant) locale = 'zh-hans';
+      if (!hasHans && hasHant) locale = 'zh-hant';
+    }
+    if (locale) {
+      req.lng = locale;
+      req.i18n.lng = function(){ return locale };
+    }
+    next();
+  });
 };
 
 /**

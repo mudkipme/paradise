@@ -20,15 +20,19 @@ var server = http.createServer(app);
 
 i18n.init({
   resGetPath: 'public/locales/__lng__/__ns__.json'
-  ,fallbackLng: false
+  ,preload: ['zh-hans', 'zh-hant', 'en']
+  ,supportedLngs: ['zh-hans', 'zh-hant', 'en']
+  ,fallbackLng: config.app.defaultLanguage
   ,load: 'current'
   ,lowerCaseLng: true
-  ,detectLngFromHeaders: false
+  ,detectLngFromHeaders: true
   ,detectLngFromPath: false
+  ,useCookie: false
   ,ns: {
     namespaces: ['app', 'pokemon'],
     defaultNs: 'app'
   }
+  ,debug: true
 });
 
 // configurations

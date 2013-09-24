@@ -10,7 +10,7 @@ requirejs.config({
     ,marionette: '../components/backbone.marionette/lib/core/amd/backbone.marionette'
     ,'backbone.wreqr': '../components/backbone.wreqr/lib/amd/backbone.wreqr'
     ,'backbone.babysitter': '../components/backbone.babysitter/lib/amd/backbone.babysitter'
-    ,i18next: '../components/i18next/release/i18next.amd.withJQuery-1.6.3'
+    ,i18next: '../components/i18next/release/i18next.amd.withJQuery-1.7.1'
     ,moment: '../components/moment/moment'
     ,'moment/lang': '../components/moment/lang'
     ,'socket.io': '../components/socket.io-client/dist/socket.io'
