@@ -1,0 +1,24 @@
+<% _.each(items, function(pokemon){ %>
+  <li class="pokemon">
+    <div class="sprite">
+      <img src="<%= spriteUrl(pokemon) %>" alt="<%- pokemonName(pokemon) %>" />
+    </div>
+    <div class="name"><%- pokemonName(pokemon) %></div>
+    <div class="hp">
+      HP<div class="progress"><div class="progress-bar <%
+      if (pokemon.stats.hp / pokemon.stats.maxHp <= 0.2) {
+        %>progress-bar-danger<%
+      } else if (pokemon.stats.hp / pokemon.stats.maxHp <= 0.5) {
+        %>progress-bar-warning<%
+      } else {
+        %>progress-bar-success<%
+      } %>" style="width: <%= pokemon.stats.hp / pokemon.stats.maxHp * 100 %>%"></div></div>
+    </div>
+    <div class="level">Lv. <%= pokemon.level %></div>
+    <div class="type">
+      <% _.each(pokemon.species.types, function(type){
+        %><span class="label type-<%= type.name %>"><%= t('type.'+type.name) %></span><%
+      }) %>
+    </div>
+  </li>
+<% }) %>

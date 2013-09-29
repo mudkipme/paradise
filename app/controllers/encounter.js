@@ -9,13 +9,10 @@ exports.post = function(req, res){
     ,function(location, next){
       location.encounter(req.trainer, next);
     }
-  ], function(err, pokemon){
+  ], function(err, encounter){
     if (err) return res.json(403, {error: err.message});
 
-    res.json({
-      location: req.body.location
-      ,pokemon: pokemon || null
-    });
+    res.json(encounter);
   });
 };
 
@@ -31,15 +28,15 @@ exports.catch = function(req, res){
 
 // Escape from the current wild Pokémon
 exports.escape = function(req, res){
-  if (!req.trainer.wildPokemon)
+  var pokemon = req.trainer.encounter.pokemon;
+  if (!pokemon)
     return res.json(404, 'NO_ENCOUNTER_POKEMON');
 
   async.series([
-    req.trainer.wildPokemon.remove.bind(req.trainer.wildPokemon)
+    pokemon.remove.bind(pokemon)
 
     ,function(next){
-      req.trainer.currentLocation = null;
-      req.trainer.wildPokemon = null;
+      req.trainer.encounter = {};
       req.trainer.save(next);
     }
   ], function(err){

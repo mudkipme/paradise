@@ -33,8 +33,12 @@ var TrainerSchema = new Schema({
     itemId:         Number,
     number:         Number
   }],
-  currentLocation:  String,
-  wildPokemon:      { type: Schema.Types.ObjectId, ref: 'Pokemon' },
+  encounter: {
+    location:       String,
+    area:           String,
+    method:         String,
+    pokemon:        { type: Schema.Types.ObjectId, ref: 'Pokemon' },
+  },
   realWorld: {
     longitude:      Number,
     latitude:       Number,
@@ -63,12 +67,19 @@ TrainerSchema.virtual('storageNum').get(function(){
   }
 });
 
+TrainerSchema.virtual('localTime').get(function(){
+  if (this._localTime) {
+    return this._localTime;
+  }
+  this._localTime = new time.Date();
+  this._localTime.setTimezone(this.realWorld.timezoneId);
+  return this._localTime;
+});
+
 // Get current season
 TrainerSchema.virtual('season').get(function(){
-  var now = new time.Date();
   var seasons = ['spring', 'summer', 'autumn', 'winter'];
-  now.setTimezone(this.realWorld.timezoneId);
-  return seasons[now.getMonth() % 4];
+  return seasons[this.localTime.getMonth() % 4];
 });
 
 // Get current time of day
@@ -79,10 +90,7 @@ TrainerSchema.virtual('timeOfDay').get(function(){
     ,autumn: [6, 20]
     ,winter: [7, 19]
   };
-  var now = new time.Date(), season = this.season;
-  now.setTimezone(this.realWorld.timezoneId);
-
-  var hour = now.getHours();
+  var hour = this.localTime.getHours(), season = this.season;
   if (hour >= split[season][0] && hour < 10) {
     return 'morning';
   } else if (hour >= 10 && hour < split[season][1]) {
@@ -233,8 +241,8 @@ TrainerSchema.methods.initParty = function(callback){
  * Init the current encounter Pokémon
  */
 TrainerSchema.methods.initWild = function(callback){
-  if (!this.wildPokemon) return callback(null);
-  this.wildPokemon.initData(callback);
+  if (!this.encounter.pokemon) return callback(null);
+  this.encounter.pokemon.initData(callback);
 };
 
 
@@ -372,6 +380,7 @@ TrainerSchema.methods.todaySpecies = function(callback){
 // Hide some information from toJSON
 TrainerSchema.methods.toJSON = function(options){
   var res = mongoose.Document.prototype.toJSON.call(this, options);
+  res.localTime = this.localTime.toDateString() + ' ' + this.localTime.toLocaleTimeString();
   return _.omit(res, ['pokedexCaughtHex', 'pokedexSeenHex'
     , 'storage', 'storagePokemon', 'bag', 'todayLuck']);
 };
@@ -379,7 +388,7 @@ TrainerSchema.methods.toJSON = function(options){
 // Find trainer by name, and init necessary information
 TrainerSchema.statics.findByName = function(name, callback){
   this.findOne({ name: name })
-  .populate('party wildPokemon')
+  .populate('party encounter.pokemon')
   .exec(function(err, trainer){
     if (err) return callback(err);
     if (!trainer) return callback(null, null);

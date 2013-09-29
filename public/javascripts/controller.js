@@ -9,8 +9,10 @@ define([
   ,'views/storage'
   ,'views/world'
   ,'views/region'
+  ,'views/encounter'
 ], function(Marionette, vent, MenuView, HomeView, PartyView
-  , BagView, PokeMartView, StorageView, WorldView, RegionView){
+  , BagView, PokeMartView, StorageView, WorldView, RegionView
+  , EncounterView){
 
   // Avoid circular dependencies
   var App = null;
@@ -54,10 +56,16 @@ define([
 
     ,world: function(){
       App.mainRegion.show(new WorldView);
+      App.trainer.fetch();
     }
 
     ,region: function(region){
       App.mainRegion.show(new RegionView({region: region}));
+      App.trainer.fetch();
+    }
+
+    ,encounter: function(){
+      App.mainRegion.show(new EncounterView({model: App.trainer.encounter}));
     }
   });
 });

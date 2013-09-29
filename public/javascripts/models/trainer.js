@@ -5,13 +5,15 @@ define([
   ,'collections/party'
   ,'collections/pocket'
   ,'collections/storage'
-], function($, _, Backbone, Party, Pocket, Storage){
+  ,'models/encounter'
+], function($, _, Backbone, Party, Pocket, Storage, Encounter){
 
   var Trainer = Backbone.Model.extend({
     initialize: function(){
-      this.party = new Party(this.get('party'));
+      this.party = new Party(this.get('party'), {trainer: this});
       this.pocket = new Pocket({trainer: this});
       this.storage = new Storage([], {trainer: this});
+      this.encounter = new Encounter(this.get('encounter'), {trainer: this});
 
       this.listenTo(this.party, 'move', this.moveParty);
     }
@@ -22,6 +24,7 @@ define([
 
     ,parse: function(resp){
       this.party.set(resp.party);
+      this.encounter.set(resp.encounter);
       return resp;
     }
 

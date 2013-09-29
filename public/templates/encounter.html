@@ -1,0 +1,26 @@
+<section class="encounter-scene encounter-<%- timeOfDay %> <% if (_.contains(['old-rod', 'good-rod', 'super-rod', 'surf', 'super-rod-spots', 'surf-spots'], method)) { %>encounter-water<% } %>">
+  <div class="encounter-events">
+    <p><%= t('encounter.jump-out', {pokemon: pokemonName()}) %></p>
+    <p><%= t('encounter.select-pokemon') %></p>
+  </div>
+  <div class="pokemon-info popover top">
+    <div class="arrow"></div>
+    <div class="popover-content">
+      <p>
+        <%- pokemonName() %><% if (pokemon.gender == Gender.female) { %><span class="female">♀</span><% } else if (pokemon.gender == Gender.male) { %><span class="male">♂</span><% } %>
+      </p>
+      <p>Lv. <%= pokemon.level %> <% if (pokemon.isShiny) {%><span class="shiny-star"></span><%}%></p>
+    </div>
+  </div>
+  <div class="encounter-pokemon">
+    <div class="shadow"></div>
+    <div class="sprite">
+      <img src="<%= spriteUrl() %>" alt="<%- pokemonName() %>" />
+    </div>
+  </div>
+</section>
+<section class="party-select"></section>
+<section class="encounter-options">
+  <button class="btn btn-pokeball"><%= t('pocket.pokeballs') %></button>
+  <button class="btn btn-escape"><%= t('encounter.escape') %></button>
+</section>

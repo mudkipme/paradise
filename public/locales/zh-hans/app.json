@@ -109,6 +109,11 @@
     ,"forme": "__pokemon__ 变换成为__forme__型态！"
     ,"connector": " 和 "
   }
+  ,"encounter": {
+    "jump-out": "野生的__pokemon__出现了！"
+    ,"select-pokemon": "请选择队伍中的神奇宝贝对战！"
+    ,"escape": "逃脱"
+  }
   ,"forme": {
     "sky": "天空"
   }

@@ -470,6 +470,9 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
 // Hide some information from toJSON
 PokemonSchema.methods.toJSON = function(options){
   var res = mongoose.Document.prototype.toJSON.call(this, options);
+  if (res.originalTrainer) {
+    res.originalTrainer = _.pick(res.originalTrainer, 'id', 'name');
+  }
   return _.omit(res, ['individual', 'effort', 'lostHp'
     , 'natureId', 'holdItemId', 'pokeBallId']);
 };

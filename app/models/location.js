@@ -67,7 +67,7 @@ var Location = function(identifier, callback){
 
 var locationProto = {
   encounter: function(trainer, callback){
-    if (trainer.wildPokemon)
+    if (trainer.encounter.pokemon)
       return callback(new Error('ALREADY_IN_ENCOUNTER'));
 
     var me = this;
@@ -101,8 +101,6 @@ var locationProto = {
 
     // Choose a location area
     encounters = _.sample(_.values(_.groupBy(encounters, 'location_area')));
-    console.log(encounters);
-
 
     // Choose a method
     var methods = _.uniq(_.pluck(encounters, 'method')), rates = [];
@@ -111,7 +109,7 @@ var locationProto = {
       rates.push(memo);
       return memo;
     }, 0);
-    var seed = _.random(0, sum), method = null;
+    var seed = _.random(0, sum - 1), method = null;
     _.each(rates, function(rate, i){
       if (seed < rate) {
         method = methods[i];
@@ -128,7 +126,7 @@ var locationProto = {
       rates.push(memo);
       return memo;
     }, 0);
-    seed = _.random(0, sum);
+    seed = _.random(0, sum - 1);
     _.each(rates, function(rate, i){
       if (seed < rate) {
         encounter = encounters[i];
@@ -136,9 +134,8 @@ var locationProto = {
       }
     });
 
-    console.log(encounter);
-
-    if (!encounter) return callback(null);
+    var result = { location: me.name, time: new Date() };
+    if (!encounter) return callback(null, result);
 
     // Now create this Pokémon
     async.waterfall([
@@ -159,14 +156,16 @@ var locationProto = {
       ,function(pokemon, next){
         pokemon.save(function(err){
           if (err) return next(err);
-          trainer.wildPokemon = pokemon;
-          trainer.currentLocation = me.name;
+          result.area = encounter.location_area;
+          result.method = encounter.method;
+          result.pokemon = pokemon;
+          trainer.encounter = result;
           trainer.save(next);
         });
       }
     ], function(err){
       if (err) return callback(err);
-      callback(err, pokemon);
+      callback(err, result);
     });
   }
 };

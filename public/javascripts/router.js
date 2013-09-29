@@ -10,6 +10,7 @@ define([
       ,'storage': 'storage'
       ,'world': 'world'
       ,'world/:region': 'region'
+      ,'encounter': 'encounter'
     }
   });
 });
