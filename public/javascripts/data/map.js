@@ -1958,14 +1958,14 @@ define([], function(){
           ,x2: 428
         }
         ,{
-          name: 'unova-route-19'
+          name: 'route-19'
           ,direction: 'vertical'
           ,x: 28
           ,y1: 306
           ,y2: 266
         }
         ,{
-          name: 'unova-route-19'
+          name: 'route-19'
           ,direction: 'diagonal'
           ,x1: 28
           ,x2: 66
@@ -1973,28 +1973,28 @@ define([], function(){
           ,y2: 254
         }
         ,{
-          name: 'unova-route-20'
+          name: 'route-20'
           ,direction: 'horizontal'
           ,y: 254
           ,x1: 66
           ,x2: 138
         }
         ,{
-          name: 'unova-route-21'
+          name: 'route-21'
           ,direction: 'vertical'
           ,x: 469
           ,y1: 105
           ,y2: 72
         }
         ,{
-          name: 'unova-route-22'
+          name: 'route-22'
           ,direction: 'horizontal'
           ,y: 72
           ,x1: 469
           ,x2: 417
         }
         ,{
-          name: 'unova-route-23'
+          name: 'route-23'
           ,direction: 'diagonal'
           ,x1: 393
           ,x2: 340
@@ -2002,14 +2002,14 @@ define([], function(){
           ,y2: 30
         }
         ,{
-          name: 'unova-route-23'
+          name: 'route-23'
           ,direction: 'vertical'
           ,x: 393
           ,y1: 72
           ,y2: 33
         }
         ,{
-          name: 'unova-route-23'
+          name: 'route-23'
           ,direction: 'horizontal'
           ,y: 72
           ,x1: 417

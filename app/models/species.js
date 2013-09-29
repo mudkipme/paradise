@@ -5,7 +5,8 @@ var Type = require('./type');
 
 // Cached Pokémon species data.
 // speciesCache[nationalNumber][formIdentifier]
-speciesCache = {};
+var speciesCache = {};
+var pokemonIdCache = {};
 
 // Get the Species object
 var Species = function(nationalNumber, form, callback) {
@@ -149,6 +150,18 @@ var speciesProto = {
 // Get all Pokémon's names
 Species.allNames = function(callback){
   db.all('SELECT id AS number, identifier AS name FROM pokemon_species', callback);
+};
+
+// Get the species id and form identifier by pokemon_id
+Species.pokemonId = function(pokemonId, callback){
+  if (pokemonIdCache[pokemonId])
+    return callback(null, pokemonIdCache[pokemonId]);
+
+  db.get('SELECT species_id, form_identifier FROM pokemon_forms JOIN pokemon ON pokemon_forms.pokemon_id = pokemon.id WHERE pokemon_id = ? AND pokemon_forms.is_default = 1', [pokemonId], function(err, row){
+    if (err) return callback(err);
+    if (!row) return new Error('MissingNo.');
+    return callback(null, row);
+  });
 };
 
 // Get the baby species of a Pokémon, without Insense or not

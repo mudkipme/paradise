@@ -6,19 +6,21 @@ var pokemon = require('./controllers/pokemon');
 var item = require('./controllers/item');
 var storage = require('./controllers/storage');
 var admin = require('./controllers/admin');
+var encounter = require('./controllers/encounter');
 
 // Middlewares
 var auth = require('./middlewares/authentication');
 var pm = require('./middlewares/pokemon-middleware');
 
-var defaults = [auth.login, auth.trainer, auth.locale];
+var defaults = [auth.login, auth.trainer];
 var isSelf = [auth.login, auth.trainer, auth.isSelf];
+var page = [auth.login, auth.trainer, auth.locale];
 var myPokemon = [auth.login, auth.trainer, pm.myPokemon];
 var isAdmin = [auth.login, auth.isAdmin];
 
 module.exports = function(app){
-  app.get('/', defaults, index.index);
-  app.get(/^\/(party|pokedex|bag|trainer|storage|world|timeline|pokemart|daycare|trade|battle|rank|migrate|setting|record|help)(\/.*)?$/, defaults, index.defaults);
+  app.get('/', page, index.index);
+  app.get(/^\/(party|pokedex|bag|trainer|storage|world|timeline|pokemart|daycare|trade|battle|rank|migrate|setting|record|help)(\/.*)?$/, page, index.defaults);
   app.get('/bbs', bbs.login);
 
   // Trainer actions
@@ -58,6 +60,9 @@ module.exports = function(app){
   app.patch('/api/storage/:boxId', defaults, storage.put);
   app.post('/api/storage/move', defaults, storage.move);
   app.post('/api/storage/sort', defaults, storage.sort);
+
+  // Encounter
+  app.post('/api/encounter', defaults, encounter.post);
 
   // Admin
   app.post('/api/admin/event-pokemon', isAdmin, admin.eventPokemon);

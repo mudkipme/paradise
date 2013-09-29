@@ -229,6 +229,14 @@ TrainerSchema.methods.initParty = function(callback){
   }, callback);
 };
 
+/**
+ * Init the current encounter Pokémon
+ */
+TrainerSchema.methods.initWild = function(callback){
+  if (!this.wildPokemon) return callback(null);
+  this.wildPokemon.initData(callback);
+};
+
 
 /**
  * Set real world location based on latitude and longitude
@@ -371,7 +379,7 @@ TrainerSchema.methods.toJSON = function(options){
 // Find trainer by name, and init necessary information
 TrainerSchema.statics.findByName = function(name, callback){
   this.findOne({ name: name })
-  .populate('party')
+  .populate('party wildPokemon')
   .exec(function(err, trainer){
     if (err) return callback(err);
     if (!trainer) return callback(null, null);
@@ -379,6 +387,7 @@ TrainerSchema.statics.findByName = function(name, callback){
     async.series([
       trainer.initParty.bind(trainer)
       ,trainer.todaySpecies.bind(trainer)
+      ,trainer.initWild.bind(trainer)
     ], function(err){
       if (err) return callback(err);
       callback(null, trainer);

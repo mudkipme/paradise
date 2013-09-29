@@ -32,7 +32,6 @@ i18n.init({
     namespaces: ['app', 'pokemon'],
     defaultNs: 'app'
   }
-  ,debug: true
 });
 
 // configurations

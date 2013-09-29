@@ -16,12 +16,12 @@ exports.get = function(req, res){
   var storagePokemon = _.where(req.trainer.storagePokemon, { boxId: boxId });
 
   Pokemon.populate(storagePokemon, { path: 'pokemon' }, function(err){
-    if (err) return res.json(500, {err: err.message});
+    if (err) return res.json(500, {error: err.message});
 
     async.eachSeries(_.pluck(storagePokemon, 'pokemon'), function(pokemon, next){
       pokemon.initData(next);
     }, function(err){
-      if (err) return res.json(500, {err: err.message});
+      if (err) return res.json(500, {error: err.message});
       storagePokemon = _.map(storagePokemon, function(sp){
         return _.extend({ position: sp.position }, sp.pokemon.toJSON());
       });
