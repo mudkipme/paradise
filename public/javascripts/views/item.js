@@ -41,11 +41,13 @@ define([
     ,template: _.template(itemTemplate)
     ,templateHelpers: { t: i18n.t }
 
+    ,initialize: function(){
+      this.listenTo(vent, 'windowResize', this.ellipsisDesc);
+      this.listenTo(vent, 'popover', this.hidePopover);
+    }
+
     ,onRender: function(){
       var me = this;
-
-      me.listenTo(vent, 'windowResize', me.ellipsisDesc);
-      me.listenTo(vent, 'popover', me.hidePopover);
 
       me.partyPopover = new PartyPopoverView({
         collection: require('app').trainer.party

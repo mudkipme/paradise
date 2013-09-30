@@ -40,13 +40,13 @@ define([
 
     ,initialize: function(options){
       this.pokeMart = options.pokeMart;
+      this.listenTo(vent, 'windowResize', this.setPosition);
     }
 
     ,onRender: function(){
       var me = this;
 
       me.setPosition();
-      me.listenTo(vent, 'windowResize', this.setPosition);
 
       // Fade in the shelf
       me.$el.css('opacity', 0).offset();

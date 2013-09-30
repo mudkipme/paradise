@@ -3,9 +3,11 @@ define([
   ,'underscore'
   ,'marionette'
   ,'i18next'
+  ,'vent'
   ,'views/pokemon'
   ,'text!templates/party-select.html'
-], function($, _, Marionette, i18n, PokemonView, partySelectTemplate){
+  ,'util'
+], function($, _, Marionette, i18n, vent, PokemonView, partySelectTemplate){
 
   var helpers = PokemonView.prototype.templateHelpers;
 
@@ -24,8 +26,46 @@ define([
       }
     }
 
+    ,ui: {
+      pokemon: '.pokemon'
+    }
+
+    ,events: {
+      'mouseenter .pokemon': 'withdrawCard'
+      ,'mouseleave .pokemon': 'depositCard'
+      ,'click .pokemon': 'choosePokemon'
+    }
+
     ,collectionEvents: {
       'add remove change sort': 'render'
+    }
+
+    ,initialize: function(){
+      this.listenTo(vent, 'windowResize', this.resetPosition);
+    }
+
+    ,onRender: function(){
+      this.resetPosition();
+    }
+
+    ,onShow: function(){
+      this.resetPosition();
+    }
+
+    ,resetPosition: function(){
+      var pokemonNumber = this.collection.size();
+      var width = this.$el.width(), singleWidth = this.ui.pokemon.width();
+      var left = Math.ceil((singleWidth * pokemonNumber - width) / (pokemonNumber - 1));
+
+      this.ui.pokemon.not(':first-child').css('margin-left', -left + 'px');
+    }
+
+    ,withdrawCard: function(e){
+      $(e.currentTarget).css('z-index', 1);
+    }
+
+    ,depositCard: function(e){
+      $(e.currentTarget).css('z-index', '');
     }
   });
 

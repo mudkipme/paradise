@@ -29,7 +29,7 @@ define([
       return data;
     }
 
-    ,onRender: function(){
+    ,onShow: function(){
       var party = require('app').trainer.party;
       this.partySelect.show(new PartySelectView({collection: party}));
     }

@@ -80,10 +80,13 @@ define([
       return iv;
     }
 
-    ,onRender: function(){
-      this.el.className = 'wallpaper-' + (this.collection.wallpaper || 'blue');
+    ,initialize: function(){
       this.listenTo(vent, 'io:storage:add', this.pokemonAdded);
       this.listenTo(this.collection.trainer, 'change:storageNum', this.renderPage);
+    }
+
+    ,onRender: function(){
+      this.el.className = 'wallpaper-' + (this.collection.wallpaper || 'blue');
       this.renderPage();
     }
 

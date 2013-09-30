@@ -12,16 +12,48 @@
       background-image: url(../images/encounter/sky-night.png);
     }
 
+    .encounter-events {
+      text-align: center;
+      font-size: 16px;
+      padding-top: 20px;
+      p {
+        margin: 0;
+      }
+    }
+
     .encounter-pokemon {
       position: absolute;
       width: 100%;
-      height: 172px;
+      height: 180px;
       bottom: -27px;
-      background: data-uri('../images/encounter/ground.png') bottom center no-repeat;
+      background: url(../images/encounter/ground.png) bottom center no-repeat;
+
+      .sprite {
+        position: absolute;
+        left: 50%;
+        width: 96px;
+        height: 96px;
+        margin-left: -48px;
+      }
+
+      .shadow {
+        position: absolute;
+        top: 60px;
+        left: 50%;
+        width: 120px;
+        height: 25px;
+        margin-left: -60px;
+        border-radius: 50%;
+        background-color: #4aa14d;
+      }
     }
 
     &.encounter-water .encounter-pokemon {
-      background-image: data-uri('../images/encounter/water.png');
+      background-image: url(../images/encounter/water.png);
+
+      .shadow {
+        background-color: #0076f4;
+      }
     }
 
     .pokemon-info {
@@ -34,8 +66,35 @@
       p {
         margin: 0;
         text-align: center;
-        font-size: 18px;
+        font-size: 16px;
       }
+    }
+  }
+
+  .encounter-options {
+    .make-row();
+    margin-top: 30px;
+    > div {
+      .make-xs-column(6);
+      text-align: center;
+    }
+    .btn {
+      width: 120px;
+    }
+    .btn-pokeball {
+      .btn-primary;
+    }
+    .btn-escape {
+      .btn-danger;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  #encounter-view {
+    .party-select {
+      padding-left: 25px;
+      padding-right: 25px;
     }
   }
 }

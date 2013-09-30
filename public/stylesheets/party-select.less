@@ -1,0 +1,73 @@
+.party-select-view {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0;
+  text-align: center;
+  white-space: nowrap;
+
+  .pokemon {
+    width: 117px;
+    height: 213px;
+    display: inline-block;
+    background: data-uri('../images/pokemon/selection.png') no-repeat;
+    position: relative;
+    font-size: 14px;
+    cursor: pointer;
+
+    .sprite {
+      position: absolute;
+      left: 50%;
+      top: 7px;
+      margin-left: -48px;
+      width: 96px;
+      height: 96px;
+    }
+
+    .name, .hp, .level {
+      .text-blur;
+    }
+
+    .name {
+      line-height: 1.2;
+      word-break: break-all;
+    }
+
+    .name, .level {
+      position: absolute;
+      top: 105px;
+      left: 15px;
+      right: 15px;
+      text-align: center;
+    }
+
+    .level {
+      top: 155px;
+    }
+
+    .hp {
+      position: absolute;
+      top: 140px;
+      width: 100%;
+      text-align: center;
+      font-size: 11.844px;
+      .progress {
+        display: inline-block;
+        margin-bottom: 0;
+        height: 5px;
+        line-height: 5px;
+        margin-left: 5px;
+        vertical-align: middle;
+        width: 75px;
+      }
+    }
+
+    .type {
+      position: absolute;
+      top: 175px;
+      width: 100%;
+      text-align: center;
+    }
+  }
+}

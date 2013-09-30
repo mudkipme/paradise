@@ -27,10 +27,13 @@ define([
       sprite: '.sprite'
     }
 
+    ,initialize: function(){
+      this.listenTo(vent, 'popover', this.hidePopover);
+    }
+
     ,onRender: function(){
       var me = this;
 
-      me.listenTo(vent, 'popover', me.hidePopover);
       me.$el.popover({
         html: true
         ,content: function(){
