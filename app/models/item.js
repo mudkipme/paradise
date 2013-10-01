@@ -245,13 +245,11 @@ var itemProto = {
   }
 
   ,accuracy: function(accuracy, order){
-    var effects = _.where(this.effects, {effect_type: 'battle', param_1: 'accuracy'});
-    _.each(effects, function(effect){
-      if (effect.param_3 == 'slow' && order != 2)
-        return;
-      accuracy *= parseFloat(effect.param_2.substr(1));
-    });
-    return accuracy;
+    var effect = _.findWhere(this.effects, {effect_type: 'battle', param_1: 'accuracy'});
+    if (!effect || (effect.param_3 == 'slow' && order != 2))
+      return accuracy;
+    
+    return accuracy * parseFloat(effect.param_2.substr(1));
   }
 
   // movement-first, movement-last
@@ -279,7 +277,7 @@ var itemProto = {
         return;
 
       if (effect.param_1 == 'power') {
-        battleStat.damage *= parseFloat(effect.param_2.substr(1));
+        options.damage *= parseFloat(effect.param_2.substr(1));
       }
 
       if (effect.param_1 == 'shell-bell') {
@@ -325,8 +323,23 @@ var itemProto = {
     });
   }
 
-  ,afterBattle: function(){
+  ,effort: function(effort){
+    var effects = _.findWhere(this.effects, {effect_type: 'after-battle'});
+    if (!effect || !effect.param_1.match(/^effort/))
+      return;
+    var stat = effect.param_1.substr(7);
 
+    if (!stat && effect.param_2 == 'x2') {
+      _.each(effort, function(value, key){
+        effort[key] *= 2;
+      });
+    }
+
+    if (stat) {
+      effort[stat] += parseInt(effect.param_2);
+    }
+
+    return;
   }
 };
 

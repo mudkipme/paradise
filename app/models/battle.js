@@ -37,7 +37,11 @@ var battleStat = function(pokemon){
   return result;
 };
 
-var Battle = function(pokemonA, pokemonB, callback){
+var Battle = function(pokemonA, pokemonB, options, callback){
+  if (!callback) {
+    callback = options;
+    options = {};
+  }
 
   var battle = Object.create(battleProto);
   battle.pokemonA = pokemonA;
@@ -47,15 +51,77 @@ var Battle = function(pokemonA, pokemonB, callback){
   battle.roundCount = 0;
   battle.result = battle.round(true);
 
-  // Gain Experience
-  if (battle.winner.trainer) {
+  var actions = {};
 
+  var caculateExp = function(pokemon, s){
+    var a = battle.defeated.trainer ? 1.5 : 1;
+    var t = pokemon.originalTrainer._id.equals(pokemon.trainer) ? 1 : 1.5;
+    var b = battle.defeated.species.baseExperience;
+    var e = pokemon.holdItem && pokemon.holdItem.name == 'lucky-egg';
+    var l = battle.defeated.level;
+    var lp = pokemon.level;
+    return ((a * b * l) / (5 * s) * Math.pow(2 * l + 10, 2.5) / Math.pow(l + lp + 10, 2.5) + 1) * t * e;
+  };
+
+  // Gain Experience, efforts and happiness
+  if (battle.winner.trainer) {
+    var getExpPokemon = [battle.winner];
+
+    // Detect Exp Shares
+    actions.trainer = battle.winner.populate.bind(battle.winner, 'trainer.party');
+    actions.party = battle.winner.trainer.initParty.bind(battle.winner.trainer.initParty);
+    actions.experience = function(next){
+      _.each(battle.trainer.party, function(pm){
+        if (pm.holdItem.name == 'exp-share' && !pm._id.equals(battle.winner._id)) {
+          getExpPokemon.push(pm);
+        }
+      });
+      // Gain Experiences
+      async.mapSeries(getExpPokemon, function(pokemon, cb){
+        var exp = caculateExp(pokemon, getExpPokemon.length);
+        pokemon.gainExperience(exp, options, cb);
+      }, next);
+    };
+
+    actions.effort = function(next){
+      // Gain base stats
+      async.mapSeries(getExpPokemon, function(pokemon, cb){
+        var effort = _.clone(battle.defeated.species.effort);
+        if (pokemon.holdItem) {
+          pokemon.holdItem.effort(effort);
+        }
+        pokemon.gainEffort(effort, cb);
+      }, next);
+    };
+
+    // Gain friendship
+    if (_.random(0, 1)) {
+      actions.happiness = function(next){
+        var happiness = battle.winner.happiness < 200 ? 2 : 1;
+        battle.winner.gainHappiness(happiness, next);
+      };
+    }
   }
 
   // Lose HP
-  if (battle.loser.trainer) {
+  if (battle.defeated.trainer) {
+    actions.loseHp = function(next){
+      var loseHp = 10 + Math.round(Math.sqrt(battle.winner.level));
+      battle.defeated.gainHP(-loseHp, next);
+    };
 
+    actions.loseHappiness = function(next){
+      battle.defeated.gainHappiness(-1, next);
+    };
   }
+
+  async.series(actions, function(err, results){
+    if (err) return callback(err);
+
+    results = _.pick(results, 'experience', 'loseHp');
+    results.result = battle.result;
+    callback(null, results);
+  });
 };
 
 var battleProto = {
@@ -185,11 +251,11 @@ var battleProto = {
   ,endMatch: function(){
     if (statA.hp > statB.hp) {
       this.winner = this.pokemonA;
-      this.loser = this.pokemonB;
+      this.defeated = this.pokemonB;
       return 'win';
     } else if (statB.hp > statA.hp) {
       this.winner = this.pokemonB;
-      this.loser = this.pokemonA;
+      this.defeated = this.pokemonA;
       return 'lose';
     }
 

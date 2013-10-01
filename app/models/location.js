@@ -35,7 +35,14 @@ var Location = function(identifier, callback){
   location.name = identifier;
 
   async.waterfall([
-    db.all.bind(db, 'SELECT encounters.id AS id, version_id, encounter_methods.identifier AS method, rarity, location_areas.identifier AS location_area, pokemon_id, min_level, max_level FROM encounters JOIN encounter_slots ON encounter_slot_id = encounter_slots.id JOIN encounter_methods ON encounter_method_id = encounter_methods.id JOIN location_areas ON location_areas.id = location_area_id JOIN locations ON locations.id = location_id WHERE locations.identifier = ?', [identifier])
+    db.all.bind(db, 'SELECT id FROM locations WHERE identifier = ?', [identifier], next)
+
+    ,function(rows, next){
+      if (!rows.length) return next(null, []);
+      location.id = rows[0].id;
+
+      db.all('SELECT encounters.id AS id, version_id, encounter_methods.identifier AS method, rarity, location_areas.identifier AS location_area, pokemon_id, min_level, max_level FROM encounters JOIN encounter_slots ON encounter_slot_id = encounter_slots.id JOIN encounter_methods ON encounter_method_id = encounter_methods.id JOIN location_areas ON location_areas.id = location_area_id WHERE location_id = ?', [location.id], next);
+    }
 
     ,function(rows, next){
       if (!rows.length) return next(null, rows);

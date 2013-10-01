@@ -1,5 +1,6 @@
 var async = require('async');
 var Location = require('../models/location');
+var Battle = require('../models/battle');
 
 // Encounter a wild Pokémon
 exports.post = function(req, res){

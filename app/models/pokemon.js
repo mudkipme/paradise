@@ -138,7 +138,7 @@ PokemonSchema.virtual('expNextLevel').get(function(){
 // Events happened when Pokémon level up
 // Options includes the battle stats like location
 PokemonSchema.methods.onLevelUp = function(level, options, callback){
-  if (!callback) { callback = options; options = null; }
+  if (!callback) { callback = options; options = {}; }
 
   var events = {type: 'level', value: level}, me = this;
   var happiness = me.happiness < 100 ? 5 : (me.happiness < 200 ? 3 : 2);
@@ -149,7 +149,7 @@ PokemonSchema.methods.onLevelUp = function(level, options, callback){
   // Evolution
   if (level == me.level) {
     actions.push(function(next){
-      me.evolve('level-up', next);
+      me.evolve('level-up', options, next);
     });
   }
 
@@ -220,20 +220,42 @@ PokemonSchema.methods.levelUp = function(callback){
 
 // Gain friendship
 PokemonSchema.methods.gainHappiness = function(happiness, callback){
-  if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
-  if (this.happiness >= 255) return callback(null);
+  var me = this;
+  if (!me._inited) return callback(new Error('ERR_NOT_INITED'));
+  if (me.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+  if (me.happiness >= 255) return callback(null);
 
-  if (this.happiness + happiness > 255) {
-    happiness = 255 - this.happiness;
+  if (!me.populated('trainer')) {
+    me.populate('trainer', function(err){
+      if (err) return callback(err);
+      me.gainHappiness(happiness, callback);
+    });
+    return;
   }
 
-  if (this.happiness + happiness < 0) {
-    happiness = -this.happiness;
+  if (happiness > 0 && me.holdItem && me.holdItem.name == 'soothe-bell') {
+    happiness = Math.round(happiness * 1.5);
   }
 
-  this.happiness += happiness;
+  if (me.pokeBall && me.pokeBall.name == 'luxury-ball') {
+    happiness *= 2;
+  }
 
-  this.save(function(err){
+  if (happiness > 0 && me.speciesNumber == me.trainer.todayLuck) {
+    happiness *= 8;
+  }
+
+  if (me.happiness + happiness > 255) {
+    happiness = 255 - me.happiness;
+  }
+
+  if (me.happiness + happiness < 0) {
+    happiness = -me.happiness;
+  }
+
+  me.happiness += happiness;
+
+  me.save(function(err){
     if (err) return callback(err);
     callback(null, {type: 'happiness', value: happiness});
   });
@@ -245,12 +267,26 @@ PokemonSchema.methods.gainHP = function(hp, callback){
   if (this.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
   if (!this.lostHp) return callback(null);
 
-  var recoveredHp = hp < this.lostHp ? hp : this.lostHp;
-  this.lostHp -= recoveredHp;
+  var currentHp = this.stats.hp;
+  if (hp > this.lostHp) {
+    hp = this.lostHp;
+  }
+  if (-hp > currentHp) {
+    hp = -currentHp;
+    
+  }
+  this.lostHp -= hp;
+  var events = [{type: 'hp', value: recoveredHp}];
+
+  // Fainted, send to Pokémon Center
+  if (hp == currentHp) {
+    this.pokemonCenter = new Date();
+    events.push({type: 'pokemon-center'});
+  }
 
   this.save(function(err){
     if (err) return callback(err);
-    callback(null, {type: 'hp', value: recoveredHp});
+    callback(null, events);
   });
 };
 
@@ -381,13 +417,9 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
 
   var resultNumber = null;
 
-  if (me.trainer && !me.populated('trainer')) {
-    me.populate('trainer', function(err){
-      if (err) return callback(err);
-      me.trainer.populate('party', 'speciesNumber', function(err){
-        if (err) return callback(err);
-        me.evolve(trigger, options, callback);
-      });
+  if (me.trainer && !me.populated('trainer.party')) {
+    me.populate('trainer.party', function(err){
+      me.evolve(trigger, options, callback);
     });
     return;
   }
