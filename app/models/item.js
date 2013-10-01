@@ -6,6 +6,7 @@
 // dependencies
 var async = require('async');
 var _ = require('underscore');
+var Type = require('./type');
 var db = require('../common').baseData;
 
 var itemCache = {};
@@ -51,15 +52,56 @@ var Item = function(identifier, cb) {
   });
 };
 
-var parseCondition = function(pokemon, condition){
-  var matches;
-  if (matches = condition.match(/^type-(\w+)/)) {
-    if (_.contains(_.pluck(pokemon.species.types, 'name'), matches[1])) {
-      return true;
-    }
-  }
+// Check if an item effect fits the condition
+// options.typeId - the type id of attacking move
+// options.critical - whether it's a critical hit
+// options.special - whether it's a special attack
+// options.attacker - attacker's battle stat
+// options.defender - defender's battle stat
+// options.order - round order
+var parseCondition = function(pokemon, condition, options){
+  options = options || {};
+  var conditions = condition.split(';');
 
-  return false;
+  var matches = _.map(conditions, function(con){
+    var matchType = con.match(/^(type|damage)-(.+)/);
+    var matchSpecies = con.match(/^species-(.+)/);
+
+    if (matchType) {
+      var types = matchType[2].split(',');
+      var matchTypes = options.typeId
+        ? [ Type.names[options.typeId] ]
+        : _.pluck(pokemon.species.types, 'name');
+      if (!_.intersection(types, matchType).length)
+        return false;
+    }
+
+    if (matchSpecies) {
+      var numbers = matchType[1].split(',');
+      if (!_.contains(numbers, pokemon.species.number))
+        return false;
+    }
+
+    if (con == 'critical' && !options.critical)
+      return false;
+
+    if (con == 'full-hp' && (!options.defender || options.defender.maxHp != options.defender.hp))
+      return false;
+
+    if (con == 'non-final' && pokemon.species.evolution.length)
+      return false;
+    
+    if (con == 'physical' && options.special)
+      return false;
+
+    if (con == 'slow' && options.order == 1)
+      return false;
+
+    if (con == 'special' && !options.special)
+      return false;
+  });
+
+  return _.every(matches);
 };
 
 // Item usage
@@ -156,7 +198,134 @@ var itemProto = {
     });
   }
 
-  ,hold: function(pokemon, battleStat, callback){
+  ,beforeBattle: function(pokemon, battleStat){
+    var effects = _.where(this.effects, {effect_type: 'battle'});
+    _.each(effects, function(effect){
+      if (!parseCondition(pokemon, effect.param_3))
+        return;
+
+      // Attack boost
+      if (effect.param_1 == 'attack' && effect.param_2.match(/^x/)) {
+        battleStat.attack *= parseFloat(effect.param_2.substr(1));
+      }
+
+      // Critical stage
+      if (effect.param_1 == 'critical') {
+        battleStat.criticalStage += parseInt(effect.param_2.substr(6));
+        if (battleStat.criticalStage > 4) {
+          battleStat.criticalStage = 4;
+        }
+      }
+
+      // Defense boost
+      if (effect.param_1 == 'defense') {
+        battleStat.defense *= parseFloat(effect.param_2.substr(1));
+      }
+
+      // Evasion
+      if (effect.param_1 == 'evasion') {
+        battleStat.evasion *= parseFloat(effect.param_2.substr(1));
+      }
+
+      // Special attack
+      if (effect.param_1 == 'special-attack' && effect.param_2.match(/^x/)) {
+        battleStat['special-attack'] *= parseFloat(effect.param_2.substr(1));
+      }
+
+      // Special defense
+      if (effect.param_1 == 'special-defense') {
+        battleStat['special-defense'] *= parseFloat(effect.param_2.substr(1));
+      }
+
+      // Speed
+      if (effect.param_1 == 'speed') {
+        battleStat['speed'] *= parseFloat(effect.param_2.substr(1));
+      }
+    });
+  }
+
+  ,accuracy: function(accuracy, order){
+    var effects = _.where(this.effects, {effect_type: 'battle', param_1: 'accuracy'});
+    _.each(effects, function(effect){
+      if (effect.param_3 == 'slow' && order != 2)
+        return;
+      accuracy *= parseFloat(effect.param_2.substr(1));
+    });
+    return accuracy;
+  }
+
+  // movement-first, movement-last
+  ,movement: function(){
+    var effect = _.find(this.effects, function(e){
+      return e.effect_type == 'battle' && e.param_1.match(/^movement-/);
+    });
+
+    if (!effect) return 0;
+    if (_.random(1, 100) > parseInt(effect.param_2)) return 0;
+
+    if (effect.param_1 == 'movement-first')
+      return 1;
+    else
+      return 2;
+  }
+
+  // power, shell-bell
+  ,afterRoundAttacker: function(options){
+    var effects = _.where(this.effects, {effect_type: 'battle'});
+    var battleStat = options.attacker;
+
+    _.each(effects, function(effect){
+      if (!parseCondition(battleStat.pokemon, effect.param_3, options))
+        return;
+
+      if (effect.param_1 == 'power') {
+        battleStat.damage *= parseFloat(effect.param_2.substr(1));
+      }
+
+      if (effect.param_1 == 'shell-bell') {
+        options.attacker.hp = options.attacker.hp + options.damage * 0.125;
+        if (options.attacker.hp > options.attacker.maxHp) {
+          options.attacker.hp = options.attacker.maxHp;
+        }
+      }
+    });
+  }
+
+  // Boost attack/special attack after damage, endure, leftovers
+  ,afterRoundDefender: function(options){
+    var effects = _.where(this.effects, {effect_type: 'battle'});
+    var battleStat = options.defender;
+
+    _.each(effects, function(effect){
+      if (!parseCondition(battleStat.pokemon, effect.param_3, options))
+        return;
+
+      if (effect.param_1 == 'attack' && effect.param_2.match(/^stage-/)) {
+        battleStat.attackStage += parseInt(effect.param_2.substr(6));
+        if (battleStat.attackStage > 6) {
+          battleStat.attackStage = 6;
+        }
+      }
+
+      if (effect.param_1 == 'endure' && _.random(0, 99) < parseInt(effect.param_2)
+        && options.damage >= battleStat.hp) {
+        options.damage = battleStat.hp - 1; 
+      }
+
+      if (effect.param_1 == 'special-attack' && effect.param_2.match(/^stage-/)) {
+        battleStat.spAtkStage += parseInt(effect.param_2.substr(6));
+        if (battleStat.spAtkStage > 6) {
+          battleStat.spAtkStage = 6;
+        }
+      }
+
+      if (effect.param_1 == 'leftovers') {
+        battleStat.hp += battleStat.maxHp * parseFloat(effect.param_2);
+      }
+    });
+  }
+
+  ,afterBattle: function(){
 
   }
 };

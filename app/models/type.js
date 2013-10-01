@@ -46,4 +46,12 @@ var Type = function(id, callback){
   });
 };
 
+// Dirty solution to avoid asynchronous
+Type.names = [null, 'normal', 'fighting', 'flying', 'poison', 'ground', 'rock'
+           , 'bug', 'ghost', 'steel', 'fire', 'water', 'grass', 'electric'
+           , 'psychic', 'ice', 'dragon', 'dark', 'fairy'];
+
+// Total types
+Type.total = 17;
+
 module.exports = Type;
