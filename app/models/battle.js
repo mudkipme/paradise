@@ -10,7 +10,7 @@ var stages = {
 };
 
 var battleStat = function(pokemon){
-  var pokemonStats = pokemon.stats;
+  var stats = pokemon.stats;
   var result = {
     pokemon: pokemon
     ,types: pokemon.species.types
@@ -46,8 +46,8 @@ var Battle = function(pokemonA, pokemonB, options, callback){
   var battle = Object.create(battleProto);
   battle.pokemonA = pokemonA;
   battle.pokemonB = pokemonB;
-  battle.statA = battleStat(pokemonOne);
-  battle.statB = battleStat(pokemonTwo);
+  battle.statA = battleStat(pokemonA);
+  battle.statB = battleStat(pokemonB);
   battle.roundCount = 0;
   battle.result = battle.round(true);
 
@@ -55,12 +55,12 @@ var Battle = function(pokemonA, pokemonB, options, callback){
 
   var caculateExp = function(pokemon, s){
     var a = battle.defeated.trainer ? 1.5 : 1;
-    var t = pokemon.originalTrainer._id.equals(pokemon.trainer) ? 1 : 1.5;
+    var t = _.isEqual(pokemon.originalTrainer._id, pokemon.trainer) ? 1 : 1.5;
     var b = battle.defeated.species.baseExperience;
-    var e = pokemon.holdItem && pokemon.holdItem.name == 'lucky-egg';
+    var e = (pokemon.holdItem && pokemon.holdItem.name == 'lucky-egg') ? 1.5 : 1;
     var l = battle.defeated.level;
     var lp = pokemon.level;
-    return ((a * b * l) / (5 * s) * Math.pow(2 * l + 10, 2.5) / Math.pow(l + lp + 10, 2.5) + 1) * t * e;
+    return Math.round(((a * b * l) / (5 * s) * Math.pow(2 * l + 10, 2.5) / Math.pow(l + lp + 10, 2.5) + 1) * t * e);
   };
 
   // Gain Experience, efforts and happiness
@@ -68,11 +68,19 @@ var Battle = function(pokemonA, pokemonB, options, callback){
     var getExpPokemon = [battle.winner];
 
     // Detect Exp Shares
-    actions.trainer = battle.winner.populate.bind(battle.winner, 'trainer.party');
-    actions.party = battle.winner.trainer.initParty.bind(battle.winner.trainer.initParty);
+    actions.trainer = function(next){
+      battle.winner.populate('trainer', function(err){
+        if (err) return next(err);
+        battle.winner.trainer.populate('party', function(err){
+          if (err) return next(err);
+          battle.winner.trainer.initParty(next);
+        });
+      });
+    }
     actions.experience = function(next){
-      _.each(battle.trainer.party, function(pm){
-        if (pm.holdItem.name == 'exp-share' && !pm._id.equals(battle.winner._id)) {
+      _.each(battle.winner.trainer.party, function(pm){
+        if (pm.holdItem && pm.holdItem.name == 'exp-share'
+          && !_.isEqual(pm._id, battle.winner._id)) {
           getExpPokemon.push(pm);
         }
       });
@@ -154,15 +162,15 @@ var battleProto = {
     this.attack(first, second, 1);
 
     if (this.statA.hp == 0 || this.statB.hp == 0)
-      return this.endMatch(callback);
+      return this.endMatch();
 
     this.attack(second, first, 2);
 
     if (this.statA.hp == 0 || this.statB.hp == 0)
-      return this.endMatch(callback);
+      return this.endMatch();
 
     if (endless) {
-      return round(true);
+      return this.round(true);
     }
   }
 
@@ -242,18 +250,18 @@ var battleProto = {
       defender.holdItem.afterRoundDefender(options);
     }
 
-    defender.hp -= options.damage;
+    defender.hp -= Math.round(options.damage);
     if (defender.hp < 0) {
       defender.hp = 0;
     }
   }
 
   ,endMatch: function(){
-    if (statA.hp > statB.hp) {
+    if (this.statA.hp > this.statB.hp) {
       this.winner = this.pokemonA;
       this.defeated = this.pokemonB;
       return 'win';
-    } else if (statB.hp > statA.hp) {
+    } else if (this.statB.hp > this.statA.hp) {
       this.winner = this.pokemonB;
       this.defeated = this.pokemonA;
       return 'lose';

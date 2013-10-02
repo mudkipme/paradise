@@ -35,7 +35,7 @@ var Location = function(identifier, callback){
   location.name = identifier;
 
   async.waterfall([
-    db.all.bind(db, 'SELECT id FROM locations WHERE identifier = ?', [identifier], next)
+    db.all.bind(db, 'SELECT id FROM locations WHERE identifier = ?', [identifier])
 
     ,function(rows, next){
       if (!rows.length) return next(null, []);

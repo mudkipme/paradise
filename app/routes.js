@@ -63,6 +63,8 @@ module.exports = function(app){
 
   // Encounter
   app.post('/api/encounter', defaults, encounter.post);
+  app.post('/api/encounter/battle', defaults, encounter.battle);
+  app.post('/api/encounter/escape', defaults, encounter.escape);
 
   // Admin
   app.post('/api/admin/event-pokemon', isAdmin, admin.eventPokemon);

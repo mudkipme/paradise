@@ -193,7 +193,9 @@ PokemonSchema.methods.gainExperience = function(exp, options, callback){
     // Level up events
     async.mapSeries(
       _.range(currentLevel + 1, me.level + 1)
-      ,me.onLevelUp.bind(me, options)
+      ,function(level, next){
+        me.onLevelUp(level, options, next);
+      }
       ,function(err, results){
         if (err) return callback(err);
         events = _.compact(_.flatten([].concat(events, results)));
@@ -265,7 +267,6 @@ PokemonSchema.methods.gainHappiness = function(happiness, callback){
 PokemonSchema.methods.gainHP = function(hp, callback){
   if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
   if (this.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
-  if (!this.lostHp) return callback(null);
 
   var currentHp = this.stats.hp;
   if (hp > this.lostHp) {
@@ -273,13 +274,12 @@ PokemonSchema.methods.gainHP = function(hp, callback){
   }
   if (-hp > currentHp) {
     hp = -currentHp;
-    
   }
   this.lostHp -= hp;
-  var events = [{type: 'hp', value: recoveredHp}];
+  var events = [{type: 'hp', value: hp}];
 
   // Fainted, send to Pokémon Center
-  if (hp == currentHp) {
+  if (hp == -currentHp) {
     this.pokemonCenter = new Date();
     events.push({type: 'pokemon-center'});
   }

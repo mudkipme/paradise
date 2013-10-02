@@ -38,6 +38,8 @@ var TrainerSchema = new Schema({
     area:           String,
     method:         String,
     pokemon:        { type: Schema.Types.ObjectId, ref: 'Pokemon' },
+    battleResult:   String,
+    time:           Date
   },
   realWorld: {
     longitude:      Number,
