@@ -32,21 +32,20 @@ define([
     }
 
     ,onRender: function(){
-      this.ui.ev.hide().css({opacity: 0});
-    }
-
-    ,onShow: function(){
       var me = this;
-      me.ui.ev.each(function(i, ev){
-        me.$el.queue(function(next){
-          var pokemonEvent = me.pokemonEvents[$(ev).index()];
-          if (pokemonEvent.type != 'evolution' && pokemonEvent.type != 'forme') {
-            $(ev).show().transition({opacity: 1}, 500, next);
-          } else {
-            me.evolve(function(){
+      this.ui.ev.hide().css({opacity: 0});
+      _.defer(function(){
+        me.ui.ev.each(function(i, ev){
+          me.$el.queue(function(next){
+            var pokemonEvent = me.pokemonEvents[$(ev).index()];
+            if (pokemonEvent.type != 'evolution' && pokemonEvent.type != 'forme') {
               $(ev).show().transition({opacity: 1}, 500, next);
-            });
-          }
+            } else {
+              me.evolve(function(){
+                $(ev).show().transition({opacity: 1}, 500, next);
+              });
+            }
+          });
         });
       });
     }
@@ -84,7 +83,6 @@ define([
 
       $.when($.loadImage(before), $.loadImage(after))
       .done(function(beforeImage, afterImage){
-
         before = new Kinetic.Image({
           x: 0
           ,y: 0

@@ -1,17 +1,26 @@
 <section class="encounter-scene encounter-<%- timeOfDay %> <% if (_.contains(['old-rod', 'good-rod', 'super-rod', 'surf', 'super-rod-spots', 'surf-spots'], method)) { %>encounter-water<% } %>">
   <div class="encounter-events">
-    <p><%= t('encounter.jump-out', {pokemon: pokemonName()}) %></p>
-    <p><%= t('encounter.select-pokemon') %></p>
+    <% if (!battleResult) { %>
+      <p><%- t('encounter.jump-out', {pokemon: pokemonName()}) %></p>
+      <p><%= t('encounter.select-pokemon') %></p>
+    <% } else if (battleResult == 'win') { %>
+      <p><%- t('encounter.win', {battlePokemon: battlePokemonName, pokemon: pokemonName()}) %></p>
+    <% } else { %>
+      <p><%- t('encounter.lose', {battlePokemon: battlePokemonName, pokemon: pokemonName()}) %></p>
+    <% } %>
   </div>
-  <div class="pokemon-info popover top">
-    <div class="arrow"></div>
-    <div class="popover-content">
-      <p>
-        <%- pokemonName() %><% if (pokemon.gender == Gender.female) { %><span class="female">♀</span><% } else if (pokemon.gender == Gender.male) { %><span class="male">♂</span><% } %>
-      </p>
-      <p>Lv. <%= pokemon.level %> <% if (pokemon.isShiny) {%><span class="shiny-star"></span><%}%></p>
+  <div class="pokemon-events"></div>
+  <% if (!battleResult) { %>
+    <div class="pokemon-info popover top">
+      <div class="arrow"></div>
+      <div class="popover-content">
+        <p>
+          <%- pokemonName() %><% if (pokemon.gender == Gender.female) { %><span class="female">♀</span><% } else if (pokemon.gender == Gender.male) { %><span class="male">♂</span><% } %>
+        </p>
+        <p>Lv. <%= pokemon.level %> <% if (pokemon.isShiny) {%><span class="shiny-star"></span><%}%></p>
+      </div>
     </div>
-  </div>
+  <% } %>
   <div class="encounter-pokemon">
     <div class="shadow"></div>
     <div class="sprite">

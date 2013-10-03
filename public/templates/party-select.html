@@ -1,5 +1,5 @@
 <% _.each(items, function(pokemon){ %>
-  <li class="pokemon">
+  <li class="pokemon" data-id="<%= pokemon.id %>">
     <div class="sprite">
       <img src="<%= spriteUrl(pokemon) %>" alt="<%- pokemonName(pokemon) %>" />
     </div>

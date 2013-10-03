@@ -39,6 +39,7 @@ var TrainerSchema = new Schema({
     method:         String,
     pokemon:        { type: Schema.Types.ObjectId, ref: 'Pokemon' },
     battleResult:   String,
+    battlePokemon:  { type: Schema.Types.ObjectId, ref: 'Pokemon' },
     time:           Date
   },
   realWorld: {
@@ -274,11 +275,11 @@ TrainerSchema.methods.findPokemon = function(pokemon){
   var partyPopulated = this.populated('party');
   var result = null;
 
-  _.each(this.party, function(pm, index){
+  _.some(this.party, function(pm, index){
     var id = partyPopulated ? pm._id : pm;
     if (id.equals(pokemon._id)) {
       result = { party: true, position: index };
-      return false;
+      return true;
     }
   });
   if (result) return result;

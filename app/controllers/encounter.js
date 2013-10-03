@@ -36,6 +36,7 @@ exports.battle = function(req, res){
   Battle(pokemonA, pokemonB, {location: req.trainer.encounter.location}, function(err, result){
     if (err) return res.json(500, {error: err.message});
     req.trainer.encounter.battleResult = result.result;
+    req.trainer.encounter.battlePokemon = pokemonA;
 
     req.trainer.save(function(err){
       if (err) return res.json(500, {error: err.message});
@@ -59,7 +60,13 @@ exports.escape = function(req, res){
     pokemon.remove.bind(pokemon)
 
     ,function(next){
-      req.trainer.encounter = {};
+      req.trainer.encounter.location = null;
+      req.trainer.encounter.area = null;
+      req.trainer.encounter.method = null;
+      req.trainer.encounter.pokemon = null;
+      req.trainer.encounter.battleResult = null;
+      req.trainer.encounter.battlePokemon = null;
+      req.trainer.encounter.time = null;
       req.trainer.save(next);
     }
   ], function(err){

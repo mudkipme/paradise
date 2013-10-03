@@ -45,11 +45,10 @@ define([
     }
 
     ,onRender: function(){
-      this.resetPosition();
-    }
-
-    ,onShow: function(){
-      this.resetPosition();
+      var me = this;
+      _.defer(function(){
+        me.resetPosition();
+      });
     }
 
     ,resetPosition: function(){
@@ -66,6 +65,10 @@ define([
 
     ,depositCard: function(e){
       $(e.currentTarget).css('z-index', '');
+    }
+
+    ,choosePokemon: function(e){
+      this.trigger('choose', this.collection.get($(e.currentTarget).data('id')));
     }
   });
 

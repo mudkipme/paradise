@@ -139,7 +139,7 @@ PokemonSchema.virtual('expNextLevel').get(function(){
 // Options includes the battle stats like location
 PokemonSchema.methods.onLevelUp = function(level, options, callback){
   if (!callback) { callback = options; options = {}; }
-
+console.log(callback);
   var events = {type: 'level', value: level}, me = this;
   var happiness = me.happiness < 100 ? 5 : (me.happiness < 200 ? 3 : 2);
 
@@ -417,14 +417,18 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
 
   var resultNumber = null;
 
-  if (me.trainer && !me.populated('trainer.party')) {
-    me.populate('trainer.party', function(err){
-      me.evolve(trigger, options, callback);
+  if (me.trainer && !me.populated('trainer')) {
+    me.populate('trainer', function(err){
+      if (err) return callback(err);
+      me.trainer.populate('party', function(err){
+        if (err) return callback(err);
+        me.evolve(trigger, options, callback);
+      });
     });
     return;
   }
 
-  _.each(me.species.evolutions, function(ev){
+  _.some(me.species.evolutions, function(ev){
     if (ev.trigger != trigger) {
       return;
     }
@@ -481,7 +485,7 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
       return;
 
     resultNumber = ev.evolved_species_id;
-    return false;
+    return true;
   });
 
   if (!resultNumber) return callback(null);
@@ -505,6 +509,10 @@ PokemonSchema.methods.toJSON = function(options){
   if (res.originalTrainer) {
     res.originalTrainer = _.pick(res.originalTrainer, 'id', 'name');
   }
+  if (_.isObject(res.trainer)) {
+    res.trainer = res.trainer.id;
+  }
+
   return _.omit(res, ['individual', 'effort', 'lostHp'
     , 'natureId', 'holdItemId', 'pokeBallId']);
 };

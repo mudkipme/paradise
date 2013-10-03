@@ -117,10 +117,10 @@ var locationProto = {
       return memo;
     }, 0);
     var seed = _.random(0, sum - 1), method = null;
-    _.each(rates, function(rate, i){
+    _.some(rates, function(rate, i){
       if (seed < rate) {
         method = methods[i];
-        return false;
+        return true;
       }
     });
     encounters = _.where(encounters, {method: method});
@@ -134,14 +134,15 @@ var locationProto = {
       return memo;
     }, 0);
     seed = _.random(0, sum - 1);
-    _.each(rates, function(rate, i){
+    _.some(rates, function(rate, i){
       if (seed < rate) {
         encounter = encounters[i];
-        return false;
+        return true;
       }
     });
 
-    var result = { location: me.name, time: new Date() };
+    var result = { location: me.name, time: new Date()
+      , battleResult: null, battlePokemon: null };
     if (!encounter) return callback(null, result);
 
     // Now create this Pokémon

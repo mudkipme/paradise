@@ -103,6 +103,7 @@
     "level-up": "__pokemon__ 等级上升到了 __level__ ！"
     ,"happiness": "__pokemon__ 和你更亲近一点了！"
     ,"hp": "__pokemon__ 回复了 __hp__ 点 HP！"
+    ,"loseHp": "__pokemon__ 损失了 __hp__ 点 HP！"
     ,"effort": "__pokemon__ 的 __stat__ 基础得点提升了！"
     ,"evolution": "__pokemon__ 进化成为了 __evolution__ ！"
     ,"experience": "__pokemon__ 获得了 __experience__ 点经验值！"
@@ -110,9 +111,11 @@
     ,"connector": " 和 "
   }
   ,"encounter": {
-    "jump-out": "野生的__pokemon__出现了！"
+    "jump-out": "野生的 __pokemon__ 出现了！"
     ,"select-pokemon": "请选择队伍中的神奇宝贝对战！"
     ,"escape": "逃脱"
+    ,"win": "你的 __battlePokemon__ 战胜了野生的 __pokemon__！"
+    ,"lose": "你的 __battlePokemon__ 败给了野生的 __pokemon__！"
   }
   ,"forme": {
     "sky": "天空"

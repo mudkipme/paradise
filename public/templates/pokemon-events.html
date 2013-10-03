@@ -6,10 +6,12 @@
     <li class="event">
       <% if (event.type == 'level') { %>
         <%- t('events.level-up', {pokemon: old.pokemonName(), level: event.value}) %>
-      <% } else if (event.type == 'happiness') { %>
+      <% } else if (event.type == 'happiness' && events.length == 1) { %>
         <%- t('events.happiness', {pokemon: old.pokemonName()}) %>
-      <% } else if (event.type == 'hp') { %>
+      <% } else if (event.type == 'hp' && event.value > 0) { %>
         <%- t('events.hp', {pokemon: old.pokemonName(), hp: event.value}) %>
+      <% } else if (event.type == 'hp') { %>
+        <%- t('events.loseHp', {pokemon: old.pokemonName(), hp: -event.value}) %>
       <% } else if (event.type == 'effort') { %>
         <%- t('events.effort', {pokemon: old.pokemonName(), stat: _.map(_.keys(event.value), function(stat){ return t('stat.'+stat) }).join(t('events.connector'))}) %>
       <% } else if (event.type == 'evolution') { %>

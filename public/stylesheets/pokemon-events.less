@@ -2,16 +2,8 @@
   text-align: center;
 
   .sprite-container {
-    width: 96px;
-    height: 96px;
-    margin: 0 auto;
-    position: relative;
-
     > * {
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
+      display: inline-block;
       height: 96px;
       width: 96px;
     }
@@ -21,5 +13,11 @@
     margin: 0;
     padding-left: 0;
     list-style: none;
+  }
+}
+
+#encounter-view .pokemon-events-view {
+  .sprite-container img {
+    display: none;
   }
 }

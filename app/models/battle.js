@@ -55,7 +55,7 @@ var Battle = function(pokemonA, pokemonB, options, callback){
 
   var caculateExp = function(pokemon, s){
     var a = battle.defeated.trainer ? 1.5 : 1;
-    var t = _.isEqual(pokemon.originalTrainer._id, pokemon.trainer) ? 1 : 1.5;
+    var t = _.isEqual(pokemon.originalTrainer._id, pokemon.trainer._id) ? 1 : 1.5;
     var b = battle.defeated.species.baseExperience;
     var e = (pokemon.holdItem && pokemon.holdItem.name == 'lucky-egg') ? 1.5 : 1;
     var l = battle.defeated.level;
@@ -125,10 +125,17 @@ var Battle = function(pokemonA, pokemonB, options, callback){
 
   async.series(actions, function(err, results){
     if (err) return callback(err);
-
-    results = _.pick(results, 'experience', 'loseHp');
-    results.result = battle.result;
-    callback(null, results);
+    // Convert events to {pokemon: **, events: [**]}
+    var events = [];
+    if (results.experience) {
+      _.each(getExpPokemon, function(pm, index){
+        events.push({pokemon: pm, events: results.experience[index]});
+      });
+    }
+    if (results.loseHp) {
+      events.push({pokemon: battle.defeated, events: results.loseHp});
+    }
+    callback(null, {result: battle.result, events: events});
   });
 };
 
