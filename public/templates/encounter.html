@@ -23,14 +23,14 @@
       </div>
     </div>
   <% } %>
-  <% if (pokemon) {%>
-    <div class="encounter-pokemon">
+  <div class="encounter-pokemon">
+    <% if (pokemon) {%>
       <div class="shadow"></div>
       <div class="sprite">
           <img src="<%= spriteUrl() %>" alt="<%- pokemonName() %>" />
       </div>
-    </div>
-  <% } %>
+    <% } %>
+  </div>
 </section>
 <section class="party-select"></section>
 <% if (pokemon) { %>

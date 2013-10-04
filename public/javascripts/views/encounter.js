@@ -5,13 +5,15 @@ define([
   ,'marionette'
   ,'i18next'
   ,'kinetic'
+  ,'vent'
   ,'views/pokemon'
   ,'views/party-select'
   ,'views/pokemon-events'
+  ,'views/bag-popover'
   ,'text!templates/encounter.html'
   ,'util'
-], function($, _, Backbone, Marionette, i18n, kinetic
- , PokemonView, PartySelectView, PokemonEventsView, encounterTemplate){
+], function($, _, Backbone, Marionette, i18n, kinetic, vent
+ , PokemonView, PartySelectView, PokemonEventsView, BagPopoverView, encounterTemplate){
 
   var EncounterView = Marionette.Layout.extend({
     id: 'encounter-view'
@@ -26,20 +28,25 @@ define([
     ,ui: {
       pokemonEvents: '.pokemon-events'
       ,sprite: '.encounter-pokemon .sprite'
+      ,pokeBall: '.btn-pokeball'
     }
 
     ,events: {
       'click .btn-escape': 'escape'
+      ,'shown.bs.popover .btn-pokeball': 'showBagPopover'
+      ,'selectItem .btn-pokeball': 'catchPokemon'
     }
 
     ,modelEvents: {
       'escape': 'escaped'
       ,'change:battleResult': 'render'
-      ,'pokemon:events': 'showPokemonEvents'
+      ,'pokemonEvents': 'showPokemonEvents'
+      ,'catch': 'showCatch'
     }
 
     ,initialize: function(){
       this.children = new Backbone.ChildViewContainer();
+      this.listenTo(vent, 'popover', this.hidePopover);
     }
 
     ,serializeData: function(){
@@ -58,14 +65,39 @@ define([
     }
 
     ,onRender: function(){
-      var party = require('app').trainer.party;
-      if (!this.model.get('battleResult') && !this.partySelectView) {
-        this.partySelectView = new PartySelectView({collection: party});
-        this.partySelect.show(this.partySelectView);
-        this.partySelectView.on('choose', _.bind(this.battle, this));
+      var me = this;
+      var trainer = me.model.trainer;
+      var party = trainer.party;
+
+      // Show party Pokémon select
+      if (!me.model.get('battleResult') && !me.partySelectView && me.model.get('pokemon')) {
+        me.partySelectView = new PartySelectView({collection: party});
+        me.partySelect.show(me.partySelectView);
+        me.partySelectView.on('choose', _.bind(me.battle, me));
       }
-      if (this.model.get('battleResult') == 'win') {
-        this.blurPokemon();
+
+      // Blur the wild Pokémon when win
+      if (me.model.get('battleResult') == 'win') {
+        me.blurPokemon();
+      }
+
+      // Select Poké Ball
+      if (me.model.pokemon) {
+        me.bagPopover = new BagPopoverView({
+          collection: trainer.pocket.bag
+          ,pocket: 'pokeballs'
+          ,button: me.ui.pokeBall
+        });
+        me.ui.pokeBall.popover({
+          html: true
+          ,content: me.bagPopover.el
+          ,placement: 'top'
+        });
+        me.bagPopover.on('render', function(){
+          me.popoverRendering = true;
+          me.ui.pokeBall.popover('show');
+          me.popoverRendering = false;
+        });
       }
     }
 
@@ -74,6 +106,24 @@ define([
         child.close();
         this.children.remove(child);
       }, this);
+
+      if (this.bagPopover) {
+        this.bagPopover.close();
+      }
+    }
+
+    ,showBagPopover: function(){
+      this.bagPopover.delegateEvents();
+      if (!this.popoverRendering) {
+        this.model.trainer.pocket.fetch();
+      }
+    }
+
+    ,hidePopover: function(e){
+      if (!e || e.target != this.ui.pokeBall.get(0)) {
+        var popover = this.ui.pokeBall.data('bs.popover');
+        popover && popover.leave(popover);
+      }
     }
 
     ,escape: function(){
@@ -93,6 +143,15 @@ define([
       this.children.add(view);
       view.render();
       this.ui.pokemonEvents.append(view.el);
+    }
+
+    ,catchPokemon: function(e, item){
+      this.model.catchPokemon(item);
+      this.hidePopover();
+    }
+
+    ,showCatch: function(shake){
+      var pokeBall = this.model.pokeBall;
     }
 
     // Will switch to CSS solution once Firefox support that

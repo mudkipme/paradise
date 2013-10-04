@@ -116,6 +116,7 @@
     ,"escape": "逃脱"
     ,"win": "你的 __battlePokemon__ 战胜了野生的 __pokemon__！"
     ,"lose": "你的 __battlePokemon__ 败给了野生的 __pokemon__！"
+    ,"pokemon-not-found": "没有发现野生的神奇宝贝出现！"
   }
   ,"forme": {
     "sky": "天空"

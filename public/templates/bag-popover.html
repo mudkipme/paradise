@@ -1,0 +1,6 @@
+<% _.each(items, function(item){ %>
+  <a href="#" data-id="<%= item.id %>">
+    <img src="<%= PARADISE.imgBase %>/items/<%= (item.item.name) %>.png" alt="<%= t('item:' + item.item.name) %>" />
+    <%= t('item:' + item.item.name) %>
+  </a>
+<% }) %>

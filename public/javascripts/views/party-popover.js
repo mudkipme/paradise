@@ -23,7 +23,9 @@ define([
     ,selectPokemon: function(e){
       e.preventDefault();
       var index = $(e.target).index();
-      this.button.trigger('selectPokemon', this.collection.at(index));
+      if (this.options.button) {
+        this.options.button.trigger('selectPokemon', this.collection.at(index));
+      }
     }
   });
 

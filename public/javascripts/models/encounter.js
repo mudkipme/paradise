@@ -57,7 +57,7 @@ define([
           _.each(data.events, function(ev){
             var pokemon = me.trainer.party.get(ev.pokemon.id);
             pokemon && pokemon.set(ev.pokemon);
-            me.trigger('pokemon:events', {
+            me.trigger('pokemonEvents', {
               model: pokemon
               ,pokemonEvents: ev.events
               ,oldPokemon: oldPokemon
@@ -76,6 +76,21 @@ define([
         ,success: function(){
           me.trigger('escape');
           me.set(me.defaults);
+        }
+      });
+    }
+
+    ,catchPokemon: function(pokeBall){
+      var me = this;
+      me.pokeBall = pokeBall;
+      me.sync(null, me, {
+        url: me.url + '/catch'
+        ,type: 'POST'
+        ,data: {itemId: pokeBall.id}
+        ,processData: true
+        ,success: function(data){
+          me.trigger('catch', {shake: data.shakeResult});
+          me.set(me.defaults, {silent: true});
         }
       });
     }

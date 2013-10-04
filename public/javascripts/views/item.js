@@ -28,7 +28,8 @@ define([
       'submit .gift-form': 'giftSubmit'
       ,'selectPokemon .btn-hold': 'holdItem'
       ,'selectPokemon .btn-use': 'useItem'
-      ,'shown.bs.popover .actions button': 'showPartyPopover'
+      ,'shown.bs.popover .actions .btn-hold': 'showPartyPopover'
+      ,'shown.bs.popover .actions .btn-use': 'showPartyPopover'
     }
 
     ,modelEvents: {
@@ -79,7 +80,7 @@ define([
 
     ,showPartyPopover: function(e){
       this.partyPopover.delegateEvents();
-      this.partyPopover.button = $(e.currentTarget);
+      this.partyPopover.options.button = $(e.currentTarget);
       require('app').trainer.fetch();
     }
 
@@ -109,7 +110,7 @@ define([
 
     ,hidePopover: function(e){
       this.$('.actions button').each(function(i, button){
-        if (button !== e.target) {
+        if (!e || button !== e.target) {
           var popover = $(button).data('bs.popover');
           popover && popover.leave(popover);
         }
@@ -134,12 +135,12 @@ define([
 
     ,holdItem: function(e, pokemon){
       pokemon.holdItem(this.model);
-      this.ui.hold.popover('hide');
+      this.hidePopover();
     }
 
     ,useItem: function(e, pokemon){
       pokemon.useItem(this.model);
-      this.ui.use.popover('hide');
+      this.hidePopover();
     }
 
     ,holdDone: function(pokemon){
