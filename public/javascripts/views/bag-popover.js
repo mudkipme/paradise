@@ -13,7 +13,7 @@ define([
     ,templateHelpers: { t: i18n.t }
 
     ,collectionEvents: {
-      'add remove change sort': 'render'
+      'add remove change reset': 'render'
     }
 
     ,serializeData: function(){
@@ -24,7 +24,7 @@ define([
           return item.item.pocket == me.options.pocket;
         });
       }
-      return {items: items};
+      return {items: items, pocket: this.options.pocket};
     }
 
     ,events: {

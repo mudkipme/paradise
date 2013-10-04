@@ -3,6 +3,7 @@ var _ = require('underscore');
 var Item = require('../models/item');
 var Location = require('../models/location');
 var Battle = require('../models/battle');
+var config = require('../../config.json');
 
 var clearEncounter = function(trainer){
   trainer.encounter.location = null;
@@ -24,7 +25,6 @@ exports.post = function(req, res){
     }
   ], function(err, encounter){
     if (err) return res.json(403, {error: err.message});
-
     res.json(encounter);
   });
 };
@@ -49,10 +49,24 @@ exports.battle = function(req, res){
     req.trainer.encounter.battleResult = result.result;
     req.trainer.encounter.battlePokemon = pokemonA;
 
-    req.trainer.save(function(err){
-      if (err) return res.json(500, {error: err.message});
-      res.json(result);
-    });
+    var finish = function(){
+      req.trainer.save(function(err){
+        if (err) return res.json(500, {error: err.message});
+        res.json(result);
+      });
+    };
+
+    // If lost battle, the wild Pokémon might escape
+    if (result.result == 'lose' && _.random(0, 99) < config.app.escapeRate) {
+      pokemonB.remove(function(err){
+        if (err) return res.json(500, {error: err.message});
+        clearEncounter(req.trainer);
+        result.escape = true;
+        finish();
+      });
+    } else {
+      finish();
+    }
   });
 };
 
@@ -63,7 +77,12 @@ exports.catch = function(req, res){
   if (!pokemon)
     return res.json(404, {error: 'NO_ENCOUNTER_POKEMON'});
 
-  Item(parseInt(req.body.itemId), function(err, pokeBall){
+  var itemId = parseInt(req.body.itemId);
+
+  if (!req.trainer.hasItem(itemId))
+    return res.json(403, {error: 'NO_ENOUGH_ITEM_IN_BAG'});
+
+  Item(itemId, function(err, pokeBall){
     if (err) return res.json(500, {error: err.message});
 
     var hp = pokemon.stats.maxHp;
@@ -72,33 +91,48 @@ exports.catch = function(req, res){
     }
     var shakeResult = pokeBall.catchResult(req.trainer, hp);
 
+    var actions = [
+      req.trainer.removeItem.bind(req.trainer, itemId, 1)
+    ];
+    var result = { shake: shakeResult };
+
     // Success
     if (shakeResult == 4) {
       clearEncounter(req.trainer);
-      req.trainer.catchPokemon(pokemon, pokeBall, location, function(err){
-        if (err) return res.json(500, {error: err.message});
-        res.json({shake: shakeResult, pokemon: pokemon});
-      });
+      actions.unshift(
+        req.trainer.catchPokemon.bind(req.trainer, pokemon, pokeBall, location)
+      );
     } else {
-      res.json({shake: shakeResult, pokemon: pokemon});
+      if (_.random(0, 99) < config.app.escapeRate) {
+        actions.unshift(pokemon.remove.bind(pokemon));
+        clearEncounter(req.trainer);
+        result.escape = true;
+      }
     }
+
+    async.series(actions, function(err){
+      if (err) return res.json(500, {error: err.message});
+      res.json(result);
+    });
   });
 };
 
 // Escape from the current wild Pokémon
 exports.escape = function(req, res){
   var pokemon = req.trainer.encounter.pokemon;
-  if (!pokemon)
-    return res.json(404, {error: 'NO_ENCOUNTER_POKEMON'});
 
-  async.series([
-    pokemon.remove.bind(pokemon)
-
-    ,function(next){
+  var actions = [
+    function(next){
       clearEncounter(req.trainer);
       req.trainer.save(next);
     }
-  ], function(err){
+  ];
+
+  if (pokemon) {
+    actions.unshift(pokemon.remove.bind(pokemon));
+  }
+
+  async.series(actions, function(err){
     if (err) res.json(500, {error: err.message});
     res.send(204);
   });

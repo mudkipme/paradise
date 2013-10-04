@@ -80,10 +80,12 @@
   }
 
   .encounter-options {
-    .make-row();
+    display: table;
+    width: 100%;
+    .box-sizing(border-box);
     margin-top: 30px;
     > div {
-      .make-xs-column(6);
+      display: table-cell;
       text-align: center;
     }
     .btn {
@@ -91,6 +93,9 @@
     }
     .btn-pokeball {
       .btn-primary;
+    }
+    .btn-leave {
+      .btn-success;
     }
     .btn-escape {
       .btn-danger;

@@ -26,13 +26,15 @@ define([
     }
 
     ,ui: {
-      pokemonEvents: '.pokemon-events'
+      encounterEvents: '.encounter-events'
+      ,pokemonEvents: '.pokemon-events'
       ,sprite: '.encounter-pokemon .sprite'
       ,pokeBall: '.btn-pokeball'
     }
 
     ,events: {
       'click .btn-escape': 'escape'
+      ,'click .btn-leave': 'escape'
       ,'shown.bs.popover .btn-pokeball': 'showBagPopover'
       ,'selectItem .btn-pokeball': 'catchPokemon'
     }
@@ -88,34 +90,48 @@ define([
           ,pocket: 'pokeballs'
           ,button: me.ui.pokeBall
         });
+        me.bagPopover.render();
         me.ui.pokeBall.popover({
           html: true
           ,content: me.bagPopover.el
           ,placement: 'top'
         });
-        me.bagPopover.on('render', function(){
-          me.popoverRendering = true;
-          me.ui.pokeBall.popover('show');
-          me.popoverRendering = false;
+
+        // Re-position the popover after render
+        me.listenTo(me.bagPopover, 'render', function(){
+          me._popoverRendering = true;
+          var popover = me.ui.pokeBall.data('bs.popover');
+          popover.options.animation = false;
+          popover.show();
+          popover.options.animation = true;
+          me._popoverRendering = false;
         });
       }
+
+      _.defer(function(){
+        me.$el.appear();
+      })
     }
 
     ,onClose: function(){
-      this.children.each(function(child){
-        child.close();
-        this.children.remove(child);
-      }, this);
+      this.closePokemonEvents();
 
       if (this.bagPopover) {
         this.bagPopover.close();
       }
     }
 
+    ,closePokemonEvents: function(){
+      this.children.each(function(child){
+        child.close();
+        this.children.remove(child);
+      }, this);
+    }
+
     ,showBagPopover: function(){
       this.bagPopover.delegateEvents();
-      if (!this.popoverRendering) {
-        this.model.trainer.pocket.fetch();
+      if (!this._popoverRendering) {
+        this.model.trainer.pocket.fetch({reset: true});
       }
     }
 
@@ -154,6 +170,9 @@ define([
       var me = this, pokeBall = me.model.pokeBall;
       var pokeBallImg = PARADISE.imgBase + '/encounter-pokeballs/'
         + pokeBall.get('item').name + '.png';
+
+      me.$('button').prop('disabled', true);
+
       $.when(me.pokemonCanvas(), $.loadImage(pokeBallImg))
       .done(function(sprite, pokeBallImg){
         sprite.setFilter(Kinetic.Filters.Brighten);
@@ -192,7 +211,6 @@ define([
           // Capture Done!
           me.ui.sprite.delay(500)
           .tweenChain({ node: pokeBall, filterBrightness: 64 });
-          me.showCatchSuccess();
         } else {
           // Capture Failed
           me.ui.sprite.delay(500)
@@ -200,13 +218,43 @@ define([
             ,{ node: pokeBall, scaleX: 0, scaleY: 0 });
         }
 
+        if (e.escape) {
+          // Pokémon escaped
+          me.ui.sprite.delay(500)
+          .tweenChain({ node: sprite, opacity: 0 });
+        }
+
+        me.ui.sprite.promise().done(function(){
+          if (e.shake == 4) {
+            me.showCatchSuccess();
+          } else {
+            me.showCatchFail(e.escape);
+          }
+          me.$('button').prop('disabled', false);
+        });
+
         me._pokeBall = pokeBall;
       });
     }
 
     // Successfully caught a Pokémon
     ,showCatchSuccess: function(){
+      this.ui.pokeBall.parent().hide();
+      this.closePokemonEvents();
 
+      var pokemon = i18n.t('pokemon:' + this.model.pokemon.get('species').name);
+      var text = i18n.t('encounter.catch-success', {pokemon: pokemon});
+      this.ui.encounterEvents.text(text);
+    }
+
+    ,showCatchFail: function(escaped){
+      if (escaped) {
+        this.ui.pokeBall.parent().hide();
+      }
+      this.closePokemonEvents();
+      var pokemon = i18n.t('pokemon:' + this.model.pokemon.get('species').name);
+      var text = i18n.t(escaped ? 'encounter.escaped' : 'encounter.catch-fail', {pokemon: pokemon});
+      this.ui.encounterEvents.text(text);
     }
 
     // Convert Pokémon to Kinetic Objects

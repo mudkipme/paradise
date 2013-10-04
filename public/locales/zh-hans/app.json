@@ -98,6 +98,7 @@
     ,"buy-has-number": "拥有数量"
     ,"buy-number": "购买数量"
     ,"use-done": "__pokemon__ 使用了 __item__。"
+    ,"item-not-found": "背包里目前还没有__pocket__。"
   }
   ,"events": {
     "level-up": "__pokemon__ 等级上升到了 __level__ ！"
@@ -114,9 +115,13 @@
     "jump-out": "野生的 __pokemon__ 出现了！"
     ,"select-pokemon": "请选择队伍中的神奇宝贝对战！"
     ,"escape": "逃脱"
+    ,"leave": "离开"
     ,"win": "你的 __battlePokemon__ 战胜了野生的 __pokemon__！"
     ,"lose": "你的 __battlePokemon__ 败给了野生的 __pokemon__！"
     ,"pokemon-not-found": "没有发现野生的神奇宝贝出现！"
+    ,"catch-success": "成功收服到了野生的 __pokemon__！"
+    ,"catch-fail": "__pokemon__ 跳了出来！"
+    ,"escaped": "野生的 __pokemon__ 逃离了！"
   }
   ,"forme": {
     "sky": "天空"

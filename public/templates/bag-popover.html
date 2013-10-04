@@ -1,6 +1,10 @@
-<% _.each(items, function(item){ %>
-  <a href="#" data-id="<%= item.id %>">
-    <img src="<%= PARADISE.imgBase %>/items/<%= (item.item.name) %>.png" alt="<%= t('item:' + item.item.name) %>" />
-    <%= t('item:' + item.item.name) %>
-  </a>
-<% }) %>
+<% if (items.length) { %>
+  <% _.each(items, function(item){ %>
+    <a href="#" data-id="<%= item.id %>">
+      <img src="<%= PARADISE.imgBase %>/items/<%= (item.item.name) %>.png" alt="<%= t('item:' + item.item.name) %>" />
+      <%= t('item:' + item.item.name) %>
+    </a>
+  <% }) %>
+<% } else { %>
+  <p><%= t('action.item-not-found', {pocket: t('pocket.' + (pocket || 'misc'))}) %></p>
+<% } %>

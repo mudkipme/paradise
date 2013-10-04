@@ -1,14 +1,17 @@
 <section class="encounter-scene encounter-<%- timeOfDay %> <% if (_.contains(['old-rod', 'good-rod', 'super-rod', 'surf', 'super-rod-spots', 'surf-spots'], method)) { %>encounter-water<% } %> <% if (location && location.match(/(cave|tunnel|path|falls|gate|mt-|mountain|chasm|den)/)) { %>encounter-cave<% } %>">
   <div class="encounter-events">
     <% if (!pokemon) { %>
-      <p><%- t('encounter.pokemon-not-found') %></p>
+      <p><%= t('encounter.pokemon-not-found') %></p>
     <% } else if (!battleResult) { %>
-      <p><%- t('encounter.jump-out', {pokemon: pokemonName()}) %></p>
+      <p><%= t('encounter.jump-out', {pokemon: pokemonName()}) %></p>
       <p><%= t('encounter.select-pokemon') %></p>
     <% } else if (battleResult == 'win') { %>
       <p><%- t('encounter.win', {battlePokemon: battlePokemonName, pokemon: pokemonName()}) %></p>
     <% } else { %>
       <p><%- t('encounter.lose', {battlePokemon: battlePokemonName, pokemon: pokemonName()}) %></p>
+    <% } %>
+    <% if (escape) { %>
+      <p><%= t('encounter.escaped', {pokemon: pokemonName()}) %></p>
     <% } %>
   </div>
   <div class="pokemon-events"></div>
@@ -24,7 +27,7 @@
     </div>
   <% } %>
   <div class="encounter-pokemon">
-    <% if (pokemon) {%>
+    <% if (pokemon && !escape) {%>
       <div class="shadow"></div>
       <div class="sprite">
           <img src="<%= spriteUrl() %>" alt="<%- pokemonName() %>" />
@@ -33,9 +36,15 @@
   </div>
 </section>
 <section class="party-select"></section>
-<% if (pokemon) { %>
-  <section class="encounter-options">
+<section class="encounter-options">
+  <% if (pokemon && !escape) { %>
     <div><button class="btn btn-pokeball"><%= t('pocket.pokeballs') %></button></div>
-    <div><button class="btn btn-escape"><%= t('encounter.escape') %></button></div>
-  </section>
-<% } %>
+  <% } %>
+  <div>
+    <% if (!pokemon || battleResult) { %>
+      <button class="btn btn-leave"><%= t('encounter.leave') %></button>
+    <% } else { %>
+      <button class="btn btn-escape"><%= t('encounter.escape') %></button>
+    <% } %>
+  </div>
+</section>

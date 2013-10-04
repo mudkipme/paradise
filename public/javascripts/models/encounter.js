@@ -15,6 +15,7 @@ define([
       ,pokemon: null
       ,battleResult: null
       ,battlePokemon: null
+      ,escape: false
     }
 
     ,initialize: function(attributes, options){
@@ -53,7 +54,7 @@ define([
         ,data: {pokemonId: pokemon.id}
         ,processData: true
         ,success: function(data){
-          me.set({battleResult: data.result});
+          me.set({battleResult: data.result, escape: data.escape});
           _.each(data.events, function(ev){
             var pokemon = me.trainer.party.get(ev.pokemon.id);
             pokemon && pokemon.set(ev.pokemon);
@@ -63,6 +64,9 @@ define([
               ,oldPokemon: oldPokemon
             });
           });
+          if (data.escape) {
+            me.set(me.defaults, {silent: true});
+          }
         }
       });
     }
@@ -89,8 +93,10 @@ define([
         ,data: {itemId: pokeBall.id}
         ,processData: true
         ,success: function(data){
-          me.trigger('catch', {shake: data.shake});
-          me.set(me.defaults, {silent: true});
+          me.trigger('catch', data);
+          if (data.escape || data.shake == 4) {
+            me.set(me.defaults, {silent: true});
+          }
         }
       });
     }

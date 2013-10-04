@@ -42,7 +42,7 @@ define([
     }
 
     ,gotoLocation: function(){
-      if (this.encounter.get('pokemon')) {
+      if (this.encounter.get('location')) {
         Backbone.history.navigate('/encounter', {trigger: true});
       }
     }
