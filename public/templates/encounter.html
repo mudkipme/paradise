@@ -1,6 +1,8 @@
-<section class="encounter-scene encounter-<%- timeOfDay %> <% if (_.contains(['old-rod', 'good-rod', 'super-rod', 'surf', 'super-rod-spots', 'surf-spots'], method)) { %>encounter-water<% } %>">
+<section class="encounter-scene encounter-<%- timeOfDay %> <% if (_.contains(['old-rod', 'good-rod', 'super-rod', 'surf', 'super-rod-spots', 'surf-spots'], method)) { %>encounter-water<% } %> <% if (location && location.match(/(cave|tunnel|path|falls|gate|mt-|mountain|chasm|den)/)) { %>encounter-cave<% } %>">
   <div class="encounter-events">
-    <% if (!battleResult) { %>
+    <% if (!pokemon) { %>
+      <p><%- t('encounter.pokemon-not-found') %></p>
+    <% } else if (!battleResult) { %>
       <p><%- t('encounter.jump-out', {pokemon: pokemonName()}) %></p>
       <p><%= t('encounter.select-pokemon') %></p>
     <% } else if (battleResult == 'win') { %>
@@ -10,7 +12,7 @@
     <% } %>
   </div>
   <div class="pokemon-events"></div>
-  <% if (!battleResult) { %>
+  <% if (!battleResult && pokemon) { %>
     <div class="pokemon-info popover top">
       <div class="arrow"></div>
       <div class="popover-content">
@@ -21,15 +23,19 @@
       </div>
     </div>
   <% } %>
-  <div class="encounter-pokemon">
-    <div class="shadow"></div>
-    <div class="sprite">
-      <img src="<%= spriteUrl() %>" alt="<%- pokemonName() %>" />
+  <% if (pokemon) {%>
+    <div class="encounter-pokemon">
+      <div class="shadow"></div>
+      <div class="sprite">
+          <img src="<%= spriteUrl() %>" alt="<%- pokemonName() %>" />
+      </div>
     </div>
-  </div>
+  <% } %>
 </section>
 <section class="party-select"></section>
-<section class="encounter-options">
-  <div><button class="btn btn-pokeball"><%= t('pocket.pokeballs') %></button></div>
-  <div><button class="btn btn-escape"><%= t('encounter.escape') %></button></div>
-</section>
+<% if (pokemon) { %>
+  <section class="encounter-options">
+    <div><button class="btn btn-pokeball"><%= t('pocket.pokeballs') %></button></div>
+    <div><button class="btn btn-escape"><%= t('encounter.escape') %></button></div>
+  </section>
+<% } %>

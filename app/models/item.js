@@ -323,8 +323,9 @@ var itemProto = {
     });
   }
 
+  // Modify the gain base stats after battle
   ,effort: function(effort){
-    var effects = _.findWhere(this.effects, {effect_type: 'after-battle'});
+    var effect = _.findWhere(this.effects, {effect_type: 'after-battle'});
     if (!effect || !effect.param_1.match(/^effort/))
       return;
     var stat = effect.param_1.substr(7);
@@ -340,6 +341,39 @@ var itemProto = {
     }
 
     return;
+  }
+
+  ,catchResult: function(trainer, hp){
+    var pokemon = trainer.encounter.pokemon;
+    var effect = _.findWhere(this.effects, {effect_type: 'catch'});
+    var ball = parseFloat(effect.param_1);
+
+    // Different Poké Balls
+    var ballType = effect.param_2;
+    var pokemonTypes = _.pluck(pokemon.species.types, 'name');
+    var waterMethods = ['old-rod', 'good-rod', 'super-rod', 'surf', 'super-rod-spots', 'surf-spots'];
+    var cave = /(cave|tunnel|path|falls|gate|mt-|mountain|chasm|den)/;
+
+    if (ballType == 'net' && _.intersection(pokemonTypes, ['water', 'bug']).length) {
+      ball = 3;
+    } else if (ballType == 'dive' && _.contains(waterMethods, trainer.encounter.method)) {
+      ball = 3.5;
+    } else if (ballType == 'nest' && pokemon.level <= 30) {
+      ball = (40 - pokemon.level) / 10;
+    } else if (ballType == 'repeat' && trainer.caught(pokemon.species)) {
+      ball = 3;
+    } else if (ballType == 'dark' && (trainer.timeOfDay == 'night' || trainer.encounter.match(cave))) {
+      ball = 4;
+    }
+
+    var maxHp = pokemon.stats.maxHp;
+    var a = (3 * maxHp - 2 * hp) * pokemon.species.captureRate * ball / (3 * maxHp);
+    var b = 65536 / Math.pow(255 / a, 0.25);
+    var shakeResult = 0;
+    while (shakeResult < 4 && _.random(0, 65535) < b) {
+      shakeResult++;
+    }
+    return shakeResult;
   }
 };
 

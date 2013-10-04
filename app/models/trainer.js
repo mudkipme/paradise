@@ -139,6 +139,14 @@ TrainerSchema.methods.getPokedex = function(callback) {
   });
 };
 
+TrainerSchema.methods.caught = function(species){
+  species = _.isObject(species) ? species.number : species;
+  if (!me._pokedexCaught) {
+    me._pokedexCaught = new BitArray(Species.max, me.pokedexCaughtHex);
+  }
+  return me._pokedexCaught(species);
+};
+
 /**
  * Find an empty slot in storage
  */
@@ -215,7 +223,7 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
     }
     pokemon.meetDate = new Date();
     pokemon.meetLevel = pokemon.level;
-    pokemon.meetPlaceIndex = location.name;
+    pokemon.meetPlaceIndex = _.isString(location) ? location : location.name;
 
 
     pokemon.save(function(err){

@@ -1,7 +1,18 @@
 var async = require('async');
 var _ = require('underscore');
+var Item = require('../models/item');
 var Location = require('../models/location');
 var Battle = require('../models/battle');
+
+var clearEncounter = function(trainer){
+  trainer.encounter.location = null;
+  trainer.encounter.area = null;
+  trainer.encounter.method = null;
+  trainer.encounter.pokemon = null;
+  trainer.encounter.battleResult = null;
+  trainer.encounter.battlePokemon = null;
+  trainer.encounter.time = null;
+};
 
 // Encounter a wild Pokémon
 exports.post = function(req, res){
@@ -47,26 +58,44 @@ exports.battle = function(req, res){
 
 // Catch the wild Pokémon
 exports.catch = function(req, res){
+  var pokemon = req.trainer.encounter.pokemon;
+  var location = req.trainer.encounter.location;
+  if (!pokemon)
+    return res.json(404, {error: 'NO_ENCOUNTER_POKEMON'});
 
+  Item(parseInt(req.body.itemId), function(err, pokeBall){
+    if (err) return res.json(500, {error: err.message});
+
+    var hp = pokemon.stats.maxHp;
+    if (req.trainer.encounter.battleResult == 'win') {
+      hp = Math.round(hp / 10);
+    }
+    var shakeResult = pokeBall.catchResult(req.trainer, hp);
+
+    // Success
+    if (shakeResult == 4) {
+      clearEncounter(req.trainer);
+      req.trainer.catchPokemon(pokemon, pokeBall, location, function(err){
+        if (err) return res.json(500, {error: err.message});
+        res.json({shake: shakeResult, pokemon: pokemon});
+      });
+    } else {
+      res.json({shake: shakeResult, pokemon: pokemon});
+    }
+  });
 };
 
 // Escape from the current wild Pokémon
 exports.escape = function(req, res){
   var pokemon = req.trainer.encounter.pokemon;
   if (!pokemon)
-    return res.json(404, 'NO_ENCOUNTER_POKEMON');
+    return res.json(404, {error: 'NO_ENCOUNTER_POKEMON'});
 
   async.series([
     pokemon.remove.bind(pokemon)
 
     ,function(next){
-      req.trainer.encounter.location = null;
-      req.trainer.encounter.area = null;
-      req.trainer.encounter.method = null;
-      req.trainer.encounter.pokemon = null;
-      req.trainer.encounter.battleResult = null;
-      req.trainer.encounter.battlePokemon = null;
-      req.trainer.encounter.time = null;
+      clearEncounter(req.trainer);
       req.trainer.save(next);
     }
   ], function(err){

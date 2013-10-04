@@ -97,7 +97,7 @@ define([], function(){
           ,y: 356
         }
         ,{
-          name: 'indigo-plateau'
+          name: 'kanto-victory-road-4'
           ,x: 151
           ,y: 123
         }
