@@ -3,9 +3,10 @@
 define([
   'jquery'
   ,'underscore'
+  ,'kinetic'
   ,'jquery.transit'
   ,'bootstrap'
-], function($, _){
+], function($, _, Kinetic){
 
   // Deferred image loading
   $.loadImage = function(src){
@@ -158,6 +159,30 @@ define([
     .toggleClass('disabled', currentPage == totalPages)
     .data('page', currentPage + 1)
     .appendTo(pagination);
+
+    return this;
+  };
+
+  // Kinetic.Tween chain
+  $.fn.tweenChain = function(){
+    var args = arguments, me = this;
+
+    me.queue(function(next){
+      var dfds = _.map(args, function(options){
+        var dfd = $.Deferred();
+        var tween = new Kinetic.Tween(_.extend({
+          onFinish: function(){
+            dfd.resolve();
+          }
+          ,easing: Kinetic.Easings.EaseOut
+          ,duration: 0.5
+        }, options));
+
+        tween.play();
+        return dfd;
+      });
+      $.when.apply($, dfds).done(next);
+    });
 
     return this;
   };

@@ -139,7 +139,7 @@ PokemonSchema.virtual('expNextLevel').get(function(){
 // Options includes the battle stats like location
 PokemonSchema.methods.onLevelUp = function(level, options, callback){
   if (!callback) { callback = options; options = {}; }
-console.log(callback);
+
   var events = {type: 'level', value: level}, me = this;
   var happiness = me.happiness < 100 ? 5 : (me.happiness < 200 ? 3 : 2);
 

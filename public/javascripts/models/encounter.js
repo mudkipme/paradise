@@ -89,7 +89,7 @@ define([
         ,data: {itemId: pokeBall.id}
         ,processData: true
         ,success: function(data){
-          me.trigger('catch', {shake: data.shakeResult});
+          me.trigger('catch', {shake: data.shake});
           me.set(me.defaults, {silent: true});
         }
       });

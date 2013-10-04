@@ -12,7 +12,7 @@ define([
   ,'views/bag-popover'
   ,'text!templates/encounter.html'
   ,'util'
-], function($, _, Backbone, Marionette, i18n, kinetic, vent
+], function($, _, Backbone, Marionette, i18n, Kinetic, vent
  , PokemonView, PartySelectView, PokemonEventsView, BagPopoverView, encounterTemplate){
 
   var EncounterView = Marionette.Layout.extend({
@@ -150,35 +150,105 @@ define([
       this.hidePopover();
     }
 
-    ,showCatch: function(shake){
-      var pokeBall = this.model.pokeBall;
+    ,showCatch: function(e){
+      var me = this, pokeBall = me.model.pokeBall;
+      var pokeBallImg = PARADISE.imgBase + '/encounter-pokeballs/'
+        + pokeBall.get('item').name + '.png';
+      $.when(me.pokemonCanvas(), $.loadImage(pokeBallImg))
+      .done(function(sprite, pokeBallImg){
+        sprite.setFilter(Kinetic.Filters.Brighten);
+        if (me._pokeBall) {
+          me._pokeBall.destroy();
+        }
+        var pokeBall = new Kinetic.Image({
+          image: pokeBallImg
+          ,width: 22
+          ,height: 22
+          ,x: 48
+          ,y: 64
+          ,scaleX: 0
+          ,scaleY: 0
+          ,offsetX: 11
+          ,offsetY: 11
+          ,filter: Kinetic.Filters.Brighten
+        });
+        me.layer.add(pokeBall);
+
+        // Show the Poké Ball
+        me.ui.sprite
+        .tweenChain({ node: sprite, filterBrightness: 255 })
+        .tweenChain({ node: sprite, scaleX: 0, scaleY: 0 }
+          ,{ node: pokeBall, scaleX: 1, scaleY: 1 });
+
+        // Shake the Poké Ball
+        _.times(Math.min(e.shake, 3), function(time){
+          me.ui.sprite.delay(500)
+          .tweenChain({ node: pokeBall, rotationDeg: -45, x: 40 })
+          .tweenChain({ node: pokeBall, rotationDeg: 45, x: 56 })
+          .tweenChain({ node: pokeBall, rotationDeg: 0, x: 48 })
+        });
+
+        if (e.shake == 4) {
+          // Capture Done!
+          me.ui.sprite.delay(500)
+          .tweenChain({ node: pokeBall, filterBrightness: 64 });
+          me.showCatchSuccess();
+        } else {
+          // Capture Failed
+          me.ui.sprite.delay(500)
+          .tweenChain({ node: sprite, scaleX: 1, scaleY: 1, filterBrightness: 0 }
+            ,{ node: pokeBall, scaleX: 0, scaleY: 0 });
+        }
+
+        me._pokeBall = pokeBall;
+      });
+    }
+
+    // Successfully caught a Pokémon
+    ,showCatchSuccess: function(){
+
+    }
+
+    // Convert Pokémon to Kinetic Objects
+    ,pokemonCanvas: function(){
+      if (this._pokemonCanvas) return this._pokemonCanvas;
+
+      var dfd = $.Deferred(), me = this;
+      $.loadImage(me.ui.sprite.find('img').attr('src'))
+      .done(function(img){
+        var stage = new Kinetic.Stage({
+          container: me.ui.sprite.get(0)
+          ,width: 96
+          ,height: 96
+        });
+
+        me.layer = new Kinetic.Layer();
+        var sprite = new Kinetic.Image({
+          image: img
+          ,x: 48
+          ,y: 64
+          ,width: 96
+          ,height: 96
+          ,offsetX: 48
+          ,offsetY: 64
+        });
+
+        me.layer.add(sprite);
+        stage.add(me.layer);
+        dfd.resolve(sprite);
+      });
+
+      me._pokemonCanvas = dfd;
+      return dfd;
     }
 
     // Will switch to CSS solution once Firefox support that
     ,blurPokemon: function(){
-      var sp = this.ui.sprite;
-      $.loadImage(sp.find('img').attr('src'))
-      .done(function(img){
-        var stage = new Kinetic.Stage({
-          container: sp.get(0)
-          ,width: 96
-          ,height: 96
-        });
-        var layer = new Kinetic.Layer();
-        var sprite = new Kinetic.Image({
-          image: img
-          ,width: 96
-          ,height: 96
-          ,filter: Kinetic.Filters.Blur
-          ,filterRadius: 0
-        });
-        layer.add(sprite);
-        stage.add(layer);
-        new Kinetic.Tween({
-          node: sprite
-          ,filterRadius: 4
-          ,duration: 0.5
-        }).play();
+      var me = this;
+      me.pokemonCanvas().done(function(sprite){
+        sprite.setFilter(Kinetic.Filters.Blur);
+        sprite.setFilterRadius(3);
+        me.layer.batchDraw();
       });
     }
   });

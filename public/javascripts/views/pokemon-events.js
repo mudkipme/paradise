@@ -50,24 +50,6 @@ define([
       });
     }
 
-    ,tweenChain: function(){
-      var args = arguments;
-      return function(){
-        var dfds = _.map(args, function(options){
-          var dfd = $.Deferred();
-          new Kinetic.Tween(_.extend({
-            onFinish: function(){
-              dfd.resolve();
-            }
-            ,easing: Kinetic.Easings.EaseOut
-            ,duration: 0.5
-          }, options)).play();
-          return dfd;
-        });
-        return $.when.apply($, dfds);
-      };
-    }
-
     ,evolve: function(callback){
       var me = this;
       var before = me.ui.sprite.data('before');
@@ -83,71 +65,53 @@ define([
 
       $.when($.loadImage(before), $.loadImage(after))
       .done(function(beforeImage, afterImage){
-        before = new Kinetic.Image({
-          x: 0
-          ,y: 0
+        var beforeOptions = {
+          x: 48
+          ,y: 48
           ,image: beforeImage
           ,width: 96
           ,height: 96
+          ,offsetX: 48
+          ,offsetY: 48
           ,filter: Kinetic.Filters.Brighten
-        });
-
-        after = new Kinetic.Image({
-          x: 48
-          ,y: 48
-          ,image: afterImage
-          ,width: 96
-          ,height: 96
-          ,filter: Kinetic.Filters.Brighten
+        }, afterOptions = _.defaults({
+          image: afterImage
           ,filterBrightness: 255
           ,scaleX: 0
           ,scaleY: 0
-        });
+        }, beforeOptions);
+
+        before = new Kinetic.Image(beforeOptions);
+        after = new Kinetic.Image(afterOptions);
 
         me.layer.add(before);
         me.layer.add(after);
         stage.add(me.layer);
         
-        var chain = me.tweenChain({
+        me.ui.sprite.tweenChain({
           node: before
           ,filterBrightness: 255
           ,duration: 1.5
-        })();
+        });
 
         _.each(_.range(0.6, 0, -0.1), function(duration, i){
-          var hideOpts = {
-            duration: duration
-            ,x: 48
-            ,y: 48
-            ,scaleX: 0
-            ,scaleY: 0
-          }, showOpts = {
-            duration: duration
-            ,x: 0
-            ,y: 0
-            ,scaleX: 1
-            ,scaleY: 1
-          };
-
-          chain = chain.then(me.tweenChain(_.extend({
-            node: before
-          }, hideOpts), _.extend({
-            node: after
-          }, showOpts)));
+          me.ui.sprite.tweenChain(
+             { node: before, duration: duration, scaleX: 0, scaleY: 0 }
+            ,{ node: after, duration: duration, scaleX: 1, scaleY: 1 }
+          );
 
           if (i != 5) {
-            chain = chain.then(me.tweenChain(_.extend({
-              node: before
-            }, showOpts), _.extend({
-              node: after
-            }, hideOpts)));
+            me.ui.sprite.tweenChain(
+               { node: after, duration: duration, scaleX: 0, scaleY: 0 }
+              ,{ node: before, duration: duration, scaleX: 1, scaleY: 1 }
+            );
           }
         });
 
-        chain.then(me.tweenChain({
+        me.ui.sprite.tweenChain({
           node: after
           ,filterBrightness: 0
-        })).then(callback);
+        }).promise().done(callback);
       });
     }
   });
