@@ -64,7 +64,7 @@ define([
     }
 
     ,fetch: function(options){
-      this.bag.fetch(options);
+      return this.bag.fetch(options);
     }
   });
 

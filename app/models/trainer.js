@@ -14,8 +14,14 @@ var geode = new Geode(config.thirdParty.geonames, {});
 var TrainerSchema = new Schema({
   name:             String,
   trainerId:        Number,
-  pokedexCaughtHex: String,
-  pokedexSeenHex:   String,
+  pokedexHex:          {
+    caught:         String,
+    seen:           String,
+    formM:          String,
+    formF:          String,
+    formMS:         String,
+    formFS:         String
+  },
   pokedexCaughtNum: { type: Number, default: 0 },
   pokedexSeenNum:   { type: Number, default: 0 },
   party:            [{ type: Schema.Types.ObjectId, ref: 'Pokemon' }],
@@ -103,48 +109,85 @@ TrainerSchema.virtual('timeOfDay').get(function(){
   }
 });
 
-TrainerSchema.methods.setPokedexSeen = function(speciesNumber) {
-  if (!this._pokedexSeen) {
-    this._pokedexSeen = new BitArray(Species.max, this.pokedexSeenHex);
-  }
-  this._pokedexSeen.set(speciesNumber, true);
-  this.pokedexSeenHex = this._pokedexSeen.toHexString();
-  this.pokedexSeenNum = this._pokedexSeen.count();
+TrainerSchema.methods.initPokedex = function(){
+  var me = this;
+  if (me._pokedex) return;
+  var dexes = ['caught', 'seen', 'formM', 'formF', 'formMS', 'formFS'];
+  me._pokedex = {};
+
+  _.each(dexes, function(dexName){
+    me._pokedex[dexName] = new BitArray(Species.max, me.pokedexHex[dexName]);
+  });
+}
+
+TrainerSchema.methods.setPokedexSeen = function(pokemon) {
+  this.initPokedex();
+  this._pokedex.seen.set(pokemon.speciesNumber, true);
+
+  var gender = pokemon.gender == 1 ? 'F' : 'M';
+  var appendix = pokemon.isShiny ? 'S' : '';
+  var dexName = 'form' + gender + appendix;
+  
+  this._pokedex[dexName].set(pokemon.species.formId, true);
+  this.pokedexHex.seen = this._pokedex.seen.toHexString();
+  this.pokedexHex[dexName] = this._pokedex[dexName].toHexString();
+  this.pokedexSeenNum = this._pokedex.seen.count();
 };
 
-TrainerSchema.methods.setPokedexCaught = function(speciesNumber) {
-  if (!this._pokedexCaught) {
-    this._pokedexCaught = new BitArray(Species.max, this.pokedexCaughtHex);
-  }
-  this._pokedexCaught.set(speciesNumber, true);
-  this.pokedexCaughtHex = this._pokedexCaught.toHexString();
-  this.pokedexCaughtNum = this._pokedexCaught.count();
+TrainerSchema.methods.setPokedexCaught = function(pokemon) {
+  this.initPokedex();
+  this.setPokedexSeen(pokemon);
+  this._pokedex.caught.set(pokemon.speciesNumber, true);
+  this.pokedexHex.caught = this._pokedex.caught.toHexString();
+  this.pokedexCaughtNum = this._pokedex.caught.count();
 };
 
 TrainerSchema.methods.getPokedex = function(callback) {
   var me = this;
-  if (!me._pokedexSeen) {
-    me._pokedexSeen = new BitArray(Species.max, me.pokedexSeenHex);
-  }
-  if (!me._pokedexCaught) {
-    me._pokedexCaught = new BitArray(Species.max, me.pokedexCaughtHex);
-  }
-  Species.allNames(function(err, result){
-    if (err) return callback(err);
-    _.each(result, function(dex){
-      dex.seen = me._pokedexSeen.get(dex.number);
-      dex.caught = me._pokedexCaught.get(dex.number);
+  me.initPokedex();
+  Species.allForms(function(err, allForms){
+
+    var result = [];
+
+    _.each(allForms, function(dex, speciesNumber){
+      var row = {
+        speciesNumber: speciesNumber
+        ,name: dex.name
+        ,hasGenderDifferences: dex.hasGenderDifferences
+        ,seen: me._pokedex.seen.get(speciesNumber)
+        ,caught: me._pokedex.caught.get(speciesNumber)
+        ,forms: []
+      }
+      _.each(dex.forms, function(formIdentifier, formId){
+        if ((!dex.hasGenderDifferences && me._pokedex.formF.get(formId))
+          || me._pokedex.formM.get(formId)) {
+          row.forms.push({form: formIdentifier});
+        }
+
+        if (dex.hasGenderDifferences && me._pokedex.formF.get(formId)) {
+          row.forms.push({form: formIdentifier, female: true});
+        }
+
+        if ((!dex.hasGenderDifferences && me._pokedex.formFS.get(formId))
+          || me._pokedex.formMS.get(formId)) {
+          row.forms.push({form: formIdentifier, shiny: true});
+        }
+
+        if (dex.hasGenderDifferences && me._pokedex.formFS.get(formId)) {
+          row.forms.push({form: formIdentifier, female: true, shiny: true});
+        }
+      });
+      result.push(row);
     });
+
     callback(null, result);
   });
 };
 
 TrainerSchema.methods.caught = function(species){
   species = _.isObject(species) ? species.number : species;
-  if (!me._pokedexCaught) {
-    me._pokedexCaught = new BitArray(Species.max, me.pokedexCaughtHex);
-  }
-  return me._pokedexCaught(species);
+  this.initPokedex();
+  return this._pokedex.caught.get(species);
 };
 
 /**
@@ -185,15 +228,6 @@ TrainerSchema.methods.storageSlot = function(){
 };
 
 /**
- * See a Pokémon
- * @param  {Pokemon}  pokemon  The Pokémon to be seen
- */
-TrainerSchema.methods.seePokemon = function(pokemon, callback) {
-  this.setPokedexSeen(pokemon.speciesNumber);
-  this.save(callback);
-};
-
-/**
  * Catch a Pokémon
  * @param  {Pokemon}   pokemon  The Pokémon to be caught
  * @param  {Item}      pokeBall The Poké Ball to use
@@ -229,8 +263,7 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
     pokemon.save(function(err){
       if (err) return callback(err);
 
-      me.setPokedexSeen(pokemon.speciesNumber);
-      me.setPokedexCaught(pokemon.speciesNumber);
+      me.setPokedexCaught(pokemon);
       me.save(function(err){
         if (err) return callback(err);
         callback(null, slot);

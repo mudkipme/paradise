@@ -168,6 +168,7 @@ var locationProto = {
           result.method = encounter.method;
           result.pokemon = pokemon;
           trainer.encounter = result;
+          trainer.setPokedexSeen(pokemon);
           trainer.save(next);
         });
       }

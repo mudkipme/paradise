@@ -7,6 +7,7 @@ var Type = require('./type');
 // speciesCache[nationalNumber][formIdentifier]
 var speciesCache = {};
 var pokemonIdCache = {};
+var allFormsCache = null;
 
 // Get the Species object
 var Species = function(nationalNumber, form, callback) {
@@ -24,7 +25,7 @@ var Species = function(nationalNumber, form, callback) {
 
   async.waterfall([
     // Pokémon Basic Information
-    db.all.bind(db, 'SELECT * FROM pokemon_forms JOIN pokemon ON pokemon_forms.pokemon_id = pokemon.id LEFT JOIN pokemon_species ON pokemon.species_id = pokemon_species.id WHERE species_id = ?', [nationalNumber])
+    db.all.bind(db, 'SELECT *, pokemon_forms.id AS form_id FROM pokemon_forms JOIN pokemon ON pokemon_forms.pokemon_id = pokemon.id LEFT JOIN pokemon_species ON pokemon.species_id = pokemon_species.id WHERE species_id = ?', [nationalNumber])
 
     ,function(rows, next){
       if (!rows.length) return next(new Error('MissingNo.'));
@@ -40,6 +41,8 @@ var Species = function(nationalNumber, form, callback) {
       species.growthRate = raw.growth_rate_id;
       species.captureRate = raw.capture_rate;
       species.formIdentifier = raw.form_identifier || '';
+      species.formId = raw.form_id;
+
       species.hatchTime = raw.hatch_counter;
       species.height = raw.height;
       species.weight = raw.weight;
@@ -147,9 +150,29 @@ var speciesProto = {
 };
 
 
-// Get all Pokémon's names
-Species.allNames = function(callback){
-  db.all('SELECT id AS number, identifier AS name FROM pokemon_species', callback);
+// Get all Pokémon's forms
+Species.allForms = function(callback){
+  if (allFormsCache) return callback(null, _.clone(allFormsCache));
+
+  db.all('SELECT pokemon_forms.id AS form_id, species_id, identifier, form_identifier, has_gender_differences FROM pokemon_forms LEFT JOIN pokemon ON pokemon_forms.pokemon_id = pokemon.id LEFT JOIN pokemon_species ON pokemon.species_id = pokemon_species.id', function(err, rows){
+    if (err) return callback(err);
+
+    allFormsCache = {};
+    _.each(rows, function(row){
+      if (!allFormsCache[row.species_id]) {
+        allFormsCache[row.species_id] = {
+          name: row.identifier
+          ,hasGenderDifferences: row.has_gender_differences
+          ,forms: {}
+        };
+      }
+      if (row.form_identifier == 0) {
+        row.form_identifier = '';
+      }
+      allFormsCache[row.species_id].forms[row.form_id] = row.form_identifier;
+    });
+    callback(null, allFormsCache);
+  });
 };
 
 // Get the species id and form identifier by pokemon_id

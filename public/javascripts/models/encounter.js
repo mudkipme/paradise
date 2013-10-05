@@ -22,7 +22,6 @@ define([
       var me = this;
       me.pokemon = new Pokemon(this.get('pokemon'));
       me.battlePokemon = options.trainer.party.get(this.get('battlePokemon'));
-      me.oldPokemon = me.battlePokemon && me.battlePokemon.toJSON();
       me.trainer = options.trainer;
 
       me.on('change:pokemon', function(){
@@ -45,7 +44,7 @@ define([
 
     // Begin battle
     ,battle: function(pokemon){
-      var me = this, oldPokemon = pokemon.toJSON();
+      var me = this;
       me.battlePokemon = pokemon;
 
       me.sync(null, me, {
@@ -57,12 +56,15 @@ define([
           me.set({battleResult: data.result, escape: data.escape});
           _.each(data.events, function(ev){
             var pokemon = me.trainer.party.get(ev.pokemon.id);
-            pokemon && pokemon.set(ev.pokemon);
-            me.trigger('pokemonEvents', {
-              model: pokemon
-              ,pokemonEvents: ev.events
-              ,oldPokemon: oldPokemon
-            });
+            if (pokemon) {
+              var oldPokemon = pokemon.toJSON();
+              pokemon.set(ev.pokemon);
+              me.trigger('pokemonEvents', {
+                model: pokemon
+                ,pokemonEvents: ev.events
+                ,oldPokemon: oldPokemon
+              });
+            }
           });
           if (data.escape) {
             me.set(me.defaults, {silent: true});
