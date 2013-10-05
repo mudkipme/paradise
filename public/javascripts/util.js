@@ -5,6 +5,8 @@ define([
   ,'underscore'
   ,'kinetic'
   ,'jquery.transit'
+  ,'jquery.mousewheel'
+  ,'hammer'
   ,'bootstrap'
 ], function($, _, Kinetic){
 

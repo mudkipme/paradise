@@ -1,0 +1,26 @@
+<div class="pokedex-entry">
+  <div class="top"></div>
+  <div class="content"></div>
+  <div class="bottom"></div>
+</div>
+
+<div class="pokedex-list-header"></div>
+<div class="pokedex-list">
+  <div class="list-container">
+    <ul>
+      <% _.each(items, function(item){ %>
+        <li data-number="<%= item.speciesNumber %>" class="<% if (item.seen) { %>seen<% } %> <% if (item.caught) { %>caught<% } %>">
+          <div class="number"><%= ('00' + item.speciesNumber).substr(-3) %></div>
+          <% if (item.seen) { %>
+            <span class="sprite" style="background: url(<%= PARADISE.imgBase %>/css-sprite-pokemon-icons.png) <%= -(item.speciesNumber-1)%25*32 %>px <%= -Math.floor((item.speciesNumber-1)/25)*32 %>px no-repeat" />
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+  <div class="scroll-container">
+    <div class="scroll-box">
+      <div class="scroll-block"></div>
+    </div>
+  </div>
+</div>

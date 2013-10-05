@@ -7,6 +7,7 @@ var item = require('./controllers/item');
 var storage = require('./controllers/storage');
 var admin = require('./controllers/admin');
 var encounter = require('./controllers/encounter');
+var species = require('./controllers/species');
 
 // Middlewares
 var auth = require('./middlewares/authentication');
@@ -66,6 +67,9 @@ module.exports = function(app){
   app.post('/api/encounter/battle', defaults, encounter.battle);
   app.post('/api/encounter/escape', defaults, encounter.escape);
   app.post('/api/encounter/catch', defaults, encounter.catch);
+
+  // Species
+  app.get('/api/species/:speciesId', species.get);
 
   // Admin
   app.post('/api/admin/event-pokemon', isAdmin, admin.eventPokemon);

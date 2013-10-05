@@ -1,6 +1,6 @@
 {
   "name": "paradise",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "dependencies": {
     "requirejs": "*",
     "requirejs-text": "*",
@@ -14,6 +14,9 @@
     "backbone.marionette": "*",
     "backbone.wreqr": "*",
     "backbone.babysitter": "*",
-    "socket.io-client": "*"
+    "socket.io-client": "*",
+    "hammerjs": "*",
+    "backbone.hammer": "*",
+    "jquery-mousewheel": "*"
   }
 }

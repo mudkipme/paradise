@@ -10,9 +10,10 @@ define([
   ,'views/world'
   ,'views/region'
   ,'views/encounter'
+  ,'views/pokedex'
 ], function(Marionette, vent, MenuView, HomeView, PartyView
   , BagView, PokeMartView, StorageView, WorldView, RegionView
-  , EncounterView){
+  , EncounterView, PokedexView){
 
   // Avoid circular dependencies
   var App = null;
@@ -66,6 +67,11 @@ define([
 
     ,encounter: function(){
       App.mainRegion.show(new EncounterView({model: App.trainer.encounter}));
+    }
+
+    ,pokedex: function(){
+      App.mainRegion.show(new PokedexView({collection: App.trainer.pokedex}));
+      App.trainer.pokedex.fetch({reset: true});
     }
   });
 });

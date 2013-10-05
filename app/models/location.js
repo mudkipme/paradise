@@ -11,7 +11,7 @@ var Species = require('./Species');
 var locationCache = {};
 
 var methodRate = {
-  walk: 60
+  walk: 100
   ,'old-rod': 20
   ,'good-rod': 20
   ,'super-rod': 20

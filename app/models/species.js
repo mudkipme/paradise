@@ -25,7 +25,7 @@ var Species = function(nationalNumber, form, callback) {
 
   async.waterfall([
     // Pokémon Basic Information
-    db.all.bind(db, 'SELECT *, pokemon_forms.id AS form_id FROM pokemon_forms JOIN pokemon ON pokemon_forms.pokemon_id = pokemon.id LEFT JOIN pokemon_species ON pokemon.species_id = pokemon_species.id WHERE species_id = ?', [nationalNumber])
+    db.all.bind(db, 'SELECT *, pokemon_forms.id AS form_id, pokemon_species.identifier AS name, pokemon_colors.identifier AS color FROM pokemon_forms JOIN pokemon ON pokemon_forms.pokemon_id = pokemon.id LEFT JOIN pokemon_species ON pokemon.species_id = pokemon_species.id JOIN pokemon_colors ON pokemon_colors.id = color_id WHERE species_id = ?', [nationalNumber])
 
     ,function(rows, next){
       if (!rows.length) return next(new Error('MissingNo.'));
@@ -36,13 +36,13 @@ var Species = function(nationalNumber, form, callback) {
       raw = raw || _.findWhere(rows, {pokemon_id: nationalNumber});
 
       species.number = raw.species_id;
-      species.name = raw.identifier;
+      species.name = raw.name;
       species.genderRadio = raw.gender_rate;
       species.growthRate = raw.growth_rate_id;
       species.captureRate = raw.capture_rate;
       species.formIdentifier = raw.form_identifier || '';
       species.formId = raw.form_id;
-
+      species.color = raw.color;
       species.hatchTime = raw.hatch_counter;
       species.height = raw.height;
       species.weight = raw.weight;

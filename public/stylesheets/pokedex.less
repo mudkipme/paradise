@@ -1,0 +1,125 @@
+#pokedex-view {
+  .pokedex-entry {
+    margin-bottom: 25px;
+    .top, .content, .bottom {
+      position: relative;
+    }
+    .top {
+      height: 38px;
+      background: data-uri('../images/pokedex/entry-top.png') no-repeat;
+      z-index: 1;
+      margin-bottom: -14px;
+    }
+    &.caught .top {
+      background-image: data-uri('../images/pokedex/entry-top-caught.png');
+    }
+    .content {
+      background: data-uri('../images/pokedex/entry-content.png') repeat-y;
+      width: 100px;
+    }
+    .bottom {
+      height: 24px;
+      background: data-uri('../images/pokedex/entry-bottom.png') no-repeat;
+    }
+  }
+  
+  .pokedex-list-header {
+    height: 14px;
+    background: data-uri('../images/pokedex/pokedex-list-header.png') no-repeat;
+  }
+
+  .pokedex-list {
+    height: 404px;
+    border-top: 2px solid #007352;
+    border-bottom: 2px solid #007352;
+    position: relative;
+    .list-container {
+      height: 400px;
+      overflow: hidden;
+      margin-right: 10px;
+      padding-left: 2px;
+      background: #007352;
+    }
+    ul {
+      .make-row(0);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    li {
+      .make-xs-column(3, 0);
+      .make-sm-column(2, 0);
+      border: 1px solid #007352;
+      background-color: #d4f2f6;
+      height: 100px;
+      .box-sizing(border-box);
+      text-align: center;
+      position: relative;
+      .number {
+        font-size: 20px;
+        line-height: 100%;
+        margin-top: 12px;
+      }
+      .sprite {
+        display: block;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        height: 32px;
+        width: 32px;
+        margin-top: -8px;
+        margin-left: -16px;
+      }
+
+      &.seen {
+        cursor: pointer;
+
+        &:hover {
+          border-color: #ec3200;
+          outline: 1px solid #ec3200;
+          z-index: 1;
+        }
+
+        &.selected {
+          background: #ffee9f;
+        }
+
+        &:not(.caught) .sprite {
+          opacity: 0.4;
+        }
+      }
+    }
+    .scroll-container {
+      display: block;
+      position: absolute;
+      right: 0;
+      top: 0;
+      .box-sizing(border-box);
+      height: 100%;
+      width: 10px;
+      border: 2px solid #007352;
+      background: #292929;
+      border-top-width: 1px;
+      border-bottom-width: 1px;
+      .scroll-box {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        left: 2px;
+        bottom: 2px;
+        border-top: 2px solid #007352;
+        border-bottom: 2px solid #007352;
+        background: #08b57b;
+      }
+      .scroll-block {
+        position: absolute;
+        margin: -4px;
+        left: 0;
+        right: 0;
+        height: 16px;
+        border: 2px solid #4a8418;
+        background: #94ef18;
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@ define([
       ,'world': 'world'
       ,'world/:region': 'region'
       ,'encounter': 'encounter'
+      ,'pokedex': 'pokedex'
     }
   });
 });

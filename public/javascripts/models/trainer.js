@@ -6,7 +6,8 @@ define([
   ,'collections/pocket'
   ,'collections/storage'
   ,'models/encounter'
-], function($, _, Backbone, Party, Pocket, Storage, Encounter){
+  ,'collections/pokedex'
+], function($, _, Backbone, Party, Pocket, Storage, Encounter, Pokedex){
 
   var Trainer = Backbone.Model.extend({
     initialize: function(){
@@ -14,6 +15,7 @@ define([
       this.pocket = new Pocket({trainer: this});
       this.storage = new Storage([], {trainer: this});
       this.encounter = new Encounter(this.get('encounter'), {trainer: this});
+      this.pokedex = new Pokedex([], {trainer: this});
 
       this.listenTo(this.party, 'move', this.moveParty);
     }
