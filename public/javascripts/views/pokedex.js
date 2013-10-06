@@ -5,9 +5,10 @@ define([
   ,'i18next'
   ,'text!templates/pokedex.html'
   ,'text!templates/entry-infobox.html'
+  ,'text!templates/entry-sprites.html'
   ,'util'
   ,'backbone.hammer'
-], function($, _, Marionette, i18n, pokedexTemplate, infoboxTemplate){
+], function($, _, Marionette, i18n, pokedexTemplate, infoboxTemplate, spritesTemplate){
 
   var PokedexView = Marionette.ItemView.extend({
     id: 'pokedex-view'
@@ -16,11 +17,13 @@ define([
     ,templateHelpers: { t: i18n.t }
 
     ,infoboxTemplate: _.template(infoboxTemplate)
+    ,spritesTemplate: _.template(spritesTemplate)
 
     ,events: {
       'click .pokedex-list li.seen': 'openEntry'
       ,'mousewheel .list-container': 'listWheel'
       ,'click .scroll-container': 'clickScroll'
+      ,'slid.bs.carousel #pokedex-sprites': 'slideSprites'
     }
 
     ,hammerEvents: {
@@ -47,9 +50,11 @@ define([
     ,onRender: function(){
       var entry = this.collection.findWhere({seen: true});
       if (entry) {
+        this.ui.pokedexGrid
+        .filter('[data-number="' + entry.get('speciesNumber') + '"]')
+        .addClass('selected');
         this.selectedEntry = entry;
-        this.updateInfobox(entry);
-        entry.updateEntry();
+        this.showSprites(entry);
       }
     }
 
@@ -67,8 +72,8 @@ define([
         ,me.ui.infobox.transition({opacity: 0}))
       .done(function(){
         me.selectedEntry = entry;
-        me.updateInfobox(entry);
-        entry.updateEntry();
+        me.showSprites(entry);
+        
         if (entry.get('caught')) {
           me.ui.entry.addClass('caught');
         } else {
@@ -80,6 +85,22 @@ define([
         me.ui.entryContent.transition({top: '', bottom: ''});
         me.ui.infobox.transition({opacity: ''});
       });
+    }
+
+    ,showSprites: function(entry){
+      var data = this.mixinTemplateHelpers(entry.toJSON());
+      this.ui.entryContent.html(this.spritesTemplate(data));
+      if (entry.get('forms').length > 1) {
+        this.$('#pokedex-sprites').carousel();
+      }
+
+      this.updateInfobox(entry);
+      entry.updateEntry(entry.get('forms')[0].form);
+    }
+
+    ,slideSprites: function(e){
+      var form = this.$('#pokedex-sprites .active').data('form');
+      this.selectedEntry.updateEntry(form);
     }
 
     ,updateInfobox: function(entry){

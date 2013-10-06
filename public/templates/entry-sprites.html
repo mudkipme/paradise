@@ -1,0 +1,29 @@
+<div id="pokedex-sprites" class="carousel slide">
+  <div class="carousel-inner">
+    <% _.each(forms, function(form, index){ %>
+      <div class="item <% if (index == 0) { %>active<% } %>" data-form="<%= form.form || '' %>">
+        <img src="<%= PARADISE.imgBase %>/pokemon/<%= form.shiny ? 'shiny/' : '' %><%= form.female ? 'female/' : '' %><%= speciesNumber %><%= form.form ? '-' + form.form : ''%>.png" class="sprite" />
+        <% if (forms.length > 1) { %>
+          <div class="title">
+            <% if (form.form) { %>
+              <%= t('forme.' + form.form) %>
+            <% } %>
+            <% if (hasGenderDifferences) { %>
+              <%= t('stat.' + (form.female ? 'female' : 'male')) %>
+            <% } %>
+            <% if (form.shiny) { %>
+              <%= t('stat.shiny') %>
+            <% } %>
+            <% if (!form.form && !hasGenderDifferences && !form.shiny) { %>
+              <%= t('forme.normal') %>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    <% }) %>
+  </div>
+  <% if (forms.length > 1) { %>
+    <a class="left carousel-control" href="#pokedex-sprites" data-slide="prev"></a>
+    <a class="right carousel-control" href="#pokedex-sprites" data-slide="next"></a>
+  <% } %>
+</div>

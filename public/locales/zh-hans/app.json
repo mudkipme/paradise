@@ -69,6 +69,9 @@
     ,"storage-name": "BOX __boxId__"
     ,"egg-group": "蛋群"
     ,"color": "颜色"
+    ,"male": "雄性"
+    ,"female": "雌性"
+    ,"shiny": "不同颜色"
   }
   ,"action": {
     "send-pokemon-center": "送到神奇宝贝中心"
@@ -126,7 +129,8 @@
     ,"escaped": "野生的 __pokemon__ 逃离了！"
   }
   ,"forme": {
-    "sky": "天空"
+    "normal": "一般"
+    ,"sky": "天空"
   }
   ,"type": {
     "normal": "一般"
