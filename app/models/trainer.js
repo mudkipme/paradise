@@ -151,7 +151,7 @@ TrainerSchema.methods.getPokedex = function(callback) {
 
     _.each(allForms, function(dex, speciesNumber){
       var row = {
-        speciesNumber: speciesNumber
+        speciesNumber: parseInt(speciesNumber)
         ,name: dex.name
         ,hasGenderDifferences: dex.hasGenderDifferences
         ,seen: me._pokedex.seen.get(speciesNumber)

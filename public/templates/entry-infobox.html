@@ -1,0 +1,22 @@
+<p class="title">
+  <span class="number"><%= speciesNumber %></span><span class="name"><%= t('pokemon:'+name) %></span>
+</p>
+<p class="types">
+  <% _.each(types, function(type){
+    %><span class="label type-<%= type.name %>"><%= t('type.'+type.name) %></span><%
+  }) %>
+</p>
+<% if (eggGroups.length) { %>
+  <p class="egg-groups">
+    <%= t('stat.egg-group') %> |
+    <% _.each(eggGroups, function(eggGroup){%>
+      <span class="label egg-<%= eggGroup.identifier %>"><%= t('egg-group.'+eggGroup.identifier) %></span>
+    <% }) %>
+  </p>
+<% } %>
+<% if (color) { %>
+  <p class="color">
+    <%= t('stat.color') %> |
+    <span class="label" style="background-color: <%= color %>"><%= t('color.'+color) %></span>
+  </p>
+<% } %>

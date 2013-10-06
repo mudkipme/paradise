@@ -1,25 +1,74 @@
 #pokedex-view {
   .pokedex-entry {
+    position: relative;
+    height: 304px;
     margin-bottom: 25px;
     .top, .content, .bottom {
-      position: relative;
+      position: absolute;
+      width: 100%;
     }
     .top {
+      top: 0;
       height: 38px;
-      background: data-uri('../images/pokedex/entry-top.png') no-repeat;
-      z-index: 1;
-      margin-bottom: -14px;
+      background: data-uri('../images/pokedex/entry-top.png') left bottom no-repeat;
+      z-index: 2;
     }
     &.caught .top {
       background-image: data-uri('../images/pokedex/entry-top-caught.png');
     }
     .content {
-      background: data-uri('../images/pokedex/entry-content.png') repeat-y;
-      width: 100px;
+      background: data-uri('../images/pokedex/entry-content.png') left center repeat-y;
+      top: 24px;
+      bottom: 24px;
     }
     .bottom {
+      bottom: 0;
       height: 24px;
-      background: data-uri('../images/pokedex/entry-bottom.png') no-repeat;
+      background: data-uri('../images/pokedex/entry-bottom.png') left top no-repeat;
+      z-index: 1;
+    }
+
+    .entry-infobox {
+      position: absolute;
+      width: 252px;
+      bottom: -19px;
+      height: 187px;
+      left: 50%;
+      margin-left: -126px;
+      z-index: 5;
+      background: data-uri('../images/pokedex/infobox-content.png') left 28px no-repeat;
+      .infobox-top {
+        height: 28px;
+        background: data-uri('../images/pokedex/infobox-top.png') no-repeat;
+      }
+      .infobox-content {
+        height: 116px;
+        font-size: 19px;
+        z-index: 1;
+        p {
+          padding: 0 27px;
+          margin: 0;
+          line-height: 35px;
+          &.title {
+            line-height: 36px;
+            margin-top: -12px;
+          }
+          &.types {
+            line-height: 43px;
+            text-align: center;
+            .label:not(:last-child) {
+              margin-right: 50px;
+            }
+          }
+        }
+        .number {
+          margin-right: 40px;
+        }
+      }
+      .infobox-bottom {
+        height: 43px;
+        background: data-uri('../images/pokedex/infobox-bottom.png') no-repeat;
+      }
     }
   }
   
@@ -119,6 +168,29 @@
         height: 16px;
         border: 2px solid #4a8418;
         background: #94ef18;
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  #pokedex-view {
+    .pokedex-entry {
+      height: 164px;
+      .entry-infobox {
+        right: 0px;
+        left: auto;
+        margin-left: 0;
+      }
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  #pokedex-view {
+    .pokedex-entry {
+      .entry-infobox {
+        right: 60px;
       }
     }
   }

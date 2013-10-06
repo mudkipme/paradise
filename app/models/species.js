@@ -16,6 +16,7 @@ var Species = function(nationalNumber, form, callback) {
     form = null;
   }
 
+  nationalNumber = parseInt(nationalNumber);
   form = form || '0';
 
   if (speciesCache[nationalNumber] && speciesCache[nationalNumber][form])

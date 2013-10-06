@@ -67,6 +67,8 @@
     ,"tradable": "允许被请求交换"
     ,"pokemon-center-time": "它正在神奇宝贝中心休息，还需__pokemonCenterTime__回复"
     ,"storage-name": "BOX __boxId__"
+    ,"egg-group": "蛋群"
+    ,"color": "颜色"
   }
   ,"action": {
     "send-pokemon-center": "送到神奇宝贝中心"
@@ -172,6 +174,35 @@
     ,"sassy": "狂妄"
     ,"careful": "慎重"
     ,"quirky": "浮躁"
+  }
+  ,"egg-group": {
+    "monster": "怪兽"
+    ,"water1": "水中1"
+    ,"bug": "虫"
+    ,"flying": "飞行"
+    ,"ground": "陆上"
+    ,"fairy": "妖精"
+    ,"plant": "植物"
+    ,"humanshape": "人型"
+    ,"water3": "水中3"
+    ,"mineral": "矿物"
+    ,"indeterminate": "不定形"
+    ,"water2": "水中2"
+    ,"ditto": "百变怪"
+    ,"dragon": "龙"
+    ,"no-eggs": "未发现"
+  }
+  ,"color": {
+    "black": "黑色"
+    ,"blue": "蓝色"
+    ,"brown": "棕色"
+    ,"gray": "灰色"
+    ,"green": "绿色"
+    ,"pink": "粉色"
+    ,"purple": "紫色"
+    ,"red": "红色"
+    ,"white": "白色"
+    ,"yellow": "黄色"
   }
   ,"pocket": {
     "misc": "道具"

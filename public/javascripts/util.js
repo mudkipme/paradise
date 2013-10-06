@@ -29,7 +29,7 @@ define([
 
   // CSS3 transition version of jQuery slideDown/slideUp
   // Inspired by https://github.com/Ilycite/zepto-slide-transition
-  $.fn.transDown = function(){
+  $.fn.transDown = function(callback){
     this.show();
 
     var position = this.css('position');
@@ -63,10 +63,11 @@ define([
     return this.transition.bind(this, options).apply(this, arguments)
     .promise().done(function(){
       this.css({ 'overflow': overflow, height: '' });
+      callback && _.defer(callback);
     });
   };
 
-  $.fn.transUp = function(){
+  $.fn.transUp = function(callback){
     var overflow = this.css('overflow');
 
     var options = {
@@ -87,6 +88,7 @@ define([
     }).apply(this, arguments)
     .promise().done(function(){
       this.css($.extend({ 'overflow': overflow }, options)).hide();
+      callback && _.defer(callback);
     });
   };
 
