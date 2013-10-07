@@ -11,9 +11,10 @@ define([
   ,'views/region'
   ,'views/encounter'
   ,'views/pokedex'
+  ,'views/daycare'
 ], function(Marionette, vent, MenuView, HomeView, PartyView
   , BagView, PokeMartView, StorageView, WorldView, RegionView
-  , EncounterView, PokedexView){
+  , EncounterView, PokedexView, DayCareView){
 
   // Avoid circular dependencies
   var App = null;
@@ -72,6 +73,10 @@ define([
     ,pokedex: function(){
       App.mainRegion.show(new PokedexView({collection: App.trainer.pokedex}));
       App.trainer.pokedex.fetch({reset: true});
+    }
+
+    ,daycare: function(){
+      App.mainRegion.show(new DayCareView({collection: App.trainer.daycare}));
     }
   });
 });

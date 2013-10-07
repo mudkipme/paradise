@@ -269,12 +269,14 @@ PokemonSchema.methods.gainHP = function(hp, callback){
   if (this.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
 
   var currentHp = this.stats.hp;
+
   if (hp > this.lostHp) {
     hp = this.lostHp;
   }
   if (-hp > currentHp) {
     hp = -currentHp;
   }
+  if (hp == 0) return callback(null);
   this.lostHp -= hp;
   var events = [{type: 'hp', value: hp}];
 
@@ -362,8 +364,12 @@ PokemonSchema.methods.setHoldItem = function(item, callback){
 };
 
 // Init data of this Pokémon
-PokemonSchema.methods.initData = function(callback){
+PokemonSchema.methods.initData = function(trainer, callback){
   var me = this;
+  if (!callback) {
+    callback = trainer;
+    trainer = false;
+  }
   if (me._inited) return callback(null, me);
 
   var inits = {
@@ -377,6 +383,10 @@ PokemonSchema.methods.initData = function(callback){
 
   if (me.holdItemId) {
     inits.holdItem = async.apply(Item, me.holdItemId);
+  }
+
+  if (me.trainer && trainer) {
+    inits.trainer = me.populate.bind(me, 'trainer', _.isString(trainer) ? trainer : true);
   }
 
   if (me.originalTrainer) {
@@ -553,7 +563,7 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
 
     // Alternate color
     if (!opts.isShiny && opts.isShiny !== false) {
-      opts.isShiny = _.random(0, 8192) == 0;
+      opts.isShiny = _.random(0, 8191) == 0;
     }
 
     pokemon = new Pokemon({

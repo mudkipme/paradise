@@ -1,0 +1,29 @@
+#day-care-view {
+  section {
+    height: 384px;
+    cursor: pointer;
+    position: relative;
+
+    h1 {
+      font-size: 30px;
+      color: #fff;
+      line-height: 100%;
+      position: absolute;
+      width: 100%;
+      text-align: center;
+    }
+
+    &.deposit {
+      background: #26d670;
+      h1 {
+        bottom: 25px;
+      }
+    }
+    &.withdraw {
+      background: #ffd324;
+      h1 {
+        top: 25px;
+      }
+    }
+  }
+}

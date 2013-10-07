@@ -343,6 +343,7 @@ var itemProto = {
     return;
   }
 
+  // Capture Pokémon
   ,catchResult: function(trainer, hp){
     var pokemon = trainer.encounter.pokemon;
     var effect = _.findWhere(this.effects, {effect_type: 'catch'});
@@ -374,6 +375,16 @@ var itemProto = {
       shakeResult++;
     }
     return shakeResult;
+  }
+
+  // Inherit IV
+  ,inhertIV: function(){
+    var effect = _.find(this.effects, function(effect){
+      return effect.effect_type == 'after-battle' && effect.param_1.match(/^effort-/);
+    });
+
+    if (!effect) return;
+    return effect.param_1.substr(6);
   }
 };
 

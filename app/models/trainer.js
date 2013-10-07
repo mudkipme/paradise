@@ -120,7 +120,7 @@ TrainerSchema.methods.initPokedex = function(){
   });
 }
 
-TrainerSchema.methods.setPokedexSeen = function(pokemon) {
+TrainerSchema.methods.setPokedexSeen = function(pokemon){
   this.initPokedex();
   this._pokedex.seen.set(pokemon.speciesNumber, true);
 
@@ -134,7 +134,7 @@ TrainerSchema.methods.setPokedexSeen = function(pokemon) {
   this.pokedexSeenNum = this._pokedex.seen.count();
 };
 
-TrainerSchema.methods.setPokedexCaught = function(pokemon) {
+TrainerSchema.methods.setPokedexCaught = function(pokemon){
   this.initPokedex();
   this.setPokedexSeen(pokemon);
   this._pokedex.caught.set(pokemon.speciesNumber, true);

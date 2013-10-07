@@ -16,7 +16,6 @@
     "backbone.babysitter": "*",
     "socket.io-client": "*",
     "hammerjs": "*",
-    "backbone.hammer": "*",
     "jquery-mousewheel": "*"
   }
 }

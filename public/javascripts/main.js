@@ -12,7 +12,6 @@ requirejs.config({
     ,marionette: '../components/backbone.marionette/lib/core/amd/backbone.marionette'
     ,'backbone.wreqr': '../components/backbone.wreqr/lib/amd/backbone.wreqr'
     ,'backbone.babysitter': '../components/backbone.babysitter/lib/amd/backbone.babysitter'
-    ,'backbone.hammer': '../components/backbone.hammer/backbone.hammer'
     ,i18next: '../components/i18next/release/i18next.amd.withJQuery-1.7.1'
     ,moment: '../components/moment/moment'
     ,'moment/lang': '../components/moment/lang'
@@ -23,7 +22,6 @@ requirejs.config({
     ,backbone: { exports: 'Backbone', deps: ['jquery', 'underscore'] }
     ,'juqery.transit': { deps: ['jquery'] }
     ,'bootstrap': { deps: ['jquery'] }
-    ,'marionette': { deps: ['backbone.hammer'] }
   }
 });
 

@@ -12,6 +12,7 @@ define([
       ,'world/:region': 'region'
       ,'encounter': 'encounter'
       ,'pokedex': 'pokedex'
+      ,'daycare': 'daycare'
     }
   });
 });

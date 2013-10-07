@@ -7,7 +7,6 @@ define([
   ,'text!templates/entry-infobox.html'
   ,'text!templates/entry-sprites.html'
   ,'util'
-  ,'backbone.hammer'
 ], function($, _, Marionette, i18n, pokedexTemplate, infoboxTemplate, spritesTemplate){
 
   var PokedexView = Marionette.ItemView.extend({
@@ -24,10 +23,7 @@ define([
       ,'mousewheel .list-container': 'listWheel'
       ,'click .scroll-container': 'clickScroll'
       ,'slid.bs.carousel #pokedex-sprites': 'slideSprites'
-    }
-
-    ,hammerEvents: {
-      'dragdown .list-container': 'listDragDown'
+      ,'dragdown .list-container': 'listDragDown'
       ,'dragup .list-container': 'listDragUp'
     }
 
@@ -56,6 +52,7 @@ define([
         this.selectedEntry = entry;
         this.showSprites(entry);
       }
+      this.$el.hammer();
     }
 
     ,openEntry: function(e){
@@ -64,6 +61,7 @@ define([
       var number = $(e.currentTarget).addClass('selected').data('number');
       var entry = me.collection.findWhere({speciesNumber: number});
       var height = me.ui.entry.height() / 2;
+      me.ui.entry.appear();
 
       // animation when open the entry
       $.when(me.ui.entryTop.transition({height: height + 14})
@@ -120,8 +118,15 @@ define([
     }
 
     ,listScroll: function(delta){
+      var list = this.ui.pokedexList;
       var height = this.ui.pokedexGrid.outerHeight();
       this._delta = this._delta ? this._delta + delta : delta;
+      if (this._delta < 0) {
+        this._delta = 0;
+      }
+      if (this._delta > list.find('ul').height() - list.height()) {
+        this._delta = list.find('ul').height() - list.height();
+      }
 
       this.ui.pokedexList.scrollTop(Math.round(-this._delta/height) * height);
       this.updateScroll();

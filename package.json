@@ -18,6 +18,7 @@
     "bit-array": "*",
     "geode": "*",
     "time": "*",
-    "i18next": "*"
+    "i18next": "*",
+    "geolib": "*"
   }
 }
