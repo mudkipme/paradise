@@ -77,7 +77,7 @@ var parseCondition = function(pokemon, condition, options){
     }
 
     if (matchSpecies) {
-      var numbers = matchType[1].split(',');
+      var numbers = matchSpecies[1].split(',');
       if (!_.contains(numbers, pokemon.species.number))
         return false;
     }
@@ -177,6 +177,9 @@ var itemProto = {
     var me = this;
 
     if (!me.usable) return callback(new Error('ITEM_NOT_USABLE'));
+    if (pokemon.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+    if (pokemon.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
+
 
     async.mapSeries(me._usableEffects(), function(effect, next){
       // Apply Item usages

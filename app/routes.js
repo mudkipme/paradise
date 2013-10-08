@@ -8,6 +8,7 @@ var storage = require('./controllers/storage');
 var admin = require('./controllers/admin');
 var encounter = require('./controllers/encounter');
 var species = require('./controllers/species');
+var daycare = require('./controllers/daycare');
 
 // Middlewares
 var auth = require('./middlewares/authentication');
@@ -62,14 +63,22 @@ module.exports = function(app){
   app.post('/api/storage/move', defaults, storage.move);
   app.post('/api/storage/sort', defaults, storage.sort);
 
-  // Encounter
+  // Encounter actions
   app.post('/api/encounter', defaults, encounter.post);
   app.post('/api/encounter/battle', defaults, encounter.battle);
   app.post('/api/encounter/escape', defaults, encounter.escape);
   app.post('/api/encounter/catch', defaults, encounter.catch);
 
-  // Species
+  // Species actions
   app.get('/api/species/:speciesId', species.get);
+
+  // Day Care actions
+  app.get('/api/daycare', defaults, daycare.list);
+  app.post('/api/daycare', defaults, daycare.post);
+  app.post('/api/daycare/:dayCareId', daycare.get);
+  app.post('/api/daycare/:dayCareId/deposit', defaults, daycare.deposit);
+  app.post('/api/daycare/:dayCareId/withdraw', defaults, daycare.withdraw);
+  app.post('/api/daycare/:dayCareId/request', defaults, daycare.request);
 
   // Admin
   app.post('/api/admin/event-pokemon', isAdmin, admin.eventPokemon);

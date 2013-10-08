@@ -16,17 +16,18 @@ var DayCareSchema = new Schema({
   eggTrainer:     { type: Schema.Types.ObjectId, ref: 'Trainer' },
   createTime:     Date,
   fillTime:       Date
+}, {
+  toJSON: { virtuals: true, minimize: false }
 });
 
 // Init the Day Care
-DayCareSchema.methods.initCare = function(callback){
+DayCareSchema.methods.initData = function(callback){
   var me = this;
   if (me._inited) return callback(null, me);
 
   me.populate('pokemonA pokemonB egg', function(err){
     if (err) return callback(err);
-
-    async.eachSeries(_.compact(me.pokemonA, me.pokemonB, me.egg)
+    async.eachSeries(_.compact([me.pokemonA, me.pokemonB, me.egg])
       ,function(pokemon, next){
         pokemon.initData('name realWorld', next);
       }, callback);
@@ -37,6 +38,8 @@ DayCareSchema.methods.deposit = function(pokemon, callback){
   if (!this._inited) return callback(new Error('ERR_NOT_INITED'));
   if (this.pokemonB) return callback(new Error('DAY_CARE_FULL'));
   if (this.egg) return callback(new Error('TAKE_EGG_FIRST'));
+  if (pokemon.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+  if (pokemon.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
 
   if (this.pokemonA && _.equals(this.pokemonA._id, pokemon._id))
     return callback(new Error('ALREADY_JOINED'));
@@ -59,32 +62,41 @@ DayCareSchema.methods.withdraw = function(pokemon, callback){
   if (this.egg && _.equals(pokemon._id, this.egg._id)) {
     this.egg = null;
     this.fillTime = new Date();
-    this.save(callback);
-  } else if (this.pokemonB && _.equals(pokemon._id, this.pokemonB._id)) {
+    return this.save(callback);
+  }
+
+  if (this.pokemonB && _.equals(pokemon._id, this.pokemonB._id)) {
     this.pokemonB = null;
     this.trainerB = null;
     this.fillTime = null;
-    this.save(callback);
-  } else if (this.pokemonA && _.equals(pokemon._id, this.pokemonA._id)) {
+    return this.save(callback);
+  }
+
+  if (this.pokemonA && _.equals(pokemon._id, this.pokemonA._id)) {
     if (this.pokemonB) {
       this.pokemonA = this.pokemonB;
       this.trainerA = this.trainerB;
       this.pokemonB = null;
       this.trainerB = null;
       this.fillTime = null;
-      this.save(callback);
+      return this.save(callback);
     } else if (this.egg) {
       this.pokemonA = null;
       this.trainerA = null;
       this.fillTime = null;
-      this.save(callback);
-    } else {
-      this.remove(callback);
+      return this.save(callback);
     }
+
+    return this.remove(callback);
   }
+
+  callback(new Error('POKEMON_NOT_FOUND'));
 };
 
 DayCareSchema.statics.newDayCare = function(pokemon, callback){
+  if (pokemon.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+  if (pokemon.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
+  
   var dayCare = new DayCare({
     pokemonA: pokemon
     ,trainerA: pokemon.trainer

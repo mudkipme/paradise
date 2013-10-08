@@ -42,6 +42,10 @@ var Battle = function(pokemonA, pokemonB, options, callback){
     callback = options;
     options = {};
   }
+  if (pokemonA.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+  if (pokemonA.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
+  if (pokemonB.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+  if (pokemonB.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
 
   var battle = Object.create(battleProto);
   battle.pokemonA = pokemonA;

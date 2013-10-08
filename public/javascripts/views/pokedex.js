@@ -120,7 +120,7 @@ define([
     ,listScroll: function(delta){
       var list = this.ui.pokedexList;
       var height = this.ui.pokedexGrid.outerHeight();
-      this._delta = this._delta ? this._delta + delta : delta;
+      this._delta = this._delta ? this._delta - delta : -delta;
       if (this._delta < 0) {
         this._delta = 0;
       }
@@ -128,7 +128,7 @@ define([
         this._delta = list.find('ul').height() - list.height();
       }
 
-      this.ui.pokedexList.scrollTop(Math.round(-this._delta/height) * height);
+      this.ui.pokedexList.scrollTop(Math.round(this._delta/height) * height);
       this.updateScroll();
     }
 
@@ -152,7 +152,7 @@ define([
       var scroll = $(e.currentTarget);
       if ($(e.target).hasClass('scroll-block')) return;
       var percent = (e.offsetY - 5) / (scroll.outerHeight() - 10);
-      this._delta = -percent * (list.find('ul').height() - list.height());
+      this._delta = percent * (list.find('ul').height() - list.height());
       this.listScroll(0);
     }
   });
