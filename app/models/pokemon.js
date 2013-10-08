@@ -135,6 +135,21 @@ PokemonSchema.virtual('expNextLevel').get(function(){
   }
 });
 
+// When the Pokémon egg will hatch
+PokemonSchema.virtual('hatchRate').get(function(){
+  if (!this._inited || !this.isEgg || !this.meetDate) return false;
+  var cycle = Math.ceil((Date.now() - this.meetDate.getTime()) / (3600000 * config.app.hatchCycleHour));
+  var cycleLeft = this.species.hatchTime - cycle;
+  if (cycleLeft <= 0)
+    return 'hatched';
+  else if (cycleLeft <= 5)
+    return 'soon';
+  else if (cycleLeft <= 10)
+    return 'close';
+  else
+    return 'wait';
+});
+
 // Events happened when Pokémon level up
 // Options includes the battle stats like location
 PokemonSchema.methods.onLevelUp = function(level, options, callback){
@@ -364,6 +379,7 @@ PokemonSchema.methods.setHoldItem = function(item, callback){
 };
 
 // Init data of this Pokémon
+// The first parameter is whether/which will be populated from trainer 
 PokemonSchema.methods.initData = function(trainer, callback){
   var me = this;
   if (!callback) {
@@ -389,6 +405,13 @@ PokemonSchema.methods.initData = function(trainer, callback){
     inits.trainer = me.populate.bind(me, 'trainer', _.isString(trainer) ? trainer : true);
   }
 
+  if (me.hatchRate == 'hatched') {
+    inits.hatch = function(next){
+      me.isEgg = false;
+      me.save(next);
+    };
+  }
+
   if (me.originalTrainer) {
     inits.originalTrainer = me.populate.bind(me, 'originalTrainer', 'name');
   }
@@ -408,7 +431,17 @@ PokemonSchema.methods.initData = function(trainer, callback){
     me._pokeBall = results.pokeBall;
     me._holdItem = results.holdItem;
     me._inited = true;
-    callback(null, me);
+
+    // Hatch the Pokémon Egg!
+    if (me.hatchRate == 'hatched') {
+      me.isEgg = false;
+      me.save(function(err){
+        if (err) return callback(err);
+        callback(null, me);
+      });
+    } else {
+      callback(null, me);
+    }
   });
 };
 

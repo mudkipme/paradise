@@ -19,6 +19,7 @@
     "geode": "*",
     "time": "*",
     "i18next": "*",
-    "geolib": "*"
+    "geolib": "*",
+    "node-schedule": "*"
   }
 }

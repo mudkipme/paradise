@@ -15,7 +15,8 @@ var DayCareSchema = new Schema({
   trainerB:       { type: Schema.Types.ObjectId, ref: 'Trainer' },
   eggTrainer:     { type: Schema.Types.ObjectId, ref: 'Trainer' },
   createTime:     Date,
-  fillTime:       Date
+  fillTime:       Date,
+  breedRate:      Number
 }, {
   toJSON: { virtuals: true, minimize: false }
 });
@@ -35,7 +36,8 @@ DayCareSchema.methods.initData = function(callback){
 };
 
 DayCareSchema.methods.deposit = function(pokemon, callback){
-  if (!this._inited) return callback(new Error('ERR_NOT_INITED'));
+  if (!this._inited || !pokemon._inited)
+    return callback(new Error('ERR_NOT_INITED'));
   if (this.pokemonB) return callback(new Error('DAY_CARE_FULL'));
   if (this.egg) return callback(new Error('TAKE_EGG_FIRST'));
   if (pokemon.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
@@ -51,7 +53,8 @@ DayCareSchema.methods.deposit = function(pokemon, callback){
   } else {
     this.pokemonB = pokemon;
     this.trainerB = pokemon.trainer;
-    this.fillTime = new Date();    
+    this.fillTime = new Date();
+    this.breedRate = this.getBreedRate();
   }
 
   this.save(callback);
@@ -65,10 +68,12 @@ DayCareSchema.methods.withdraw = function(pokemon, callback){
     return this.save(callback);
   }
 
+  this.fillTime = null;
+  this.breedRate = null;
+
   if (this.pokemonB && _.equals(pokemon._id, this.pokemonB._id)) {
     this.pokemonB = null;
     this.trainerB = null;
-    this.fillTime = null;
     return this.save(callback);
   }
 
@@ -78,12 +83,10 @@ DayCareSchema.methods.withdraw = function(pokemon, callback){
       this.trainerA = this.trainerB;
       this.pokemonB = null;
       this.trainerB = null;
-      this.fillTime = null;
       return this.save(callback);
     } else if (this.egg) {
       this.pokemonA = null;
       this.trainerA = null;
-      this.fillTime = null;
       return this.save(callback);
     }
 
@@ -134,7 +137,7 @@ DayCareSchema.methods.compatible = function(){
   return true;
 };
 
-DayCareSchema.methods.breedRate = function(){
+DayCareSchema.methods.getBreedRate = function(){
   if (!this._inited) return false;
   if (!this.compatible()) return 0;
 
@@ -156,7 +159,7 @@ DayCareSchema.methods.breedRate = function(){
 
 DayCareSchema.methods.mother = function(){
   if (!this._inited) return false;
-  if (!this.compatible()) return 0;
+  if (!this.compatible()) return false;
   if (pokemonA.species.name == 'ditto') return pokemonB;
   if (pokemonB.species.name == 'ditto') return pokemonA;
   if (pokemonA.gender == 1) return pokemonA;
@@ -164,11 +167,12 @@ DayCareSchema.methods.mother = function(){
   return _.random(0, 1) ? pokemonA : pokemonB;
 };
 
-DayCareSchema.methods.checkBreed = function(callback){
+DayCareSchema.methods.breed = function(callback){
   var me = this;
 
   if (!me._inited) return callback(new Error('ERR_NOT_INITED'));
-  if (_.random(0, 99) >= me.breedRate()) return callback(null);
+  if (!me.compatible()) return callback(null);
+  if (me.egg) return callback(null);
 
   // Breed the Pokémon
   var mother = me.mother();

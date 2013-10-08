@@ -14,6 +14,7 @@ var i18n = require('i18next');
 var _ = require('underscore');
 var config = require('./config.json');
 var common = require('./app/common');
+var jobs = require('./app/jobs');
 
 var app = express();
 var server = http.createServer(app);
@@ -66,5 +67,6 @@ require('./app/io').connect(server);
 common.mongoConnection.once('open', function(){
   server.listen(app.get('port'), function(){
     console.log('Paradise server listening on port ' + app.get('port'));
+    jobs.start(app.get('env'));
   });
 });

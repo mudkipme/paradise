@@ -14,7 +14,8 @@ var MsgSchema = new Schema({
   status:          { type: Number, default: 0 },
   senderPokemon:   { type: Schema.Types.ObjectId, ref: 'Pokemon' },
   receiverPokemon: { type: Schema.Types.ObjectId, ref: 'Pokemon' },
-  relatedDayCare:  { type: Schema.Types.ObjectId, ref: 'DayCare' }
+  relatedDayCare:  { type: Schema.Types.ObjectId, ref: 'DayCare' },
+  createTime:      Date
 }, {
   toJSON: { virtuals: true, minimize: false }
 });
@@ -51,38 +52,39 @@ MsgSchema.methods.acceptDayCare = function(callback){
 
 MsgSchema.methods.accept = function(callback){
   var acceptMethods = {'day-care': 'acceptDayCare'};
-  var acceptTypes = {'day-care': 'accept-day-care'};
   var me = this;
   
-  me.read = true;
-  if (me.acceptMethods[me.type]) {
-    me.acceptMethods[me.type](function(err){
-      if (err) {
-        me.status = Status.expired;
-        me.save(function(error){
-          if (error) return callback(error);
-          return callback(err);
-        });
-      }
-      me.status = Status.accepted;
+  if (!me.acceptMethods[me.type]) 
+    return callback(new Error('MSG_NOT_ACCEPTABLE'));
+  
+  me.acceptMethods[me.type](function(err){
+    me.read = true;
+    if (err) {
+      me.status = Status.expired;
       me.save(function(error){
         if (error) return callback(error);
-        Msg.sendMsg({
-          type: acceptTypes[me.type]
-          ,sender: me.receiver
-          ,receiver: me.sender
-          ,senderPokemon: me.receiverPokemon
-          ,receiverPokemon: me.senderPokemon
-          ,relatedDayCare: me.relatedDayCare
-        });
+        return callback(err);
       });
-    })
-  }
-}
+    }
+    me.status = Status.accepted;
+    async.series([
+      me.save.bind(me)
+      ,Msg.sendMsg.bind(Msg, {
+        type: 'accept-' + me.type
+        ,sender: me.receiver
+        ,receiver: me.sender
+        ,senderPokemon: me.receiverPokemon
+        ,receiverPokemon: me.senderPokemon
+        ,relatedDayCare: me.relatedDayCare
+      })
+    ], callback);
+  });
+};
 
 MsgSchema.methods.ignore = function(callback){
   this.read = true;
   this.status = this.status && Status.ignored;
+  this.save(callback);
 };
 
 MsgSchema.statics.sendMsg = function(options, callback){
@@ -90,9 +92,9 @@ MsgSchema.statics.sendMsg = function(options, callback){
   if (_.contains(needAccept, options.type)) {
     options.status = options.status || Status.waiting;
   }
+  options.createTime = options.createTime || new Date();
 
   var msg = new Msg(options);
-
   msg.save(function(err){
     if (err) return callback(err);
     callback(null, msg);
