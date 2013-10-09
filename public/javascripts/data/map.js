@@ -399,7 +399,7 @@ define([], function(){
           ,y: 326
         }
         ,{
-          name: 'natural-park'
+          name: 'national-park'
           ,x: 232
           ,y: 162
         }
@@ -434,7 +434,7 @@ define([], function(){
           ,y: 100
         }
         ,{
-          name: 'dragon-den'
+          name: 'dragons-den'
           ,x: 440
           ,y: 92
         }
@@ -731,7 +731,7 @@ define([], function(){
           ,y: 111
         }
         ,{
-          name: 'jagged-path'
+          name: 'jagged-pass'
           ,x: 204
           ,y: 111
         }
@@ -1265,7 +1265,7 @@ define([], function(){
           ,y: 39
         }
         ,{
-          name: 'new-island'
+          name: 'newmoon-island'
           ,x: 105
           ,y: 39
         }
@@ -1463,7 +1463,7 @@ define([], function(){
           ,y2: 342
         }
         ,{
-          name: 'sinnoh-route-220'
+          name: 'sinnoh-sea-route-220'
           ,direction: 'horizontal'
           ,y: 342
           ,x1: 105
@@ -1484,7 +1484,7 @@ define([], function(){
           ,x2: 466
         }
         ,{
-          name: 'sinnoh-route-223'
+          name: 'sinnoh-sea-route-223'
           ,direction: 'vertical'
           ,x: 466
           ,y1: 259
@@ -1513,7 +1513,7 @@ define([], function(){
           ,y2: 25
         }
         ,{
-          name: 'sinnoh-route-226'
+          name: 'sinnoh-sea-route-226'
           ,direction: 'horizontal'
           ,y: 60
           ,x1: 347
@@ -1527,7 +1527,7 @@ define([], function(){
           ,y2: 60
         }
         ,{
-          name: 'sinnoh-route-230'
+          name: 'sinnoh-sea-route-230'
           ,direction: 'horizontal'
           ,y: 103
           ,x1: 347

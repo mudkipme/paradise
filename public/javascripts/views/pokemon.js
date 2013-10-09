@@ -59,6 +59,12 @@ define([
         var url = PARADISE.imgBase + '/pokemon/';
         var pokemon = this.pokemon;
 
+        if (pokemon.isEgg && pokemon.species.name == 'manaphy')
+          return url + 'egg-manaphy.png';
+
+        if (pokemon.isEgg)
+          return url + 'egg.png';
+
         if (pokemon.isShiny) {
           url += 'shiny/';
         }
@@ -74,6 +80,8 @@ define([
 
       ,pokemonName: function(){
         var pokemon = this.pokemon;
+        if (pokemon.isEgg)
+          return i18n.t('stat.egg');
         return pokemon.nickname || i18n.t('pokemon:'+pokemon.species.name)
       }
     }

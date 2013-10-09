@@ -32,7 +32,7 @@ MsgSchema.methods.acceptDayCare = function(callback){
     }
     ,function(next){
       var found = _.find(me.sender.party, function(pokemon){
-        return _.equals(me.senderPokemon._id, pokemon);
+        return _.isEqual(me.senderPokemon._id, pokemon);
       });
       if (!found) return next(new Error('POKEMON_NOT_IN_PARTY'));
       me.senderPokemon.initData(next);

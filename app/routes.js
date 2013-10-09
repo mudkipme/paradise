@@ -75,7 +75,7 @@ module.exports = function(app){
   // Day Care actions
   app.get('/api/daycare', defaults, daycare.list);
   app.post('/api/daycare', defaults, daycare.post);
-  app.post('/api/daycare/:dayCareId', daycare.get);
+  app.get('/api/daycare/:dayCareId', daycare.get);
   app.post('/api/daycare/:dayCareId/deposit', defaults, daycare.deposit);
   app.post('/api/daycare/:dayCareId/withdraw', defaults, daycare.withdraw);
   app.post('/api/daycare/:dayCareId/request', defaults, daycare.request);

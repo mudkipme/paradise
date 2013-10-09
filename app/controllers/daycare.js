@@ -90,8 +90,7 @@ exports.deposit = function(req, res){
       return res.json(403, {error: 'PERMISSION_DENIED'});
 
     async.series([
-      dayCare.initData.bind(dayCare)
-      ,dayCare.deposit.bind(pokemon)
+      dayCare.deposit.bind(dayCare, pokemon)
       ,function(next){
         req.trainer.party.pull(pokemon);
         req.trainer.save(next);
@@ -141,7 +140,7 @@ exports.withdraw = function(req, res){
     if (!req.pokemon.isEgg && (!req.pokemon.trainer || !req.pokemon.trainer._id.equals(req.trainer._id)))
       return res.json(403, 'PERMISSION_DENIED');
 
-    if (req.pokemon.isEgg && !_.equals(req.pokemon.originalTrainer, req.trainer._id))
+    if (req.pokemon.isEgg && !_.isEqual(req.pokemon.originalTrainer, req.trainer._id))
       return res.json(403, 'PERMISSION_DENIED');
 
     DayCare.findOne({ _id: req.params.dayCareId }, function(err, dayCare){

@@ -1,7 +1,23 @@
-<% _.each([pokemonA, pokemonB], function(pokemon){ %>
-  <div class="care-pokemon">
+<% _.each([pokemonA, pokemonB], function(pokemon, i){ %>
+  <div class="care-pokemon care-pokemon-<%= i+1 %>">
     <% if (pokemon) { %>
-      <div class="level">Lv. <%= pokemon.level %></div>
+      <div class="level">
+        Lv. <%= pokemon.level %>
+        <% if (pokemon.gender == Gender.female) { %>
+          <span class="female">♀</span>
+        <% } else if (pokemon.gender == Gender.male) {%>
+          <span class="male">♂</span>
+        <% } %>
+      </div>
+      <div class="sprite">
+        <img src="<%= spriteUrl(pokemon) %>" alt="<%- pokemonName(pokemon) %>" />
+      </div>
+      <div class="name"><%- pokemonName(pokemon) %></div>
     <% } %>
   </div>
 <% }) %>
+<% if (egg) { %>
+  <div class="egg">
+    <img src="<%= spriteUrl(egg) %>" alt="<%- pokemonName(egg) %>" />
+  </div>
+<% } %>

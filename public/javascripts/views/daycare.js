@@ -4,8 +4,9 @@ define([
   ,'marionette'
   ,'i18next'
   ,'views/party-select'
+  ,'views/daycare-list'
   ,'text!templates/daycare.html'
-], function($, _, Marionette, i18n, PartySelectView, dayCareTemplate){
+], function($, _, Marionette, i18n, PartySelectView, DayCareListView, dayCareTemplate){
 
   var DayCareView = Marionette.Layout.extend({
     id: 'day-care-view'
@@ -22,6 +23,7 @@ define([
       var party = this.collection.trainer.party;
       this.partySelectView = new PartySelectView({collection: party});
       this.partySelect.show(this.partySelectView);
+      this.dayCareList.show(new DayCareListView({collection: this.collection}));
     }
   });
 

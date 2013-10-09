@@ -24,45 +24,49 @@ var DayCareSchema = new Schema({
 // Init the Day Care
 DayCareSchema.methods.initData = function(callback){
   var me = this;
-  if (me._inited) return callback(null, me);
-
   me.populate('pokemonA pokemonB egg', function(err){
     if (err) return callback(err);
     async.eachSeries(_.compact([me.pokemonA, me.pokemonB, me.egg])
       ,function(pokemon, next){
         pokemon.initData('name realWorld', next);
-      }, callback);
+      }, function(err){
+        if (err) return callback(err);
+        me._inited = true;
+        callback(null);
+      });
   });
 };
 
 DayCareSchema.methods.deposit = function(pokemon, callback){
-  if (!this._inited || !pokemon._inited)
-    return callback(new Error('ERR_NOT_INITED'));
-  if (this.pokemonB) return callback(new Error('DAY_CARE_FULL'));
-  if (this.egg) return callback(new Error('TAKE_EGG_FIRST'));
+  var me = this;
+  if (me.pokemonB) return callback(new Error('DAY_CARE_FULL'));
+  if (me.egg) return callback(new Error('TAKE_EGG_FIRST'));
   if (pokemon.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
-  if (pokemon.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
+  if (pokemon.pokemonCenter) return callback(new Error('POKEMON_IN_PC'));
 
-  if (this.pokemonA && _.equals(this.pokemonA._id, pokemon._id))
+  if (me.pokemonA && _.isEqual((me.pokemonA._id || me.pokemonA), pokemon._id))
     return callback(new Error('ALREADY_JOINED'));
 
-  if (!this.pokemonA) {
-    this.pokemonA = pokemon;
-    this.trainerA = pokemon.trainer;
-    this.createTime = new Date();
+  if (!me.pokemonA) {
+    me.pokemonA = pokemon;
+    me.trainerA = pokemon.trainer;
+    me.createTime = new Date();
   } else {
-    this.pokemonB = pokemon;
-    this.trainerB = pokemon.trainer;
-    this.fillTime = new Date();
-    this.breedRate = this.getBreedRate();
+    me.pokemonB = pokemon;
+    me.trainerB = pokemon.trainer;
+    me.fillTime = new Date();
   }
 
-  this.save(callback);
+  me.initData(function(err){
+    if (err) return callback(err);
+    me.breedRate = me.getBreedRate();
+    me.save(callback);
+  });
 };
 
 DayCareSchema.methods.withdraw = function(pokemon, callback){
   if (!this._inited) return callback(null, new Error('ERR_NOT_INITED'));
-  if (this.egg && _.equals(pokemon._id, this.egg._id)) {
+  if (this.egg && _.isEqual(pokemon._id, this.egg._id)) {
     this.egg = null;
     this.fillTime = new Date();
     return this.save(callback);
@@ -71,13 +75,13 @@ DayCareSchema.methods.withdraw = function(pokemon, callback){
   this.fillTime = null;
   this.breedRate = null;
 
-  if (this.pokemonB && _.equals(pokemon._id, this.pokemonB._id)) {
+  if (this.pokemonB && _.isEqual(pokemon._id, this.pokemonB._id)) {
     this.pokemonB = null;
     this.trainerB = null;
     return this.save(callback);
   }
 
-  if (this.pokemonA && _.equals(pokemon._id, this.pokemonA._id)) {
+  if (this.pokemonA && _.isEqual(pokemon._id, this.pokemonA._id)) {
     if (this.pokemonB) {
       this.pokemonA = this.pokemonB;
       this.trainerA = this.trainerB;
@@ -113,22 +117,22 @@ DayCareSchema.statics.newDayCare = function(pokemon, callback){
 };
 
 DayCareSchema.methods.compatible = function(){
-  if (!pokemonA || !pokemonB || !me._inited) return;
-  var sameEggGroups = _.intersection(pokemonA.species.eggGroups, pokemonB.species.eggGroups);
+  if (!this.pokemonA || !this.pokemonB || !this._inited) return;
+  var sameEggGroups = _.intersection(this.pokemonA.species.eggGroups, this.pokemonB.species.eggGroups);
 
-  if (pokemonA.species.eggGroups.findWhere({name: 'no-eggs'})
-    || pokemonB.species.eggGroups.findWhere({name: 'no-eggs'}))
+  if (_.findWhere(this.pokemonA.species.eggGroups, {name: 'no-eggs'})
+    || _.findWhere(this.pokemonB.species.eggGroups, {name: 'no-eggs'}))
     return false;
 
   // As in anime, Pokémon like Staryu can breed without Ditto
-  if ((pokemonA.gender == 1 && pokemonB.gender == 1)
-    || (pokemonA.gender == 2 && pokemonB.gender == 2))
+  if ((this.pokemonA.gender == 1 && this.pokemonB.gender == 1)
+    || (this.pokemonA.gender == 2 && this.pokemonB.gender == 2))
     return false;
 
-  if (pokemonA.species.name == 'ditto' && pokemonB.species.name == 'ditto')
+  if (this.pokemonA.species.name == 'ditto' && this.pokemonB.species.name == 'ditto')
     return false;
 
-  if (pokemonA.species.name == 'ditto' || pokemonB.species.name == 'ditto')
+  if (this.pokemonA.species.name == 'ditto' || this.pokemonB.species.name == 'ditto')
     return true;
 
   if (!sameEggGroups.length == 0)
@@ -141,8 +145,8 @@ DayCareSchema.methods.getBreedRate = function(){
   if (!this._inited) return false;
   if (!this.compatible()) return 0;
 
-  var sameSpecies = pokemonA.speciesNumber == pokemonB.speciesNumber;
-  var diffId = !_.isEqual(pokemonA.originalTrainer._id, pokemonB.originalTrainer._id);
+  var sameSpecies = this.pokemonA.speciesNumber == this.pokemonB.speciesNumber;
+  var diffId = !_.isEqual(this.pokemonA.originalTrainer._id, this.pokemonB.originalTrainer._id);
 
   if (sameSpecies && diffId)
     return 70;
@@ -160,23 +164,29 @@ DayCareSchema.methods.getBreedRate = function(){
 DayCareSchema.methods.mother = function(){
   if (!this._inited) return false;
   if (!this.compatible()) return false;
-  if (pokemonA.species.name == 'ditto') return pokemonB;
-  if (pokemonB.species.name == 'ditto') return pokemonA;
-  if (pokemonA.gender == 1) return pokemonA;
-  if (pokemonB.gender == 1) return pokemonB;
-  return _.random(0, 1) ? pokemonA : pokemonB;
+  if (this.pokemonA.species.name == 'ditto') return this.pokemonB;
+  if (this.pokemonB.species.name == 'ditto') return this.pokemonA;
+  if (this.pokemonA.gender == 1) return this.pokemonA;
+  if (this.pokemonB.gender == 1) return this.pokemonB;
+  return _.random(0, 1) ? this.pokemonA : this.pokemonB;
 };
 
 DayCareSchema.methods.breed = function(callback){
   var me = this;
 
-  if (!me._inited) return callback(new Error('ERR_NOT_INITED'));
+  if (!me._inited) {
+    me.initData(function(err){
+      if (err) return callback(err);
+      me.breed(callback);
+    });
+    return;
+  }
   if (!me.compatible()) return callback(null);
   if (me.egg) return callback(null);
 
   // Breed the Pokémon
   var mother = me.mother();
-  var father = _.equals(mother._id, me.pokemonA._id) ? me.pokemonB : me.pokemonA;
+  var father = _.isEqual(mother._id, me.pokemonA._id) ? me.pokemonB : me.pokemonA;
 
   // Inherit nature
   var nature;

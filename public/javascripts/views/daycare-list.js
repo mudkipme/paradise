@@ -14,11 +14,40 @@ define([
     ,className: 'carousel slide'
     ,collection: DayCares
 
-    ,itemView: 'DayCareRoomView'
+    ,itemView: DayCareRoomView
     ,itemViewContainer: '.carousel-inner'
 
     ,template: _.template(dayCareListTemplate)
     ,templateHelpers: { t: i18n.t }
+
+    ,options: {
+      carouselSize: 4
+    }
+
+    // Create a wrapper to contains several rooms
+    ,appendHtml: function(cv, iv, index){
+      var $container = this.getItemViewContainer(cv);
+      var itemIndex = Math.floor(index / this.options.carouselSize);
+      var wrapper = $container.find('.item').eq(itemIndex);
+      if (!wrapper.size()){
+        wrapper = $('<div/>').addClass('item').appendTo($container);
+        if (!$container.find('.item.active').size()) {
+          wrapper.addClass('active');
+        }
+      }
+      wrapper.append(iv.el);
+    }
+
+    // Re-sort the day care rooms
+    ,onItemRemoved: function(){
+      var $container = this.getItemViewContainer(this);
+      var carouselSize = this.options.carouselSize;
+      this.children.each(function(view, index){
+        var itemIndex = Math.floor(index / carouselSize);
+        $container.find('.item').eq(itemIndex).append(view.el);
+      });
+      $container.find('.item:empty').remove();
+    }
   });
 
   return DayCareListView;
