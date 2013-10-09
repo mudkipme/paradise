@@ -1,0 +1,7 @@
+<% _.each([pokemonA, pokemonB], function(pokemon){ %>
+  <div class="care-pokemon">
+    <% if (pokemon) { %>
+      <div class="level">Lv. <%= pokemon.level %></div>
+    <% } %>
+  </div>
+<% }) %>

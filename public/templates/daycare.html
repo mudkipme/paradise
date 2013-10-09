@@ -1,6 +1,18 @@
 <section class="deposit">
-  <h1>存放</h1>
+  <div class="wrapper">
+    <h1><%= t('day-care.deposit') %></h1>
+    <div class="party-select party-select-alt"></div>
+    <form class="search-day-care form-inline">
+      <div class="form-group">
+        <input type="search" class="search-input form-control" placeholder="<%= t('day-care.search-placeholder') %>">
+      </div>
+      <button type="submit" class="btn"><%= t('day-care.search') %></button>
+    </form>
+  </div>
 </section>
 <section class="withdraw">
-  <h1>取出</h1>
+  <div class="wrapper">
+    <div class="day-care-list"></div>
+    <h1><%= t('day-care.withdraw') %></h1>
+  </div>
 </section>

@@ -128,6 +128,12 @@
     ,"catch-fail": "__pokemon__ 跳了出来！"
     ,"escaped": "野生的 __pokemon__ 逃离了！"
   }
+  ,"day-care": {
+    "deposit": "存放"
+    ,"withdraw": "取出"
+    ,"search-placeholder": "输入训练家名字"
+    ,"search": "搜索有空位的饲育屋"
+  }
   ,"forme": {
     "normal": "一般"
     ,"sky": "天空"

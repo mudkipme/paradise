@@ -76,7 +76,7 @@ define([
     }
 
     ,daycare: function(){
-      App.mainRegion.show(new DayCareView({collection: App.trainer.daycare}));
+      App.mainRegion.show(new DayCareView({collection: App.trainer.dayCares}));
     }
   });
 });

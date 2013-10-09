@@ -1,29 +1,65 @@
 #day-care-view {
   section {
     height: 384px;
-    cursor: pointer;
     position: relative;
 
     h1 {
       font-size: 30px;
       color: #fff;
-      line-height: 100%;
-      position: absolute;
+      padding: 20px 0;
       width: 100%;
       text-align: center;
+      margin: 0;
+    }
+  }
+
+  .deposit {
+    background: #26d670;
+
+    .party-select {
+      padding-left: 15px;
+      padding-right: 15px;
+      margin-bottom: 15px;
     }
 
-    &.deposit {
-      background: #26d670;
-      h1 {
-        bottom: 25px;
+    .search-day-care {
+      text-align: center;
+      padding-left: 70px;
+      padding-right: 70px;
+      .form-group {
+        margin-bottom: 5px;
+      }
+      .btn {
+        .btn-primary;
       }
     }
-    &.withdraw {
-      background: #ffd324;
-      h1 {
-        top: 25px;
+  }
+
+  .withdraw {
+    background: #ffd324;
+  }
+}
+
+@media (min-width: 768px) {
+  #day-care-view {
+    .deposit {
+      .party-select {
+        padding-left: 25px;
+        padding-right: 25px;
+        margin-bottom: 30px;
       }
+      .search-day-care .form-group {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  #day-care-view {
+    .deposit .party-select {
+      padding-left: 70px;
+      padding-right: 70px;
     }
   }
 }
