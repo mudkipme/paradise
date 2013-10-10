@@ -1,12 +1,14 @@
 .day-care-room {
-  width: 274px;
   height: 147px;
-  background: url(../images/day-care/day-care-room.png) center center no-repeat;
+  background: data-uri('../images/day-care/day-care-room.png') center center no-repeat;
   position: relative;
+  margin-bottom: 6px;
+  .make-sm-column(6,0);
 
   .care-pokemon {
     position: absolute;
     top: 0;
+    left: 50%;
     text-align: center;
     width: 96px;
     height: 100%;
@@ -29,11 +31,11 @@
   }
 
   .care-pokemon-1 {
-    left: 22px;
+    margin-left: -115px;
   }
 
   .care-pokemon-2 {
-    right: 22px;
+    margin-left: 19px;
   }
 
   .egg {
@@ -43,5 +45,11 @@
     margin-left: -48px;
     left: 50%;
     bottom: -25px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .day-care-room {
+    background-size: 100%;
   }
 }

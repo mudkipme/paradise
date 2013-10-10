@@ -2,6 +2,15 @@
   section {
     height: 384px;
     position: relative;
+    overflow: hidden;
+    cursor: pointer;
+
+    .wrapper {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      .transition(top 0.5s ease-in-out);
+    }
 
     h1 {
       font-size: 30px;
@@ -10,12 +19,22 @@
       width: 100%;
       text-align: center;
       margin: 0;
+      cursor: pointer;
+    }
+
+    &.open {
+      cursor: auto;
+      .wrapper {
+        top: 0 !important;
+      }
     }
   }
 
   .deposit {
     background: #26d670;
-
+    .wrapper {
+      top: 314px;
+    }
     .party-select {
       padding-left: 15px;
       padding-right: 15px;
@@ -36,7 +55,11 @@
   }
 
   .withdraw {
+    height: 690px;
     background: #ffd324;
+    .wrapper {
+      top: -620px;
+    }
   }
 }
 
@@ -50,6 +73,14 @@
       }
       .search-day-care .form-group {
         margin-bottom: 0;
+      }
+    }
+    .withdraw {
+      height: 384px;
+      .wrapper {
+        top: -314px;
+        padding-left: 10px;
+        padding-right: 10px;
       }
     }
   }

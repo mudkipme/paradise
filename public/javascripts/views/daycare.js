@@ -19,11 +19,29 @@ define([
       ,dayCareList: '.day-care-list'
     }
 
+    ,events: {
+      'click section:not(.open)': 'openSection'
+      ,'click section h1': 'titleClick'
+    }
+
     ,onRender: function(){
       var party = this.collection.trainer.party;
       this.partySelectView = new PartySelectView({collection: party});
+      this.listenTo(this.partySelectView, 'choose', _.bind(this.deposit, this));
       this.partySelect.show(this.partySelectView);
       this.dayCareList.show(new DayCareListView({collection: this.collection}));
+    }
+
+    ,openSection: function(e){
+      $(e.currentTarget).addClass('open');
+    }
+
+    ,titleClick: function(e){
+      $(e.target).closest('section').toggleClass('open');
+    }
+
+    ,deposit: function(pokemon){
+      this.collection.deposit(pokemon);
     }
   });
 
