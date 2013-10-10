@@ -9,14 +9,6 @@ var _ = require('underscore');
 var io = require('../io');
 var Item = require('../models/item');
 
-var partyNum = function(req){
-  var party = _.filter(req.trainer.party, function(pokemon){
-      return !pokemon.isEgg && !pokemon.pokemonCenter
-        && !pokemon._id.equals(req.pokemon._id);
-  });
-  return party.length;
-};
-
 // Get Pokémon information
 exports.get = function(req, res){
   res.json(req.pokemon);
@@ -33,7 +25,8 @@ exports.release = function(req, res){
   if (!pos) return res.json(500, { error: 'FIND_POKEMON_ERROR' });
 
   if (pos.party) {
-    if (!partyNum(req)) return res.json(403, { error: 'ONE_POKEMON_LEFT' });
+    if (!req.trainer.available(req.pokemon))
+      return res.json(403, { error: 'ONE_POKEMON_LEFT' });
     req.trainer.party.splice(pos.position, 1);
   } else {
     req.trainer.storagePokemon.pull(pos._id);
@@ -59,7 +52,8 @@ exports.deposit = function(req, res){
 
   if (!pos) return res.json(500, { error: 'FIND_POKEMON_ERROR' });
   if (!pos.party) return res.json(403, { error: 'POKEMON_NOT_IN_PARTY' });
-  if (!partyNum(req)) return res.json(403, { error: 'ONE_POKEMON_LEFT' });
+  if (!req.trainer.available(req.pokemon))
+      return res.json(403, { error: 'ONE_POKEMON_LEFT' });
 
   req.trainer.party.splice(pos.position, 1);
   req.trainer.storagePokemon.push(_.extend({ pokemon: req.pokemon }, storage));

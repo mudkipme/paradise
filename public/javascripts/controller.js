@@ -78,6 +78,7 @@ define([
     ,daycare: function(){
       App.mainRegion.show(new DayCareView({collection: App.trainer.dayCares}));
       App.trainer.dayCares.fetch();
+      App.trainer.fetch();
     }
   });
 });

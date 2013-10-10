@@ -11,6 +11,7 @@ var Trainer = require('../models/trainer');
 var Pokemon = require('../models/pokemon');
 var Item = require('../models/item');
 var Location = require('../models/location');
+var config = require('../../config.json');
 
 // Get trainer's information
 exports.get = function(req, res){
@@ -47,6 +48,17 @@ exports.post = function(req, res){
   if (req.trainer) return res.json(403, { error: 'ERR_ALREADY_CREATED' });
   
   var trainer = new Trainer({ name: req.member.username });
+  var speciesNumber = parseInt(req.body.speciesNumber);
+  var location = null;
+
+  var valid = _.some(config.app.starters, function(starters, loc){
+    if (_.contains(starters, speciesNumber)) {
+      location = loc;
+      return true;
+    }
+  });
+
+  if (!valid) return res.json(403, {error: 'PERMISSION_DENIED'});
 
   async.series({
     // Receive the Pokemon from lab
@@ -56,7 +68,7 @@ exports.post = function(req, res){
     // Get a Poké Ball
     ,pokeBall: async.apply(Item, 'poke-ball')
     // Get the starter town
-    ,location: async.apply(Location, 'pallet-town')
+    ,location: async.apply(Location, location)
   }, function(err, ret){
     if (err) return res.json(500, { error: err.message });
     trainer.catchPokemon(ret.pokemon, ret.pokeBall, ret.location, function(err){
@@ -134,7 +146,7 @@ exports.put = function(req, res){
     if (err) return res.json(500, { error: err.message });
     res.json(req.trainer);
   });
-}
+};
 
 // Move Pokémon in party
 exports.move = function(req, res){

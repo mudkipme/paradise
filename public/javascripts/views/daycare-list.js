@@ -28,6 +28,10 @@ define([
       carouselControl: '.carousel-control'
     }
 
+    ,onRender: function(){
+      this.$el.carousel({ interval: false });
+    }
+
     // Create a wrapper to contains several rooms
     ,appendHtml: function(cv, iv, index){
       var $container = this.getItemViewContainer(cv);
@@ -53,9 +57,12 @@ define([
         var itemIndex = Math.floor(index / carouselSize);
         $container.find('.item').eq(itemIndex).append(view.el);
       });
-      $container.find('.item:empty').remove();
-      if ($container.find('.item').size() <= 2) {
+      $container.find('.item').filter(':empty').remove();
+      if ($container.find('.item').size() < 2) {
         this.ui.carouselControl.addClass('hide');
+      }
+      if ($container.find('.item').size() && !$container.find('.item.active').size()) {
+        $container.find('.item:last-child').addClass('active');
       }
     }
   });

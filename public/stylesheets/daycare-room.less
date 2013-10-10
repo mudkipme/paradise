@@ -46,6 +46,14 @@
     left: 50%;
     bottom: -25px;
   }
+
+  [data-pos] {
+    cursor: pointer;
+    .transition-transform(0.2s ease-out);
+    &:hover {
+      .translate(0, -5px);
+    }
+  }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {

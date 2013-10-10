@@ -134,6 +134,8 @@
     ,"withdraw": "取出"
     ,"search-placeholder": "输入训练家名字"
     ,"search": "搜索有空位的饲育屋"
+    ,"withdraw-confirm": "确定要取出 __pokemon__ 吗？"
+    ,"deposited": "__pokemon__ 已经存放到了饲育屋。"
   }
   ,"forme": {
     "normal": "一般"

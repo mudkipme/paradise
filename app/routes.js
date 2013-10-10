@@ -22,7 +22,7 @@ var isAdmin = [auth.login, auth.isAdmin];
 
 module.exports = function(app){
   app.get('/', page, index.index);
-  app.get(/^\/(party|pokedex|bag|trainer|storage|world|encounter|timeline|pokemart|daycare|trade|battle|rank|migrate|setting|record|help)(\/.*)?$/, page, index.defaults);
+  app.get(/^\/(party|pokedex|bag|trainer|storage|world|encounter|timeline|pokemart|daycare|trade|battle|rank|migrate|setting|record|help|msg)(\/.*)?$/, page, index.defaults);
   app.get('/bbs', bbs.login);
 
   // Trainer actions

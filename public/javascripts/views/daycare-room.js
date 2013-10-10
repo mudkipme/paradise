@@ -3,10 +3,11 @@ define([
   ,'underscore'
   ,'marionette'
   ,'i18next'
+  ,'vent'
   ,'models/daycare'
   ,'views/pokemon'
   ,'text!templates/daycare-room.html'
-], function($, _, Marionette, i18n, DayCare, PokemonView, dayCareRoomTemplate){
+], function($, _, Marionette, i18n, vent, DayCare, PokemonView, dayCareRoomTemplate){
 
   var helpers = PokemonView.prototype.templateHelpers;
 
@@ -26,7 +27,35 @@ define([
       }
     }
 
+    ,events: {
+      'click [data-pos]': 'withdraw'
+    }
 
+    ,modelEvents: {
+      change: 'render'
+      ,withdraw: 'refreshParty'
+    }
+
+    ,withdraw: function(e){
+      var me = this;
+      var pokemon = me.model[$(e.currentTarget).data('pos')];
+      if (!pokemon) return;
+
+      var pokemonName = helpers.pokemonName.apply({pokemon: pokemon.toJSON()});
+      vent.trigger('modal', {
+        title: i18n.t('day-care.withdraw')
+        ,content: i18n.t('day-care.withdraw-confirm', {pokemon: pokemonName})
+        ,type: 'confirm'
+        ,btnType: 'warning'
+        ,accept: function(){
+          me.model.withdraw(pokemon);
+        }
+      });
+    }
+
+    ,refreshParty: function(e){
+      vent.trigger('trainer:fetch');
+    }
   });
 
   return DayCareRoomView;

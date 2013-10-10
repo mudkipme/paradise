@@ -31,9 +31,7 @@ define([
     }
 
     ,events: {
-      'mouseenter .pokemon': 'withdrawCard'
-      ,'mouseleave .pokemon': 'depositCard'
-      ,'click .pokemon': 'choosePokemon'
+      'click .pokemon': 'choosePokemon'
     }
 
     ,collectionEvents: {
@@ -57,14 +55,6 @@ define([
       var left = Math.ceil((singleWidth * pokemonNumber - width) / (pokemonNumber - 1));
 
       this.ui.pokemon.not(':first-child').css('margin-left', -left + 'px');
-    }
-
-    ,withdrawCard: function(e){
-      $(e.currentTarget).css('z-index', 1);
-    }
-
-    ,depositCard: function(e){
-      $(e.currentTarget).css('z-index', '');
     }
 
     ,choosePokemon: function(e){

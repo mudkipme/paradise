@@ -68,8 +68,12 @@ DayCareSchema.methods.withdraw = function(pokemon, callback){
   if (!this._inited) return callback(null, new Error('ERR_NOT_INITED'));
   if (this.egg && _.isEqual(pokemon._id, this.egg._id)) {
     this.egg = null;
+    this.eggTrainer = null;
     this.fillTime = new Date();
-    return this.save(callback);
+    if (this.pokemonA || this.pokemonB)
+      return this.save(callback);
+    this.removed = true;
+    return this.remove(callback);
   }
 
   this.fillTime = null;
@@ -93,7 +97,7 @@ DayCareSchema.methods.withdraw = function(pokemon, callback){
       this.trainerA = null;
       return this.save(callback);
     }
-
+    this.removed = true;
     return this.remove(callback);
   }
 
@@ -110,7 +114,10 @@ DayCareSchema.statics.newDayCare = function(pokemon, callback){
     ,createTime: new Date
   });
 
-  dayCare.save(function(err){
+  async.series([
+    dayCare.save.bind(dayCare)
+    ,dayCare.initData.bind(dayCare)
+  ], function(err){
     if (err) callback(err);
     callback(null, dayCare);
   });
@@ -118,7 +125,9 @@ DayCareSchema.statics.newDayCare = function(pokemon, callback){
 
 DayCareSchema.methods.compatible = function(){
   if (!this.pokemonA || !this.pokemonB || !this._inited) return;
-  var sameEggGroups = _.intersection(this.pokemonA.species.eggGroups, this.pokemonB.species.eggGroups);
+  var sameEggGroups = _.intersection(
+    _.pluck(this.pokemonA.species.eggGroups, 'identifier')
+    ,_.pluck(this.pokemonB.species.eggGroups, 'identifier'));
 
   if (_.findWhere(this.pokemonA.species.eggGroups, {name: 'no-eggs'})
     || _.findWhere(this.pokemonB.species.eggGroups, {name: 'no-eggs'}))
@@ -135,7 +144,7 @@ DayCareSchema.methods.compatible = function(){
   if (this.pokemonA.species.name == 'ditto' || this.pokemonB.species.name == 'ditto')
     return true;
 
-  if (!sameEggGroups.length == 0)
+  if (sameEggGroups.length == 0)
     return false;
   
   return true;

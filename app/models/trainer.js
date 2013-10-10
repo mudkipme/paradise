@@ -14,7 +14,7 @@ var geode = new Geode(config.thirdParty.geonames, {});
 var TrainerSchema = new Schema({
   name:             String,
   trainerId:        Number,
-  pokedexHex:          {
+  pokedexHex: {
     caught:         String,
     seen:           String,
     formM:          String,
@@ -419,6 +419,15 @@ TrainerSchema.methods.todaySpecies = function(callback){
     if (err) return callback(err);
     Species(me.todayLuck, cb);
   });
+};
+
+// Get how many Pokémon in party would left if a Pokémon is deposited/released
+TrainerSchema.methods.available = function(pokemon){
+  var party = _.filter(this.party, function(pm){
+    return !pm.isEgg && !pm.pokemonCenter
+      && !pm._id.equals(pokemon._id);
+  });
+  return party.length;
 };
 
 // Hide some information from toJSON

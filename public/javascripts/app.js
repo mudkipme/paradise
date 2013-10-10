@@ -127,6 +127,10 @@ define([
     App.appRouter = new Router({
       controller: new Controller
     });
+
+    vent.on('trainer:fetch', function(){
+      App.trainer.fetch();
+    });
   });
 
   // initialize socket.io connection

@@ -16,10 +16,6 @@ define([
       var trainerName = _.isString(this.trainer) ? this.trainer : this.trainer.get('name');
       return '/api/daycare?trainer=' + trainerName;
     }
-
-    ,deposit: function(pokemon){
-      
-    }
   });
 
   return DayCares;

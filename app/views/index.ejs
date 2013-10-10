@@ -122,8 +122,13 @@
     <div id="paradise-modal"></div>
     
     <script>
-      /* detect canvas support */
-      if (!document.createElement('canvas').getContext) {
+      /* Disable legacy browsers */
+      var features;
+      (function(s, features) {
+        features.transitions = 'transition' in s || 'webkitTransition' in s || 'MozTransition' in s || 'msTransition' in s || 'OTransition' in s;
+      })(document.createElement('div').style, features || (features = {}));
+
+      if (!document.createElement('canvas').getContext || !features.transitions) {
         document.getElementById('browser-error').style.display = 'block';
         document.getElementById('paradise-app').style.display = 'none';
       }
@@ -136,19 +141,6 @@
         );
         document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
       }
-
-      /* viewport fix for 7-inch Tablets */
-      window.addEventListener('orientationchange', function(){
-        if (screen.width >= 600 && screen.width < 768) {
-          document.querySelector("meta[name=viewport]")
-          .setAttribute('content', 'width=768px, user-scalable=0');
-        } else {
-          document.querySelector("meta[name=viewport]")
-          .setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=no');
-        }
-      }, false);
-
-      window.dispatchEvent(new Event('orientationchange'));
     </script>
   </body>
 </html>
