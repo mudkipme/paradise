@@ -5,7 +5,8 @@ var express = require('express');
 var config = require('../config.json');
 
 // Session store
-var sessionStore = new express.session.MemoryStore();
+var RedisStore = require('connect-redis')(express);
+var sessionStore = new RedisStore;
 
 // MySQL connection
 var mysqlConnection = mysql.createConnection({

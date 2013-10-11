@@ -23,6 +23,8 @@ exports.connect = function(server){
     }
   });
 
+  sio.set('log level', 1);
+
   exports.sio = sio;
   exports.sockets = sio.sockets;
 };

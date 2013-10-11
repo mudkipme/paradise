@@ -32,6 +32,7 @@ define([
 
     ,events: {
       'click .pokemon': 'choosePokemon'
+      ,'touchstart .pokemon': 'hoverPokemon'
     }
 
     ,collectionEvents: {
@@ -55,6 +56,11 @@ define([
       var left = Math.ceil((singleWidth * pokemonNumber - width) / (pokemonNumber - 1));
 
       this.ui.pokemon.not(':first-child').css('margin-left', -left + 'px');
+    }
+
+    ,hoverPokemon: function(e){
+      this.$('.hover').removeClass('hover');
+      $(e.currentTarget).addClass('hover');
     }
 
     ,choosePokemon: function(e){
