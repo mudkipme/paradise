@@ -1,6 +1,7 @@
 var async = require('async');
 var express = require('express');
 var i18n = require('i18next');
+var _ = require('underscore');
 var sessionStore = require('../common').sessionStore;
 var Member = require('../models/member.js');
 var config = require('../../config.json');
@@ -45,11 +46,13 @@ exports.locale = function(req, res, next){
     var locale;
     if (req.trainer && req.trainer.language) {
       locale = req.trainer.language;
+    } else if (_.contains(['zh-hans', 'zh-hant', 'en'], req.cookies.i18next)) {
+      locale = req.cookies.i18next;
     } else if (req.headers['accept-language']) {
       var hasHans = req.headers['accept-language'].match(/zh-(hans|cn|sg|my)/i);
       var hasHant = req.headers['accept-language'].match(/zh-(hant|tw|hk|mo)/i);
-      if (hasHans && !hasHant) locale = 'zh-hans';
-      if (!hasHans && hasHant) locale = 'zh-hant';
+      if (hasHans) locale = 'zh-hans';
+      else if (hasHant) locale = 'zh-hant';
     }
     if (locale) {
       req.lng = locale;

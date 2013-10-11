@@ -27,7 +27,7 @@ module.exports = function(app){
 
   // Trainer actions
   app.get('/api/trainer', defaults, trainer.get);
-  app.post('/api/trainer', defaults, trainer.post);
+  app.post('/api/trainer', page, trainer.post);
   app.get('/api/trainer/:name', trainer.get);
   app.get('/api/trainer/:name/pokedex', trainer.pokedex);
   app.get('/api/trainer/:name/pokemon', trainer.pokemon);

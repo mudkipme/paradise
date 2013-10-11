@@ -22,9 +22,17 @@
   <div class="screen next hide">
     <div class="intro-content"><%= t('intro.text-6') %></div>
   </div>
-  <div class="screen next hide screen-region">
+  <div class="screen hide screen-region">
     <div class="intro-content">
       <p><%= t('intro.region-select') %></p>
+      <ul class="region-select">
+        <li data-region="kanto"><%= t('region.kanto') %></li>
+        <li data-region="johto"><%= t('region.johto') %></li>
+        <li data-region="hoenn"><%= t('region.hoenn') %></li>
+      </ul><ul class="region-select">
+        <li data-region="sinnoh"><%= t('region.sinnoh') %></li>
+        <li data-region="unova"><%= t('region.unova') %></li>
+      </ul>
     </div>
   </div>
   <div class="screen next hide">
@@ -39,9 +47,23 @@
   <div class="screen next hide">
     <div class="intro-content"><%= t('intro.text-10') %></div>
   </div>
-  <div class="screen hide pokemon-select">
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-11') %></div>
+  </div>
+  <div class="screen hide screen-pokemon">
     <div class="intro-content">
       <p><%= t('intro.pokemon-select') %></p>
+      <div class="pokemon-select">
+        <div class="pokemon pokemon-grass"><div class="inside"></div></div>
+        <div class="pokemon pokemon-fire"><div class="inside"></div></div>
+        <div class="pokemon pokemon-water"><div class="inside"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen hide screen-final">
+    <div class="intro-content">
+      <p></p>
+      <div class="pokemon"><div class="inside"></div></div>
     </div>
   </div>
 </div>

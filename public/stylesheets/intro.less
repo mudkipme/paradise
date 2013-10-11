@@ -54,6 +54,131 @@
       margin: 0;
     }
   }
+
+  .screen-region {
+    .region-select {
+      margin: 50px 0;
+      padding: 0;
+      list-style: none;
+      li {
+        display: inline-block;
+        width: 180px;
+        height: 100px;
+        line-height: 100px;
+        border-radius: 30px;
+        border: 4px solid #fff;
+        cursor: pointer;
+
+        &:not(:last-child) {
+          margin-right: 100px;
+        }
+        &[data-region="kanto"]:hover {
+          background-color: #e84c3d;
+        }
+        &[data-region="johto"]:hover {
+          background-color: #e77e23;
+        }
+        &[data-region="hoenn"]:hover {
+          background-color: #f1c40f;
+        }
+        &[data-region="sinnoh"]:hover {
+          background-color: #2fcc71;
+        }
+        &[data-region="unova"]:hover {
+          background-color: #3598dc;
+        }
+      }
+    }
+  }
+
+  .pokemon {
+    cursor: pointer;
+    width: 136px;
+    height: 136px;
+    background: data-uri('../images/intro/poke-ball.png') no-repeat;
+    .inside {
+      width: 136px;
+      height: 136px;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+    .species-1 {
+      background-image: url(../images/intro/1.png);
+    }
+    .species-4 {
+      background-image: url(../images/intro/4.png);
+    }
+    .species-7 {
+      background-image: url(../images/intro/7.png);
+    }
+    .species-152 {
+      background-image: url(../images/intro/152.png);
+    }
+    .species-155 {
+      background-image: url(../images/intro/155.png);
+    }
+    .species-158 {
+      background-image: url(../images/intro/158.png);
+    }
+    .species-252 {
+      background-image: url(../images/intro/252.png);
+    }
+    .species-255 {
+      background-image: url(../images/intro/255.png);
+    }
+    .species-258 {
+      background-image: url(../images/intro/258.png);
+    }
+    .species-387 {
+      background-image: url(../images/intro/387.png);
+    }
+    .species-390 {
+      background-image: url(../images/intro/390.png);
+    }
+    .species-393 {
+      background-image: url(../images/intro/393.png);
+    }
+    .species-495 {
+      background-image: url(../images/intro/495.png);
+    }
+    .species-498 {
+      background-image: url(../images/intro/498.png);
+    }
+    .species-501 {
+      background-image: url(../images/intro/501.png);
+    }
+  }
+
+  .screen-pokemon {
+    .pokemon-select {
+      height: 235px;
+      width: 660px;
+      position: relative;
+      margin-top: 100px;
+      .pokemon {
+        position: absolute;
+      }
+      .pokemon-grass {
+        top: 0;
+        left: 0;
+      }
+      .pokemon-water {
+        top: 0;
+        right: 0;
+      }
+      .pokemon-fire {
+        bottom: 0;
+        left: 50%;
+        margin-left: -68px;
+      }
+    }
+  }
+
+  .screen-final {
+    .pokemon {
+      margin: 100px auto 0;
+    }
+  }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
@@ -61,6 +186,35 @@
     .intro-content {
       padding: 35px;
       font-size: 35px;
+    }
+
+    .screen-region {
+      .region-select {
+        margin: 35px 0;
+        li {
+          &:not(:last-child) {
+            margin-right: 70px;
+          }
+          width: 126px;
+          height: 70px;
+          line-height: 70px;
+          border-radius: 21px;
+          border-width: 3px;
+        }
+      }
+    }
+
+    .screen-pokemon {
+      .pokemon-select {
+        width: 462px;
+        margin-top: 70px;
+      }
+    }
+
+    .screen-final {
+      .pokemon {
+        margin-top: 70px;
+      }
     }
   }
 }
@@ -75,6 +229,39 @@
     .intro-content {
       padding: 20px;
       font-size: 20px;
+    }
+
+    .screen-region {
+      .region-select {
+        margin: 20px 0;
+        padding: 0;
+        li {
+          &:not(:last-child) {
+            margin-right: 10px;
+          }
+          width: 72px;
+          height: 40px;
+          line-height: 40px;
+          border-radius: 12px;
+          border-width: 2px;
+        }
+      }
+    }
+
+    .screen-pokemon {
+      .pokemon-select {
+        .pokemon {
+          .scale(0.5);
+        }
+        width: 264px;
+        margin-top: 40px;
+      }
+    }
+
+    .screen-final {
+      .pokemon {
+        margin-top: 40px;
+      }
     }
   }
 }

@@ -47,7 +47,7 @@ exports.post = function(req, res){
   if (!req.member) return res.json(403, { error: 'ERR_NOT_LOGINED' });
   if (req.trainer) return res.json(403, { error: 'ERR_ALREADY_CREATED' });
   
-  var trainer = new Trainer({ name: req.member.username });
+  var trainer = new Trainer({ name: req.member.username, language: req.lng });
   var speciesNumber = parseInt(req.body.speciesNumber);
   var location = null;
 
