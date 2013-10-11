@@ -6,7 +6,7 @@ var async = require('async');
 var _ = require('underscore');
 var db = require('../common').baseData;
 var Pokemon = require('./pokemon');
-var Species = require('./Species');
+var Species = require('./species');
 
 var locationCache = {};
 
