@@ -1,0 +1,47 @@
+<div class="intro-background">
+  <% if (! /(iPad|iPhone|iPod|Android)/g.test( navigator.userAgent )) { %>
+    <video src="images/intro/intro-video.mp4" autoplay="autoplay" loop="" />
+  <% } %>
+</div>
+<div class="intro-front">
+  <div class="screen next">
+    <div class="intro-content"><%= t('intro.text-1') %></div>
+  </div>
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-2') %></div>
+  </div>
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-3') %></div>
+  </div>
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-4') %></div>
+  </div>
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-5') %></div>
+  </div>
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-6') %></div>
+  </div>
+  <div class="screen next hide screen-region">
+    <div class="intro-content">
+      <p><%= t('intro.region-select') %></p>
+    </div>
+  </div>
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-7') %></div>
+  </div>
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-8') %></div>
+  </div>
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-9') %></div>
+  </div>
+  <div class="screen next hide">
+    <div class="intro-content"><%= t('intro.text-10') %></div>
+  </div>
+  <div class="screen hide pokemon-select">
+    <div class="intro-content">
+      <p><%= t('intro.pokemon-select') %></p>
+    </div>
+  </div>
+</div>

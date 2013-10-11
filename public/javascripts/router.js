@@ -13,6 +13,16 @@ define([
       ,'encounter': 'encounter'
       ,'pokedex': 'pokedex'
       ,'daycare': 'daycare'
+      ,'trainer': 'trainer'
+      ,'timeline': 'timeline'
+      ,'trade': 'trade'
+      ,'battle': 'battle'
+      ,'rank': 'rank'
+      ,'migrate': 'migrate'
+      ,'setting': 'setting'
+      ,'record': 'record'
+      ,'help': 'help'
+      ,'msg': 'msg'
     }
   });
 });

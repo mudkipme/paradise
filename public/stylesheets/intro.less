@@ -1,0 +1,80 @@
+#intro-view {
+  padding-top: 56.25%;
+  height: 0;
+  background: #000;
+  position: relative;
+
+  .intro-background, .intro-front {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .intro-background {
+    video {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .intro-front {
+    z-index: 1;
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: -webkit-box;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+         -moz-box-align: center;
+         -ms-flex-align: center;
+      -webkit-align-items: center;
+              align-items: center;
+      -webkit-box-pack: center;
+         -moz-box-pack: center;
+         -ms-flex-pack: center;
+      -webkit-justify-content: center;
+              justify-content: center;
+      &.next {
+        cursor: pointer;
+      }
+    }
+  }
+  .intro-content {
+    padding: 50px;
+    font-size: 50px;
+    color: #fff;
+    text-align: center;
+    p {
+      margin: 0;
+    }
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  #intro-view {
+    .intro-content {
+      padding: 35px;
+      font-size: 35px;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  #intro-view {
+    padding-top: 0;
+    height: 400px;
+    video {
+      display: none;
+    }
+    .intro-content {
+      padding: 20px;
+      font-size: 20px;
+    }
+  }
+}

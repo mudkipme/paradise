@@ -26,6 +26,7 @@ define([
     ,events: {
       'click section:not(.open)': 'openSection'
       ,'click section h1': 'titleClick'
+      ,'submit .search-day-care': 'searchDayCare'
     }
 
     ,onRender: function(){
@@ -71,6 +72,11 @@ define([
         ,content: i18n.t('day-care.deposited', {pokemon: pokemon})
       });
       this.$('section.withdraw').addClass('open');
+    }
+
+    ,searchDayCare: function(e){
+      e.preventDefault();
+      vent.trigger('roadmap', 'daycare');
     }
   });
 

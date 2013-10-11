@@ -73,6 +73,9 @@
     ,"female": "雌性"
     ,"shiny": "不同颜色"
     ,"egg": "神奇宝贝蛋"
+    ,"hatch-wait": "这个神奇宝贝蛋距离孵化似乎还有一段时间。"
+    ,"hatch-close": "蛋似乎在摇晃，距离孵化大概不远了。"
+    ,"hatch-soon": "神奇宝贝蛋已经发出了响声，它马上就要孵出了！"
   }
   ,"action": {
     "send-pokemon-center": "送到神奇宝贝中心"
@@ -235,11 +238,22 @@
   ,"error": {
     "title": "发生错误"
     ,"retry-please": "发生未知错误，请重试并向神奇宝贝部落格管理员反馈。"
-    ,"ONE_POKEMON_LEFT": "您的队伍中只有一只神奇宝贝。"
+    ,"ONE_POKEMON_LEFT": "队伍中只有一只神奇宝贝。"
     ,"CANNOT_GIFT_SELF": "不能向自己赠送道具。"
     ,"TRAINER_NOT_FOUND": "无法找到这个训练家。"
     ,"ITEM_NOT_SUITABLE_TO_USE": "神奇宝贝使用这个道具没有效果。"
     ,"ERR_NO_PARTY_SLOT": "队伍中没有足够的空位。"
+    ,"ERR_POKEMON_IS_EGG": "这只神奇宝贝尚未从蛋中孵化。"
+    ,"DAY_CARE_NOT_FOUND": "无法找到这个饲育屋。"
+    ,"POKEMON_NOT_IN_PARTY": "这只神奇宝贝没有在队伍中。"
+    ,"NO_MORE_DAY_CARE": "饲育屋的数量达到上限。"
+    ,"PERMISSION_DENIED": "无法进行该操作，请刷新后重试。"
+    ,"DAY_CARE_FULL": "无法将神奇宝贝存入这个饲育屋。"
+    ,"TAKE_EGG_FIRST": "请先取出神奇宝贝蛋。"
+    ,"DAY_CARE_EMPTY": "饲育屋中没有神奇宝贝。"
+    ,"ALREADY_BATTLED": "已经参加了对战。"
+    ,"NO_ENCOUNTER_POKEMON": "没有遇到野生的神奇宝贝。"
+    ,"NO_ENOUGH_ITEM_IN_BAG": "背包中没有相应的道具。"
   }
   ,"modal": {
     "title": "提示信息"
@@ -247,5 +261,33 @@
     ,"cancel": "取消"
     ,"lucky-title": "幸运神奇宝贝"
     ,"lucky-content": "今天的幸运神奇宝贝是__species__，点击确定前往神奇宝贝百科查看__species__的资料。"
+  }
+  ,"intro": {
+    "text-1": "你好。"
+    ,"text-2": "欢迎来到神奇宝贝的世界。"
+    ,"text-3": "这里有超过六百种的<br/>名叫「神奇宝贝」的不可思议的生物。"
+    ,"text-4": "天空中，大海里，陆地上，<br/>神奇宝贝生活在世界各个地区。"
+    ,"text-5": "拥有不可思议能力的神奇宝贝，<br/>其外形和栖息地都各色各样。"
+    ,"text-6": "人类和神奇宝贝相亲相爱，<br/>共同生活在一起！"
+    ,"region-select": "请问你来自哪一个地方？"
+    ,"text-7": "你的故事快要正式拉开帷幕了。"
+    ,"text-8": "在旅途中，<br/>你一定会遇到各式各样的神奇宝贝<br/>以及有着各式各样想法的人们。"
+    ,"text-9": "希望你能在与他们的邂逅中，<br/>找到你的宝贵的东西……"
+    ,"text-10": "开始吧！<br/>打开神奇宝贝球！"
+    ,"pokemon-select": "请选择你的伙伴"
+  }
+  ,"roadmap": {
+    "title": "正在开发中"
+    ,"timeline": "沟通广场预计将于 <strong>2014年寒假内</strong> 开放，请耐心等待。"
+    ,"daycare": "加入其他训练家的饲育屋功能预计将于 <strong>2013年10月内</strong> 开放，请耐心等待。"
+    ,"trade": "通信交换预计将于 <strong>2013年10月内</strong> 开放，请耐心等待。"
+    ,"trainer": "训练家卡片预计将于 <strong>2013年10月内</strong> 开放，请耐心等待。"
+    ,"battle": "对战塔预计将于 <strong>2013年内</strong> 开放，请耐心等待。"
+    ,"rank": "排行榜预计将于 <strong>2013年内</strong> 开放，请耐心等待。"
+    ,"help": "在神奇宝贝乐园测试期间，请到神奇宝贝部落讨论区「V6测试版」寻求帮助。"
+    ,"migrate": "神奇传送预计将于 <strong>2014年春节前</strong> 开放，请耐心等待。"
+    ,"record": "历史记录预计将于 <strong>2014年寒假内</strong> 开放，请耐心等待。"
+    ,"setting": "训练家设置预计将于 <strong>2013年10月内</strong> 开放，请耐心等待。"
+    ,"msg": "消息提醒预计将于 <strong>2013年10月内</strong> 开放，请耐心等待。"
   }
 }

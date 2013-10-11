@@ -133,20 +133,18 @@ define([
     });
   });
 
-  // initialize socket.io connection
+  // initialize roadmap
   App.addInitializer(function(){
-    io.start();
-  });
-
-  // initialize message notification
-  App.addInitializer(function(){
-    if (!'Notification' in window)
-      return;
-
-    vent.on('io:msg:new', function(msg){
-      var notification = new Notification(i18n.t('app.pokemon-paradise'), {
-        body: i18n.t('msg.'+msg.type, msg.args)
-        ,icon: '/images/apple-icon-ipad.png'
+    vent.on('roadmap', function(feature, route){
+      vent.trigger('modal', {
+        title: i18n.t('roadmap.title')
+        ,content: i18n.t('roadmap.' + feature)
+        ,btnType: 'success'
+        ,hidden: function(){
+          if (route) {
+            history.back();
+          }
+        }
       });
     });
   });

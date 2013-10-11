@@ -12,6 +12,7 @@ define([
 
     ,events: {
       'click .btn-accept': 'accept'
+      ,'hidden.bs.modal': 'hidden'
     }
 
     ,template: _.template(modalTemplate)
@@ -33,6 +34,12 @@ define([
     ,accept: function(){
       if (this.options.accept) {
         this.options.accept.apply(this);
+      }
+    }
+
+    ,hidden: function(){
+      if (this.options.hidden) {
+        this.options.hidden.apply(this);
       }
     }
   });

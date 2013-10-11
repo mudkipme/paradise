@@ -1,6 +1,8 @@
 define([
   'marionette'
   ,'vent'
+  ,'io'
+  ,'views/navbar'
   ,'views/menu'
   ,'views/home'
   ,'views/party'
@@ -12,9 +14,10 @@ define([
   ,'views/encounter'
   ,'views/pokedex'
   ,'views/daycare'
-], function(Marionette, vent, MenuView, HomeView, PartyView
+  ,'views/intro'
+], function(Marionette, vent, io, NavBarView, MenuView, HomeView, PartyView
   , BagView, PokeMartView, StorageView, WorldView, RegionView
-  , EncounterView, PokedexView, DayCareView){
+  , EncounterView, PokedexView, DayCareView, IntroView){
 
   // Avoid circular dependencies
   var App = null;
@@ -22,11 +25,24 @@ define([
   return Marionette.Controller.extend({
     initialize: function(){
       App = require('app');
+      if (!App.trainer.isNew()) {
+        initTrainer();
+      }
+      App.navBar = new NavBarView;
+    }
+
+    ,initTrainer: function(){
       App.menuRegion.show(new MenuView);
+      io.start();
     }
 
     ,home: function(){
-      var homeView = new HomeView({model: App.trainer});
+      var homeView;
+      if (App.trainer.isNew()) {
+        homeView = new IntroView;
+      } else {
+        homeView = new HomeView({model: App.trainer});
+      }
       homeView.on('before:render', function(){
         App.mainRegion.expand();
       });
@@ -79,6 +95,46 @@ define([
       App.mainRegion.show(new DayCareView({collection: App.trainer.dayCares}));
       App.trainer.dayCares.fetch();
       App.trainer.fetch();
+    }
+
+    ,trainer: function(){
+      vent.trigger('roadmap', 'trainer', true);
+    }
+
+    ,timeline: function(){
+      vent.trigger('roadmap', 'timeline', true);
+    }
+
+    ,trade: function(){
+      vent.trigger('roadmap', 'trade', true);
+    }
+
+    ,battle: function(){
+      vent.trigger('roadmap', 'battle', true);
+    }
+
+    ,rank: function(){
+      vent.trigger('roadmap', 'rank', true);
+    }
+
+    ,migrate: function(){
+      vent.trigger('roadmap', 'migrate', true);
+    }
+
+    ,setting: function(){
+      vent.trigger('roadmap', 'setting', true);
+    }
+
+    ,record: function(){
+      vent.trigger('roadmap', 'record', true);
+    }
+
+    ,help: function(){
+      vent.trigger('roadmap', 'help', true);
+    }
+
+    ,msg: function(){
+      vent.trigger('roadmap', 'msg', true);
     }
   });
 });

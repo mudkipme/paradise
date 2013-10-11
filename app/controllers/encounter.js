@@ -45,7 +45,7 @@ exports.battle = function(req, res){
     return res.json(404, {error: 'POKEMON_NOT_IN_PARTY'});
 
   Battle(pokemonA, pokemonB, {location: req.trainer.encounter.location}, function(err, result){
-    if (err) return res.json(500, {error: err.message});
+    if (err) return res.json(403, {error: err.message});
     req.trainer.encounter.battleResult = result.result;
     req.trainer.encounter.battlePokemon = pokemonA;
 

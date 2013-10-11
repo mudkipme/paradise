@@ -1,14 +1,10 @@
 exports.index = function(req, res){
-  if (!req.trainer) {
-    res.render('welcome');
-  } else {
-    res.render('index');
-  }
+  res.render('index', {me: null});
 };
 
 exports.defaults = function(req, res){
   if (!req.trainer) {
-    res.redirct('/');
+    res.redirect('/');
   } else {
     res.render('index');
   }
