@@ -44,7 +44,7 @@ Member.getLogin = function(req, callback){
     return Member.getMember(process.env.DEMO_USER, callback);
 
   if (!req.session.userid || !req.session.token)
-    return callback(new Error('NOT_LOGINED'));
+    return callback(new Error('ERR_NOT_LOGINED'));
 
   db.query(
     db._('SELECT * FROM {prefix}token JOIN {prefix}userlist USING (userid)'
@@ -52,7 +52,7 @@ Member.getLogin = function(req, callback){
     ,[req.session.userid, req.session.token]
     ,function(err, result){
       if (err) return callback(err);
-      if (result.length == 0) return callback(new Error('NOT_LOGINED'));
+      if (result.length == 0) return callback(new Error('ERR_NOT_LOGINED'));
 
       var member = new Member();
       member._rawUserInfo = result[0];
