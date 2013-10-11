@@ -18,7 +18,9 @@ var checkEgg = function(){
       dayCare.breed(next);
     }, function(err){
       if (err) return console.log('CHECK_EGG_ERROR: ' + err.message);
-      console.log(dayCares.length + ' eggs appeared.');
+      if (dayCares.length) {
+        console.log(dayCares.length + ' eggs appeared.');
+      }
     });
   });
 };

@@ -128,6 +128,10 @@ define([
       controller: new Controller
     });
 
+    App.trainer.on('change:language', function(){
+      location.reload();
+    });
+
     vent.on('trainer:fetch', function(){
       App.trainer.fetch();
     });

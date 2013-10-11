@@ -26,7 +26,7 @@ define([
     initialize: function(){
       App = require('app');
       if (!App.trainer.isNew()) {
-        initTrainer();
+        this.initTrainer();
       }
       App.navBar = new NavBarView;
     }

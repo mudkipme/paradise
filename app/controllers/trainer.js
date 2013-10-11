@@ -135,6 +135,11 @@ exports.put = function(req, res){
     && req.body.currentBox < req.trainer.storageNum) {
     req.trainer.currentBox = Math.floor(req.body.currentBox);
   }
+
+  if (_.contains(['zh-hans', 'zh-hant', 'en'], req.body.language)) {
+    req.trainer.language = req.body.language;
+  }
+
   var realWorld = req.body.realWorld;
   var action = req.trainer.save.bind(req.trainer);
 

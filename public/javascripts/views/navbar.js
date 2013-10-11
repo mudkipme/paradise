@@ -13,7 +13,10 @@ define([
     }
 
     ,navigate: function(e){
-      if (e.target.host == location.host) {
+      if ($(e.target).hasClass('switch-language')) {
+        e.preventDefault();
+        require('app').trainer.save({language: $(e.target).data('language')}, {wait: true});
+      } else if (e.target.host == location.host) {
         e.preventDefault();
         Backbone.history.navigate(e.target.pathname, {trigger: true});
       }

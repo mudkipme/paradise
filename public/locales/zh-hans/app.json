@@ -9,6 +9,7 @@
     ,"currency": "Poké"
     ,"msg": "消息"
     ,"my-msg": "我的消息"
+    ,"language": "切换语言"
   }
   ,"forum": {
     "apps": "应用"
@@ -253,7 +254,7 @@
     ,"DAY_CARE_EMPTY": "饲育屋中没有神奇宝贝。"
     ,"ALREADY_BATTLED": "已经参加了对战。"
     ,"NO_ENCOUNTER_POKEMON": "没有遇到野生的神奇宝贝。"
-    ,"NO_ENOUGH_ITEM_IN_BAG": "背包中没有相应的道具。"
+    ,"NO_ENOUGH_ITEM_IN_BAG": "背包中没有足够的道具。"
   }
   ,"modal": {
     "title": "提示信息"

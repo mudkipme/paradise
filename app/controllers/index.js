@@ -1,5 +1,6 @@
 exports.index = function(req, res){
-  res.render('index', {me: null});
+  res.locals.me = res.locals.me || null;
+  res.render('index');
 };
 
 exports.defaults = function(req, res){
