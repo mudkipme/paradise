@@ -2,8 +2,8 @@ var _ = require('underscore');
 var async = require('async');
 var Pokemon = require('../models/pokemon');
 var Trainer = require('../models/trainer');
-var Item = require('../models/Item');
-var Location = require('../models/Location');
+var Item = require('../models/item');
+var Location = require('../models/location');
 
 exports.eventPokemon = function(req, res){
   var opts = {
