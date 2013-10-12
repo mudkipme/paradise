@@ -13,7 +13,7 @@ var Trainer = require('../models/trainer.js');
 exports.login = function(req, res, next){
   Member.getLogin(req, function(err, member){
     if (err) {
-      if (err.message == 'NOT_LOGINED' && !req.path.match(/^\/api/)) {
+      if (err.message == 'ERR_NOT_LOGINED' && !req.path.match(/^\/api/)) {
         return res.redirect(config.bbs.url);
       }
       return res.json(403, { error: err.message });
