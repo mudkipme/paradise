@@ -114,13 +114,21 @@ exports.bag = function(req, res){
   async.mapSeries(_.pluck(req.trainer.bag, 'itemId'), Item, function(err, result){
     if (err) return res.json(500, { error: err.message });
 
-    res.json(_.map(result, function(item, index){
-      return {
+    var resp = [];
+    _.each(result, function(item, index){
+      var exist = _.findWhere(resp, {id: item.id});
+      if (exist) {
+        exist.number += req.trainer.bag[index].number;
+        return;
+      }
+      resp.push({
         id: item.id
         ,item: item
         ,number: req.trainer.bag[index].number
-      };
-    }));
+      });
+    });
+
+    res.json(resp);
   });
 };
 

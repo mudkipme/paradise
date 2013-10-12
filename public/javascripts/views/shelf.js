@@ -122,6 +122,8 @@ define([
          ,id = $(e.currentTarget).data('id')
          ,item = me.collection.get(id);
 
+      tip.off('submit change keyup');
+
       tip.on('submit', '.buy-form', function(e){
         e.preventDefault();
         item.buy(tip.find('.item-buy-number').val());
