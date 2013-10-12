@@ -84,7 +84,7 @@ var Species = function(nationalNumber, form, callback) {
       });
 
       // Evolution
-      db.all('SELECT evolution_chain_id, evolved_species_id, evolution_triggers.identifier AS trigger, trigger_item_id, minimum_level, gender_id, location_id, held_item_id, time_of_day, known_move_id, minimum_happiness, minimum_beauty, relative_physical_stats AND party_species_id AND trade_species_id AND baby_trigger_item_id FROM pokemon_evolution JOIN pokemon_species ON evolved_species_id = pokemon_species.id JOIN evolution_triggers ON evolution_trigger_id = evolution_triggers.id JOIN evolution_chains ON evolution_chain_id = evolution_chains.id WHERE evolves_from_species_id = ?', [species.number], next);
+      db.all('SELECT evolution_chain_id, evolved_species_id, evolution_triggers.identifier AS trigger, trigger_item_id, minimum_level, gender_id, locations.identifier AS location, held_item_id, time_of_day, known_move_id, minimum_happiness, minimum_beauty, relative_physical_stats AND party_species_id AND trade_species_id AND baby_trigger_item_id FROM pokemon_evolution JOIN pokemon_species ON evolved_species_id = pokemon_species.id JOIN evolution_triggers ON evolution_trigger_id = evolution_triggers.id JOIN evolution_chains ON evolution_chain_id = evolution_chains.id LEFT JOIN locations ON location_id = locations.id WHERE evolves_from_species_id = ?', [species.number], next);
     }
     ,function(rows, next){
       Object.defineProperty(species, 'evolutions', {

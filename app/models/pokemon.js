@@ -486,7 +486,7 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
       return;
     if (ev.gender_id && me.gender != ev.gender_id)
       return;
-    if (ev.location_id && (!options.location || ev.location_id != options.location.id))
+    if (ev.location && options.location != ev.location)
       return;
     if (ev.held_item_id && me.holdItemId != ev.held_item_id)
       return;
