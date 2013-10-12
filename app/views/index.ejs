@@ -27,7 +27,11 @@
         ,me: <%- JSON.stringify(me) -%>
       };
     </script>
-    <script data-main="/javascripts/main" src="/components/requirejs/require.js"></script>
+    <% if (settings.env == 'development') { %>
+      <script data-main="/javascripts/main" src="/components/requirejs/require.js"></script>
+    <% } else { %>
+      <script src="/javascripts/main-built.js"></script>
+    <% } %>
   </head>
   <body>
     

@@ -20,7 +20,7 @@ var app = express();
 var server = http.createServer(app);
 
 i18n.init({
-  resGetPath: 'public/locales/__lng__/__ns__.json'
+  resGetPath: __dirname + '/public/locales/__lng__/__ns__.json'
   ,preload: ['zh-hans', 'zh-hant', 'en']
   ,supportedLngs: ['zh-hans', 'zh-hant', 'en']
   ,fallbackLng: config.app.defaultLanguage
@@ -49,16 +49,10 @@ app.use(express.cookieParser(config.app.cookieSecret));
 app.use(express.session({ key: 'connect.sid', store: common.sessionStore }));
 i18n.registerAppHelper(app);
 app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
 
 if ('development' == app.get('env')) {
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
-  app.use(express.static(path.join(__dirname, 'public')));
-  app.use(express.errorHandler());
-}
-
-if ('production' == app.get('env')) {
-  app.use(require('less-middleware')({ src: __dirname + '/dist', compress: true }));
-  app.use(express.static(path.join(__dirname, 'dist')));
 }
 
 require('./app/routes')(app);

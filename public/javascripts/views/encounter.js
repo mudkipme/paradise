@@ -53,7 +53,7 @@ define([
 
     ,serializeData: function(){
       var data = this.model.toJSON();
-      var time = new Date(this.model.trainer.localTime);
+      var time = new Date(this.model.trainer.get('localTime'));
       data.timeOfDay = this.model.trainer.get('timeOfDay');
       if (data.timeOfDay == 'day' && time.getHours() >= 17) {
         data.timeOfDay = 'twilight';

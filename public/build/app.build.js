@@ -1,7 +1,8 @@
 ({
-  appDir: "../",
-  baseUrl: "javascripts",
-  dir: "../../dist",
+  baseUrl: "../javascripts",
+  name: "../components/almond/almond",
   mainConfigFile: "../javascripts/main.js",
-  name: "main"
+  include: ['main'],
+  insertRequire: ['main'],
+  out: '../javascripts/main-built.js'
 })

@@ -1,6 +1,6 @@
 node_modules
 public/components
-dist
+public/javascripts/main-built.js
 config.json
 *.css
 *.sublime-project

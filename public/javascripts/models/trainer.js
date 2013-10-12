@@ -23,7 +23,7 @@ define([
     }
 
     ,url: function(){
-      return '/api/trainer/' + this.get('name');
+      return '/api/trainer/' + encodeURIComponent(this.get('name'));
     }
 
     ,parse: function(resp){
