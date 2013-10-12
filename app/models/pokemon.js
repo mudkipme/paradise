@@ -463,10 +463,15 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
   if (me.trainer && !me.populated('trainer')) {
     me.populate('trainer', function(err){
       if (err) return callback(err);
-      me.trainer.populate('party', function(err){
-        if (err) return callback(err);
-        me.evolve(trigger, options, callback);
-      });
+      me.evolve(trigger, options, callback);
+    });
+    return;
+  }
+
+  if (!me.trainer.populated('party')) {
+    me.trainer.populate('party', function(err){
+      if (err) return callback(err);
+      me.evolve(trigger, options, callback);
     });
     return;
   }
