@@ -542,21 +542,21 @@ define([], function(){
           ,y2: 175
         }
         ,{
-          name: 'johto-route-40'
+          name: 'johto-sea-route-40'
           ,direction: 'horizontal'
           ,y: 175
           ,x1: 175
           ,x2: 154
         }
         ,{
-          name: 'johto-route-40'
+          name: 'johto-sea-route-40'
           ,direction: 'vertical'
           ,x: 154
           ,y1: 175
           ,y2: 245
         }
         ,{
-          name: 'johto-route-41'
+          name: 'johto-sea-route-41'
           ,direction: 'horizontal'
           ,y: 245
           ,x1: 154
@@ -694,7 +694,7 @@ define([], function(){
           ,y: 227
         }
         ,{
-          name: 'ever-grande-city'
+          name: 'hoenn-victory-road'
           ,x: 504
           ,y: 196
         }
@@ -1148,7 +1148,7 @@ define([], function(){
           ,y: 259
         }
         ,{
-          name: 'sinnoh-pokemon-league'
+          name: 'sinnoh-victory-road'
           ,x: 466
           ,y: 155
         }
@@ -1599,7 +1599,7 @@ define([], function(){
           ,y: 85
         }
         ,{
-          name: 'unova-pokemon-league'
+          name: 'unova-victory-road-2'
           ,x: 340
           ,y: 30
         }

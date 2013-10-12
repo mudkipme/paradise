@@ -539,9 +539,13 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
     if (err) return callback(err);
     me._species = species;
     me.formIdentifier = species.formIdentifier;
+    me.trainer.setPokedexCaught(me);
     me.save(function(err){
       if (err) return callback(err);
-      callback(null, {type: 'evolution', value: me.species.name});
+      me.trainer.save(function(err){
+        if (err) return callback(err);
+        callback(null, {type: 'evolution', value: me.species.name});
+      });
     });
   });
 };

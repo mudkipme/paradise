@@ -83,7 +83,8 @@ var Battle = function(pokemonA, pokemonB, options, callback){
     }
     actions.experience = function(next){
       _.each(battle.winner.trainer.party, function(pm){
-        if (pm.holdItem && pm.holdItem.name == 'exp-share'
+        if (!pm.isEgg && !pm.pokemonCenter
+          && pm.holdItem && pm.holdItem.name == 'exp-share'
           && !_.isEqual(pm._id, battle.winner._id)) {
           getExpPokemon.push(pm);
         }

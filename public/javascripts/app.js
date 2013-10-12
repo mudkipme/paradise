@@ -117,6 +117,8 @@ define([
         ,content: content
       });
     });
+
+    $.ajaxSetup({ cache: false });
   });
 
   // initialize trainer, router and controller

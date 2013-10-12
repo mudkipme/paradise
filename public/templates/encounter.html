@@ -37,7 +37,7 @@
 </section>
 <section class="party-select"></section>
 <section class="encounter-options">
-  <% if (pokemon && !escape) { %>
+  <% if (pokemon && battleResult && !escape) { %>
     <div><button class="btn btn-pokeball"><%= t('pocket.pokeballs') %></button></div>
   <% } %>
   <div>
