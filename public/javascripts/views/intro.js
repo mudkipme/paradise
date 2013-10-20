@@ -56,11 +56,16 @@ define([
     }
 
     ,nextScreen: function(e){
+      var me = this;
+      if (me._inTransition) return;
+      me._inTransition = true;
       var scr = $(e.currentTarget).closest('.screen');
       scr.transition({opacity: 0, y: -50}, function(){
         scr.addClass('hide');
         scr.next().removeClass('hide').css({opacity: 0, y: 50}).offset();
-        scr.next().transition({opacity: 1, y: 0});
+        scr.next().transition({opacity: 1, y: 0}, function(){
+          me._inTransition = false;
+        });
       });
     }
 

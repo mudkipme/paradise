@@ -134,7 +134,9 @@ var Battle = function(pokemonA, pokemonB, options, callback){
     var events = [];
     if (results.experience) {
       _.each(getExpPokemon, function(pm, index){
-        events.push({pokemon: pm, events: results.experience[index]});
+        if (results.experience[index]) {
+          events.push({pokemon: pm, events: results.experience[index]});
+        }
       });
     }
     if (results.loseHp) {

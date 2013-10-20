@@ -148,6 +148,7 @@ define([
 
     ,battle: function(pokemon){
       this.model.battle(pokemon);
+      this.partySelect.close();
     }
 
     ,escaped: function(){

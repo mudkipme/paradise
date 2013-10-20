@@ -74,7 +74,7 @@ define([
     ,hidePopover: function(e){
       if (!e || e.target !== this.el) {
         var popover = this.$el.data('bs.popover');
-        popover.leave(popover);
+        popover && popover.leave(popover);
       }
     }
 

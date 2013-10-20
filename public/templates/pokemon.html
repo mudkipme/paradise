@@ -95,8 +95,12 @@
 <!-- Sprite and name -->
 <img class="sprite" src="<%= spriteUrl() %>" alt="<%- pokemonName() %>" draggable="false" />
 <div class="name">
-  <span><%- pokemonName() %></span>
-  <input style="display:none" type="text" placeholder="<%- t('pokemon:'+pokemon.species.name) %>" value="<%- pokemon.nickname %>" />
+  <% if (!pokemon.isEgg) { %>
+    <span><%- pokemonName() %></span>
+    <input style="display:none" type="text" placeholder="<%- t('pokemon:'+pokemon.species.name) %>" value="<%- pokemon.nickname %>" />
+  <% } else { %>
+    <%- pokemonName() %>
+  <% } %>
 </div>
 
 <% if (!pokemon.isEgg) { %>

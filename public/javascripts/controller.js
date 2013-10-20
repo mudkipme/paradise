@@ -70,6 +70,7 @@ define([
     ,storage: function(){
       App.mainRegion.show(new StorageView({collection: App.trainer.storage}));
       App.trainer.storage.fetch({reset: true});
+      App.trainer.fetch();
     }
 
     ,world: function(){

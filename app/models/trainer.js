@@ -196,22 +196,26 @@ TrainerSchema.methods.caught = function(species){
 TrainerSchema.methods.storageSlot = function(){
   var me = this;
   var storageNum = me.storageNum;
-  var box = [];
+  var box = [], boxId;
 
   // the indexes of all boxes from currentBox
   var boxIds = _.map(_.range(me.currentBox, me.currentBox + storageNum)
     ,function(index){ return index % storageNum; });
 
   // find the box which has empty slot
-  var boxId = _.find(boxIds, function(boxId){
-    box = _.where(me.storagePokemon, { boxId: boxId });
-    return box.length < 30;
+  _.some(boxIds, function(id){
+    var thisBox = _.where(me.storagePokemon, { boxId: id });
+    if (thisBox.length >= 30)
+      return false;
+    box = thisBox;
+    boxId = id;
+    return true;
   });
 
   // add a box when there's no empty slot
   if (_.isUndefined(boxId)) {
-    boxId = me.storage.length;
-    me.storage.push({ name: '', wallpaper: '' });
+    boxId = me.storageNum;
+    me.storage.set(boxId, { name: '', wallpaper: '' });
   }
 
   // find an empty slot in the box
@@ -434,8 +438,7 @@ TrainerSchema.methods.available = function(pokemon){
 TrainerSchema.methods.toJSON = function(options){
   var res = mongoose.Document.prototype.toJSON.call(this, options);
   res.localTime = this.localTime.toDateString() + ' ' + this.localTime.toLocaleTimeString();
-  return _.omit(res, ['pokedexCaughtHex', 'pokedexSeenHex'
-    , 'storage', 'storagePokemon', 'bag', 'todayLuck']);
+  return _.omit(res, ['pokedexHex', 'storage', 'storagePokemon', 'bag', 'todayLuck']);
 };
 
 // Find trainer by name, and init necessary information

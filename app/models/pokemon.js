@@ -366,6 +366,9 @@ PokemonSchema.methods.changeForme = function(formIdentifier, callback){
 
 // Set hold item
 PokemonSchema.methods.setHoldItem = function(item, callback){
+  if (this.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
+  if (this.pokemonCenterTime) return callback(new Error('POKEMON_IN_PC'));
+  
   if (item) {
     if (!item.holdable) return callback(new Error('ITEM_NOT_HOLDABLE'));
     this._holdItem = item;
@@ -476,7 +479,7 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
     return;
   }
 
-  _.some(me.species.evolutions, function(ev){
+  _.each(me.species.evolutions, function(ev){
     if (ev.trigger != trigger) {
       return;
     }
@@ -533,7 +536,6 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
       return;
 
     resultNumber = ev.evolved_species_id;
-    return true;
   });
 
   if (!resultNumber) return callback(null);

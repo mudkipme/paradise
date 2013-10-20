@@ -19,6 +19,11 @@ var Nature = function(id, callback) {
         ,decreasedStat: row.decreased_stat
         ,increasedStat: row.increased_stat
       };
+
+      if (nature.increasedStat == nature.decreasedStat) {
+        nature.increasedStat = null;
+        nature.decreasedStat = null;
+      }
       
       natureCache[id] = nature;
       callback(null, nature);
