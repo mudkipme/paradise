@@ -20,8 +20,11 @@ define([
     ,template: _.template(dayCareListTemplate)
     ,templateHelpers: { t: i18n.t }
 
-    ,options: {
-      carouselSize: 4
+    ,constructor: function(options){
+      Marionette.CompositeView.prototype.constructor.apply(this, arguments);
+      this.options = _.extend({
+        carouselSize: 4
+      }, options);
     }
 
     ,ui: {

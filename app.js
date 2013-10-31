@@ -49,11 +49,10 @@ app.use(express.cookieParser(config.app.cookieSecret));
 app.use(express.session({ key: 'connect.sid', store: common.sessionStore }));
 i18n.registerAppHelper(app);
 app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
-
 if ('development' == app.get('env')) {
   app.use(require('less-middleware')({ src: __dirname + '/public' }));
 }
+app.use(express.static(path.join(__dirname, 'public')));
 
 require('./app/routes')(app);
 require('./app/io').connect(server);

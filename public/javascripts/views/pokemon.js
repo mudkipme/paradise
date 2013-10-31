@@ -15,11 +15,6 @@ define([
     className: 'pokemon-view'
     ,model: Pokemon
 
-    ,options: {
-      collapsed: true
-      ,collapsible: true
-    }
-
     ,ui: {
       content: '.content'
       ,nicknameText: '.name span'
@@ -84,6 +79,14 @@ define([
           return i18n.t('stat.egg');
         return pokemon.nickname || i18n.t('pokemon:'+pokemon.species.name)
       }
+    }
+
+    ,constructor: function(options){
+      Marionette.ItemView.prototype.constructor.apply(this, arguments);
+      this.options = _.extend({
+          collapsed: true
+          ,collapsible: true
+        }, options);
     }
 
     // Wrap model data to avoid undefined error

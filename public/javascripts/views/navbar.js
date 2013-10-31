@@ -12,6 +12,22 @@ define([
       'click a[href]': 'navigate'
     }
 
+    ,initialize: function(){
+      $(document).ajaxStart(_.bind(this.ajaxStart, this));
+      $(document).ajaxStop(_.bind(this.ajaxStop, this));
+    }
+
+    ,ajaxStart: function(){
+      this.$('.ajax-loading').addClass('visible').offset();
+      this.$('.ajax-loading').transition({opacity: 1});
+    }
+
+    ,ajaxStop: function(){
+      this.$('.ajax-loading').stop().transition({opacity: 0}, function(){
+        $(this).removeClass('visible');
+      });
+    }
+
     ,navigate: function(e){
       if ($(e.target).hasClass('switch-language')) {
         e.preventDefault();

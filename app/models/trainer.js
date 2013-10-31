@@ -281,7 +281,7 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
  */
 TrainerSchema.methods.initParty = function(callback){
   async.eachSeries(this.party, function(pokemon, next){
-    pokemon.initData(next);
+    pokemon.initData && pokemon.initData(next);
   }, callback);
 };
 
@@ -290,7 +290,8 @@ TrainerSchema.methods.initParty = function(callback){
  */
 TrainerSchema.methods.initWild = function(callback){
   if (!this.encounter.pokemon) return callback(null);
-  this.encounter.pokemon.initData(callback);
+  var pokemon = this.encounter.pokemon;
+  pokemon.initData && pokemon.initData(callback);
 };
 
 

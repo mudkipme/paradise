@@ -19,7 +19,7 @@ exports.get = function(req, res){
     if (err) return res.json(500, {error: err.message});
 
     async.eachSeries(_.pluck(storagePokemon, 'pokemon'), function(pokemon, next){
-      pokemon.initData(next);
+      pokemon.initData && pokemon.initData(next);
     }, function(err){
       if (err) return res.json(500, {error: err.message});
       storagePokemon = _.map(storagePokemon, function(sp){

@@ -51,6 +51,21 @@ nav.navbar {
   &, .navbar-collapse {
     border-color: darken(@color-52poke, 10%);
   }
+
+  .ajax-loading {
+    display: none;
+    width: 32px;
+    height: 32px;
+    background: data-uri('../images/ajax-loading.png') no-repeat;
+    margin-top: 9px;
+    -webkit-animation: rotating 2s linear infinite;
+            animation: rotating 2s linear infinite;
+
+    &.visible {
+      display: inline-block;
+      opacity: 0;
+    }
+  }
 }
 
 #paradise-app {
@@ -110,10 +125,12 @@ footer {
   }
 }
 
-.modal-open {
-  body&,
-  .navbar-fixed-top,
-  .navbar-fixed-bottom {
-    margin-right: 0;
-  }
+@-webkit-keyframes rotating {
+  from { .rotate(0); }
+  to { .rotate(360deg); }
+}
+
+@keyframes rotating {
+  from { .rotate(0); }
+  to { .rotate(360deg); }
 }
