@@ -39,3 +39,32 @@ exports.eventPokemon = function(req, res){
     });
   });
 };
+
+exports.halloween = function(req, res){
+  var randomSpecies = [200, 353, 355, 562, 92, 425, 442, 607, 302, 479, 592, 622];
+  var randomItem = [302, 287, 224, 50, 10017];
+
+  var opts = {
+    speciesNumber: _.sample(randomSpecies),
+    holdItemId: _.sample(randomItem),
+    originalTrainer: '5273d1f14a13ea20b5faf868',
+    displayOT: 'Trick-or-Treat'
+  };
+
+  Trainer.findByName(req.body.trainer, function(err, trainer){
+    if (err) return res.json(500, {error: err.message});
+    if (!trainer) return res.json(404, {error: 'TRAINER_NOT_FOUND'});
+
+    async.series({
+      pokemon: Pokemon.createPokemon.bind(Pokemon, opts)
+      ,pokeBall: async.apply(Item, 'cherish-ball')
+      ,location: async.apply(Location, '2013-halloween')
+    }, function(err, ret){
+      if (err) return res.json(500, { error: err.message });
+      trainer.catchPokemon(ret.pokemon, ret.pokeBall, ret.location, function(err){
+        if (err) return res.json(500, { error: err.message });
+        res.json(ret.pokemon);
+      });
+    });
+  });
+};

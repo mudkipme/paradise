@@ -44,7 +44,7 @@
       } else { %>alt<% } %>"><%= t('stat.speed') %>: <%= pokemon.stats.speed %></p>
     </div>
     <p class="original-trainer">
-      <%= t('stat.original-trainer') %>: <%- pokemon.originalTrainer.name %>
+      <%= t('stat.original-trainer') %>: <%- pokemon.displayOT || pokemon.originalTrainer.name %>
     </p>
     <p class="meet-date">
       <%= t('stat.meet-date', {meetDate: moment(pokemon.meetDate).format('L'), meetPlace: t('location:' + pokemon.meetPlaceIndex), meetLevel: pokemon.meetLevel }) %>
