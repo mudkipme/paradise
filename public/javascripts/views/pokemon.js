@@ -3,11 +3,12 @@ define([
   ,'underscore'
   ,'marionette'
   ,'i18next'
+  ,'moment'
   ,'vent'
   ,'models/pokemon'
   ,'text!templates/pokemon.html'
   ,'util'
-], function($, _, Marionette, i18n, vent, Pokemon, pokemonTemplate){
+], function($, _, Marionette, i18n, moment, vent, Pokemon, pokemonTemplate){
 
   var Gender = { female: 1, male: 2, genderless: 3 };
 
@@ -47,6 +48,7 @@ define([
     ,template: _.template(pokemonTemplate)
     ,templateHelpers: {
       t: i18n.t
+      ,moment: moment
       ,Gender: Gender
 
       // Generate the sprite url of Pokémon
