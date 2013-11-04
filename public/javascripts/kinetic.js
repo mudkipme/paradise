@@ -1,9 +1,9 @@
 /*
- * KineticJS JavaScript Framework v4.7.2
+ * KineticJS JavaScript Framework v4.7.3
  * http://www.kineticjs.com/
  * Copyright 2013, Eric Rowell
  * Licensed under the MIT or GPL Version 2 licenses.
- * Date: 2013-09-29
+ * Date: 2013-11-03
  *
  * Copyright (C) 2011 - 2013 by Eric Rowell
  *
@@ -32,7 +32,7 @@ var Kinetic = {};
 (function() {
     Kinetic = {
         // public
-        version: '4.7.2',
+        version: '4.7.3',
 
         // private
         stages: [],
@@ -1051,12 +1051,7 @@ var Kinetic = {};
                 canvas.height = arg.height;
                 _context = canvas.getContext(CONTEXT_2D);
                 _context.putImageData(arg, 0, 0);
-                dataUrl = canvas.toDataURL();
-                imageObj = new Image();
-                imageObj.onload = function() {
-                    callback(imageObj);
-                };
-                imageObj.src = dataUrl;
+                this._getImage(canvas.toDataURL(), callback);
             }
             else {
                 callback(null);
@@ -2471,8 +2466,10 @@ var Kinetic = {};
         /**
          * bind events to the node. KineticJS supports mouseover, mousemove,
          *  mouseout, mouseenter, mouseleave, mousedown, mouseup, click, dblclick, touchstart, touchmove,
-         *  touchend, tap, dbltap, dragstart, dragmove, and dragend events. Pass in a string
-         *  of events delimmited by a space to bind multiple events at once
+         *  touchend, tap, dbltap, dragstart, dragmove, and dragend events. The Kinetic Stage supports
+         *  contentMouseover, contentMousemove, contentMouseout, contentMousedown, contentMouseup,
+         *  contentClick, contentDblclick, contentTouchstart, contentTouchmove, contentTouchend, contentTap,
+         *  and contentDblTap.  Pass in a string of events delimmited by a space to bind multiple events at once
          *  such as 'mousedown mouseup mousemove'. Include a namespace to bind an
          *  event by name such as 'click.foobar'.
          * @method
@@ -3563,16 +3560,15 @@ var Kinetic = {};
         },
         _fire: function(eventType, evt) {
             var events = this.eventListeners[eventType],
-                len, i;
+                i;
 
             if (events) {
-                len = events.length;
-                for(i = 0; i < len; i++) {
+                for(i = 0; i < events.length; i++) {
                     events[i].handler.call(this, evt);
                 }
             }
         },
-        /*
+        /**
          * draw both scene and hit graphs.  If the node being drawn is the stage, all of the layers will be cleared and redra
          * @method
          * @memberof Kinetic.Node.prototype
@@ -4215,7 +4211,7 @@ var Kinetic = {};
             that._animationLoop();
         }
     };
-    RAF = (function() {
+    var RAF = (function() {
         return window.requestAnimationFrame
             || window.webkitRequestAnimationFrame
             || window.mozRequestAnimationFrame
@@ -4229,7 +4225,7 @@ var Kinetic = {};
     }
 
     Kinetic.Animation.requestAnimFrame = function(callback) {
-        var raf = Kinetic.DD && Kinetic.DD.isDragging ? FRAF : RAF;
+        var raf = Kinetic.isDragging ? FRAF : RAF;
         raf(callback);
     };
 
@@ -5119,7 +5115,7 @@ var Kinetic = {};
 
     Kinetic.Node.prototype.isDraggable = Kinetic.Node.prototype.getDraggable;
 
-    var html = document.getElementsByTagName('html')[0];
+    var html = document.documentElement;
     html.addEventListener('mouseup', Kinetic.DD._endDragBefore, true);
     html.addEventListener('touchend', Kinetic.DD._endDragBefore, true);
 
@@ -5563,7 +5559,7 @@ var Kinetic = {};
 
             this._setDrawFuncs();
 
-            this.on('shadowColorChange.kinetic shadowBlurChange.kinetic shadowOffsetChange.kinetic shadowOpacityChange.kinetic', _clearHasShadowCache);
+            this.on('shadowColorChange.kinetic shadowBlurChange.kinetic shadowOffsetChange.kinetic shadowOpacityChange.kinetic shadowEnabledChanged.kinetic', _clearHasShadowCache);
         },
         hasChildren: function() {
             return false;
@@ -5747,6 +5743,7 @@ var Kinetic = {};
                 stage, bufferCanvas, bufferContext;
 
             if(drawFunc && this.isVisible()) { 
+                // if buffer canvas is needed
                 if (this._useBufferCanvas()) {
                     stage = this.getStage();
                     bufferCanvas = stage.bufferCanvas;
@@ -7063,28 +7060,12 @@ var Kinetic = {};
             }
         },
         /**
-         * get mouse position for desktop apps
-         * @method
-         * @memberof Kinetic.Stage.prototype
-         */
-        getMousePosition: function() {
-            return this.mousePos;
-        },
-        /**
-         * get touch position for mobile apps
-         * @method
-         * @memberof Kinetic.Stage.prototype
-         */
-        getTouchPosition: function() {
-            return this.touchPos;
-        },
-        /**
-         * get pointer position which can be a touc position or mouse position
+         * get pointer position which can be a touch position or mouse position
          * @method
          * @memberof Kinetic.Stage.prototype
          */
         getPointerPosition: function() {
-            return this.getTouchPosition() || this.getMousePosition();
+            return this.pointerPos;
         },
         getStage: function() {
             return this;
@@ -7257,13 +7238,6 @@ var Kinetic = {};
         getLayers: function() {
             return this.getChildren();
         },
-        _setPointerPosition: function(evt) {
-            if(!evt) {
-                evt = window.event;
-            }
-            this._setMousePosition(evt);
-            this._setTouchPosition(evt);
-        },
         _bindContentEvents: function() {
             var that = this,
                 n;
@@ -7284,7 +7258,7 @@ var Kinetic = {};
                 targetShape._fireAndBubble(MOUSELEAVE, evt);
                 this.targetShape = null;
             }
-            this.mousePos = undefined;
+            this.pointerPos = undefined;
 
             this._fire(CONTENT_MOUSEOUT, evt);
         },
@@ -7347,7 +7321,7 @@ var Kinetic = {};
             }
 
             // content event
-            this._fire(CONTENT_MOUSEDOWN);
+            this._fire(CONTENT_MOUSEDOWN, evt);
 
             // always call preventDefault for desktop events because some browsers
             // try to drag and drop the canvas element
@@ -7387,7 +7361,7 @@ var Kinetic = {};
                 }
             }
             // content events
-            this._fire(CONTENT_MOUSEUP);
+            this._fire(CONTENT_MOUSEUP, evt);
             if (Kinetic.listenClickTap) {
                 this._fire(CONTENT_CLICK, evt);
                 if(fireDblClick) {
@@ -7488,58 +7462,53 @@ var Kinetic = {};
                 dd._drag(evt);
             }
         },
-        _setMousePosition: function(evt) {
-            var contentPosition = this._getContentPosition(),
+        _setPointerPosition: function(evt) {
+            var evt = evt ? evt : window.event,
+                contentPosition = this._getContentPosition(),
                 offsetX = evt.offsetX,
                 clientX = evt.clientX,
-                mouseX = 0,
-                mouseY = 0;
+                x = 0,
+                y = 0,
+                touch;
 
-            // if offsetX is defined, assume that offsetY is defined as well
-            if (offsetX !== undefined) {
-                mouseX = offsetX;
-                mouseY = evt.offsetY;
-            }
-            // we unforunately have to use UA detection here because accessing
-            // the layerX or layerY properties in newer veresions of Chrome
-            // throws a JS warning.  layerX and layerY are required for FF
-            // when the container is transformed via CSS.
-            else if (Kinetic.UA.browser === 'mozilla') {
-                mouseX = evt.layerX;
-                mouseY = evt.layerY;
-            }
-            // if clientX is defined, assume that clientY is defined as well
-            else if (clientX !== undefined && contentPosition) {
-                mouseX = clientX - contentPosition.left;
-                mouseY = evt.clientY - contentPosition.top;
-            }
-
-
-            this.mousePos = {
-                x: mouseX,
-                y: mouseY
-            };
-        },
-        _setTouchPosition: function(evt) {
-            var contentPosition = this._getContentPosition(),
-                touch, touchX, touchY;
-
+            // touch events
             if(evt.touches !== undefined && evt.touches.length === 1) {
                 // one finger
                 touch = evt.touches[0];
 
                 // get the information for finger #1
-                touchX = touch.clientX - contentPosition.left;
-                touchY = touch.clientY - contentPosition.top;
-
-                this.touchPos = {
-                    x: touchX,
-                    y: touchY
-                };
+                x = touch.clientX - contentPosition.left;
+                y = touch.clientY - contentPosition.top;   
             }
+            // mouse events
+            else {
+                // if offsetX is defined, assume that offsetY is defined as well
+                if (offsetX !== undefined) {
+                    x = offsetX;
+                    y = evt.offsetY;
+                }
+                // we unforunately have to use UA detection here because accessing
+                // the layerX or layerY properties in newer veresions of Chrome
+                // throws a JS warning.  layerX and layerY are required for FF
+                // when the container is transformed via CSS.
+                else if (Kinetic.UA.browser === 'mozilla') {
+                    x = evt.layerX;
+                    y = evt.layerY;
+                }
+                // if clientX is defined, assume that clientY is defined as well
+                else if (clientX !== undefined && contentPosition) {
+                    x = clientX - contentPosition.left;
+                    y = evt.clientY - contentPosition.top;
+                }
+            }
+
+            this.pointerPos = {
+                x: x,
+                y: y
+            };
         },
         _getContentPosition: function() {
-            var rect = this.content.getBoundingClientRect();
+            var rect = this.content.getBoundingClientRect ? this.content.getBoundingClientRect() : { top: 0, left: 0 };
             return {
                 top: rect.top,
                 left: rect.left
@@ -7556,9 +7525,15 @@ var Kinetic = {};
             this.content.style.position = RELATIVE;
             this.content.style.display = INLINE_BLOCK;
             this.content.className = KINETICJS_CONTENT;
+            this.content.setAttribute('role', 'presentation');
             container.appendChild(this.content);
 
-            this.bufferCanvas = new Kinetic.SceneCanvas();
+            // the buffer canvas pixel ratio must be 1 because it is used as an 
+            // intermediate canvas before copying the result onto a scene canvas.
+            // not setting it to 1 will result in an over compensation
+            this.bufferCanvas = new Kinetic.SceneCanvas({
+                pixelRatio: 1
+            });
             this.bufferHitCanvas = new Kinetic.HitCanvas();
 
             this._resizeDOM();
@@ -7837,7 +7812,7 @@ var Kinetic = {};
             if (type !== 'Group' && type !== 'Shape') {
                 Kinetic.Util.error('You may only add groups and shapes to groups.');
             }
-        },
+        }
     });
     Kinetic.Util.extend(Kinetic.Group, Kinetic.Container);
 })();
@@ -8623,7 +8598,7 @@ var Kinetic = {};
                 imageHitRegion = this.imageHitRegion;
 
             if(imageHitRegion) {
-                context.drawImage(imageHitRegion, 0, 0, width, height);
+                context.drawImage(imageHitRegion, 0, 0);
                 context.beginPath();
                 context.rect(0, 0, width, height);
                 context.closePath();
@@ -8662,7 +8637,7 @@ var Kinetic = {};
                 filterCanvas = this.filterCanvas = new Kinetic.SceneCanvas({
                     width: crop.width, 
                     height: crop.height,
-                    pixelRatio: 1,
+                    pixelRatio: 1
                 });
             }
 
@@ -8708,7 +8683,8 @@ var Kinetic = {};
                 height = this.getHeight(),
                 canvas = new Kinetic.SceneCanvas({
                     width: width,
-                    height: height
+                    height: height,
+                    pixelRatio: 1
                 }),
                 _context = canvas.getContext()._context,
                 image = this.getImage(),
@@ -8757,6 +8733,12 @@ var Kinetic = {};
         getHeight: function() {
             var image = this.getImage();
             return this.attrs.height || (image ? image.height : 0);
+        },
+        destroy: function(){
+            Kinetic.Shape.prototype.destroy.call(this);
+            delete this.filterCanvas;
+            delete this.attrs;
+            return this;
         }
     };
     Kinetic.Util.extend(Kinetic.Image, Kinetic.Shape);
@@ -9050,7 +9032,6 @@ var Kinetic = {};
 ;(function() {
     // constants
     var AUTO = 'auto',
-        CALIBRI = 'Calibri',
         CANVAS = 'canvas',
         CENTER = 'center',
         CHANGE_KINETIC = 'Change.kinetic',
@@ -9447,7 +9428,7 @@ var Kinetic = {};
     Kinetic.Util.extend(Kinetic.Text, Kinetic.Shape);
 
     // add getters setters
-    Kinetic.Factory.addGetterSetter(Kinetic.Text, 'fontFamily', CALIBRI);
+    Kinetic.Factory.addGetterSetter(Kinetic.Text, 'fontFamily', 'Arial');
 
     /**
      * set font family
@@ -11307,7 +11288,9 @@ var Kinetic = {};
             // TODO: shouldn't this be on the prototype?
             this._fillFunc = _fillFunc;
             this._strokeFunc = _strokeFunc;
-
+            this._fillFuncHit = _fillFunc;
+            this._strokeFuncHit = _strokeFunc;
+            
             this.className = 'TextPath';
 
             this.dataArray = Kinetic.Path.parsePathData(this.attrs.data);
@@ -11320,8 +11303,6 @@ var Kinetic = {};
             that._setTextData();
         },
         drawFunc: function(context) {
-            var charArr = this.charArr;
-
             context.setAttr('font', this._getContextFont());
             context.setAttr('textBaseline', 'middle');
             context.setAttr('textAlign', 'left');
@@ -11332,8 +11313,6 @@ var Kinetic = {};
                 context.save();
 
                 var p0 = glyphInfo[i].p0;
-                var p1 = glyphInfo[i].p1;
-                var ht = parseFloat(this.attrs.fontSize);
 
                 context.translate(p0.x, p0.y);
                 context.rotate(glyphInfo[i].rotation);
@@ -11348,7 +11327,7 @@ var Kinetic = {};
                 // context.strokeStyle = 'cyan';
                 // else
                 // context.strokeStyle = 'green';
-
+                // var p1 = glyphInfo[i].p1;
                 // context.moveTo(p0.x, p0.y);
                 // context.lineTo(p1.x, p1.y);
                 // context.stroke();
@@ -11438,7 +11417,7 @@ var Kinetic = {};
 
                 var currLen = 0;
                 var attempts = 0;
-                var needNextSegment = false;
+
                 p1 = undefined;
                 while(Math.abs(glyphWidth - currLen) / glyphWidth > 0.01 && attempts < 25) {
                     attempts++;

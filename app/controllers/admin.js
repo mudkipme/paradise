@@ -42,7 +42,7 @@ exports.eventPokemon = function(req, res){
 
 exports.halloween = function(req, res){
   var randomSpecies = [200, 353, 355, 562, 92, 425, 442, 607, 302, 479, 592, 622];
-  var randomItem = [302, 287, 224, 50, 10017];
+  var randomItem = [302, 287, 224, 50];
 
   var opts = {
     speciesNumber: _.sample(randomSpecies),
