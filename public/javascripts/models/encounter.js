@@ -22,6 +22,9 @@ define([
       var me = this;
       me.pokemon = new Pokemon(this.get('pokemon'));
       me.battlePokemon = options.trainer.party.get(this.get('battlePokemon'));
+      if (!me.battlePokemon) {
+        me.escape({silent: true});
+      }
       me.trainer = options.trainer;
 
       me.on('change:pokemon', function(){
@@ -74,14 +77,15 @@ define([
     }
 
     // Escape from encounter
-    ,escape: function(){
+    ,escape: function(options){
       var me = this;
+      me.set(me.defaults);
       me.sync(null, me, {
         url: me.url + '/escape'
         ,type: 'POST'
         ,success: function(){
+          if (options && options.silent) return;
           me.trigger('escape');
-          me.set(me.defaults);
         }
       });
     }
