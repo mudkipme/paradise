@@ -1,9 +1,9 @@
 /*
- * KineticJS JavaScript Framework v4.7.3
+ * KineticJS JavaScript Framework v4.7.4
  * http://www.kineticjs.com/
  * Copyright 2013, Eric Rowell
  * Licensed under the MIT or GPL Version 2 licenses.
- * Date: 2013-11-03
+ * Date: 2013-11-08
  *
  * Copyright (C) 2011 - 2013 by Eric Rowell
  *
@@ -32,7 +32,7 @@ var Kinetic = {};
 (function() {
     Kinetic = {
         // public
-        version: '4.7.3',
+        version: '4.7.4',
 
         // private
         stages: [],
@@ -7467,18 +7467,21 @@ var Kinetic = {};
                 contentPosition = this._getContentPosition(),
                 offsetX = evt.offsetX,
                 clientX = evt.clientX,
-                x = 0,
-                y = 0,
+                x = null,
+                y = null,
                 touch;
 
             // touch events
-            if(evt.touches !== undefined && evt.touches.length === 1) {
-                // one finger
-                touch = evt.touches[0];
+            if(evt.touches !== undefined) {
+                // currently, only handle one finger
+                if (evt.touches.length === 1) {
 
-                // get the information for finger #1
-                x = touch.clientX - contentPosition.left;
-                y = touch.clientY - contentPosition.top;   
+                    touch = evt.touches[0];
+
+                    // get the information for finger #1
+                    x = touch.clientX - contentPosition.left;
+                    y = touch.clientY - contentPosition.top; 
+                }
             }
             // mouse events
             else {
@@ -7502,10 +7505,12 @@ var Kinetic = {};
                 }
             }
 
-            this.pointerPos = {
-                x: x,
-                y: y
-            };
+            if (x !== null && y !== null) {
+                this.pointerPos = {
+                    x: x,
+                    y: y
+                };
+            }
         },
         _getContentPosition: function() {
             var rect = this.content.getBoundingClientRect ? this.content.getBoundingClientRect() : { top: 0, left: 0 };
@@ -9063,7 +9068,7 @@ var Kinetic = {};
      * @memberof Kinetic
      * @augments Kinetic.Shape
      * @param {Object} config
-     * @param {String} [config.fontFamily] default is Calibri
+     * @param {String} [config.fontFamily] default is Arial
      * @param {Number} [config.fontSize] in pixels.  Default is 12
      * @param {String} [config.fontStyle] can be normal, bold, or italic.  Default is normal
      * @param {String} config.text
