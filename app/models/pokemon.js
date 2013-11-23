@@ -461,8 +461,7 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
   }
   var me = this;
   if (!me._inited) return callback(new Error('ERR_NOT_INITED'));
-
-  var resultNumber = null;
+  if (me.holdItem && me.holdItem.name == 'everstone') return callback(null);
 
   if (me.trainer && !me.populated('trainer')) {
     me.populate('trainer', function(err){
@@ -480,10 +479,10 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
     return;
   }
 
+  var resultNumber = null;
   _.each(me.species.evolutions, function(ev){
-    if (ev.trigger != trigger) {
+    if (ev.trigger != trigger)
       return;
-    }
     if (ev.trigger_item_id && (!options.item || ev.trigger_item_id != options.item.id))
       return;
     if (ev.minimum_level && me.level < ev.minimum_level)
