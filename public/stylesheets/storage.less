@@ -110,9 +110,25 @@
   }
   &.wallpaper-pink {
     .storage-wallpaper(@storagePink, darken(@storagePink, 50%));
+    .pokemon-view {
+      .pokemon-top, .pokemon-bottom {
+        background-image: data-uri("../images/pokemon/party-pokemon-pink.png");
+      }
+      .content {
+        background: #f1a5b7;
+      }
+    }
   }
   &.wallpaper-gray {
     .storage-wallpaper(@storageGray, #fff);
+    .pokemon-view {
+      .pokemon-top, .pokemon-bottom {
+        background-image: data-uri("../images/pokemon/party-pokemon-gray.png");
+      }
+      .content {
+        background: #c2c2c2;
+      }
+    }
   }
 }
 
