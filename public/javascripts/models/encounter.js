@@ -80,12 +80,14 @@ define([
     ,escape: function(options){
       var me = this;
       options = options || {};
-      !options.silent && me.trigger('escape');
-      me.set(me.defaults, options);
+      me.set(me.defaults, {silent: true});
 
       me.sync(null, me, {
         url: me.url + '/escape'
         ,type: 'POST'
+        ,success: function(){
+          !options.silent && me.trigger('escape');
+        }
       });
     }
 
