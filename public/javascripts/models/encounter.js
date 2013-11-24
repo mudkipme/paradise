@@ -20,9 +20,9 @@ define([
 
     ,initialize: function(attributes, options){
       var me = this;
-      me.pokemon = new Pokemon(this.get('pokemon'));
-      me.battlePokemon = options.trainer.party.get(this.get('battlePokemon'));
-      if (!me.battlePokemon) {
+      me.pokemon = new Pokemon(me.get('pokemon'));
+      me.battlePokemon = options.trainer.party.get(me.get('battlePokemon'));
+      if (me.get('battlePokemon') && !me.battlePokemon) {
         me.escape({silent: true});
       }
       me.trainer = options.trainer;
