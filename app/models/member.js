@@ -43,13 +43,12 @@ Member.getLogin = function(req, callback){
   if (process.env.DEMO_USER)
     return Member.getMember(process.env.DEMO_USER, callback);
 
-  if (!req.session.userid || !req.session.token)
+  if (!req.session.userid || !req.session.pwd)
     return callback(new Error('ERR_NOT_LOGINED'));
 
   db.query(
-    db._('SELECT * FROM {prefix}token JOIN {prefix}userlist USING (userid)'
-       + 'WHERE userid = ? AND token = ? AND app = 0 AND in_use = 1')
-    ,[req.session.userid, req.session.token]
+    db._('SELECT * FROM {prefix}userlist WHERE userid = ? AND pwd = ?')
+    ,[req.session.userid, req.session.pwd]
     ,function(err, result){
       if (err) return callback(err);
       if (result.length == 0) return callback(new Error('ERR_NOT_LOGINED'));

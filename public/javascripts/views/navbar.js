@@ -2,14 +2,17 @@ define([
   'jquery'
   ,'underscore'
   ,'backbone'
+  ,'vent'
   ,'util'
-], function($, _, Backbone){
+], function($, _, Backbone, vent){
 
   var NavBarView = Backbone.View.extend({
     el: 'nav.navbar'
 
     ,events: {
-      'click a[href]': 'navigate'
+      'click a.switch-language': 'switchLaguage'
+      ,'click a.logout, a.re-login': 'logout'
+      ,'click a[href]': 'navigate'
     }
 
     ,initialize: function(){
@@ -28,19 +31,28 @@ define([
       });
     }
 
+    ,switchLaguage: function(e){
+      e.preventDefault();
+      var language = $(e.target).data('language');
+      var trainer = require('app').trainer;
+      
+      if (!trainer.isNew()) {
+        trainer.save({language: language}, {patch: true, wait: true});
+      } else {
+        document.cookie = 'i18next=' + language;
+        location.reload();
+      }
+    }
+
+    ,logout: function(e){
+      e.preventDefault();
+      vent.trigger('logout', {
+        jumpUrl: e.currentTarget.href
+      });
+    }
+
     ,navigate: function(e){
-      if ($(e.target).hasClass('switch-language')) {
-        e.preventDefault();
-        var language = $(e.target).data('language');
-        var trainer = require('app').trainer;
-        
-        if (!trainer.isNew()) {
-          trainer.save({language: language}, {patch: true, wait: true});
-        } else {
-          document.cookie = 'i18next=' + language;
-          location.reload();
-        }
-      } else if (e.target.host == location.host) {
+      if (e.target.host == location.host) {
         e.preventDefault();
         Backbone.history.navigate(e.target.pathname, {trigger: true});
       }

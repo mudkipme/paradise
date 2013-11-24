@@ -8,7 +8,7 @@ var login = function(req, callback){
   if (!req.query.token) return callback(new Error('TOKEN_NEEDED'));
 
   db.query(
-    db._('SELECT * FROM {prefix}token WHERE app = 0 AND token = ?')
+    db._('SELECT * FROM {prefix}token JOIN {prefix}userlist USING (userid) WHERE app = 0 AND token = ?')
     , req.query.token
     , function(err, result){
       if (err) return callback(err);
@@ -23,7 +23,7 @@ var login = function(req, callback){
           if (err) return callback(err);
 
           req.session.userid = result[0].userid;
-          req.session.token = result[0].token;
+          req.session.pwd = result[0].pwd;
           callback(null);
         });
     });
@@ -35,4 +35,14 @@ exports.login = function(req, res){
     
     res.redirect('/');
   });
+};
+
+exports.logout = function(req, res){
+  delete req.session.userid;
+  delete req.session.pwd;
+  if (req.query.returnUrl) {
+    res.redirect(req.query.returnUrl);  
+  } else {
+    res.send(204);
+  }
 };

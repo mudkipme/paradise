@@ -5,9 +5,11 @@
     <title><%= t('app.pokemon-paradise') %></title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <link href="/stylesheets/main.css" rel="stylesheet" />
+    <link rel="shortcut icon" sizes="196x196" href="/images/favicon.png" />
     <link rel="apple-touch-icon-precomposed" href="/images/apple-icon.png" />
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/images/apple-icon-ipad.png" />
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/images/apple-icon.png" />
@@ -93,8 +95,8 @@
                 <li><a href="http://bbs.52poke.com/viewfav.php"><%= t('forum.viewfav') %></a></li>
                 <li><a href="http://bbs.52poke.com/misc.php?p=account"><%= t('forum.bind-account') %></a></li>
                 <li class="divider"></li>
-                <li><a href="http://bbs.52poke.com/login.php"><%= t('forum.re-login') %></a></li>
-                <li><a href="http://bbs.52poke.com/login.php?job=quit&amp;verify=<%= member.logHash %>"><%= t('forum.logout') %></a></li>
+                <li><a class="re-login" href="http://bbs.52poke.com/login.php"><%= t('forum.re-login') %></a></li>
+                <li><a class="logout" href="http://bbs.52poke.com/login.php?job=quit&amp;verify=<%= member.logHash %>"><%= t('forum.logout') %></a></li>
               </ul>
             </li>
           </ul>

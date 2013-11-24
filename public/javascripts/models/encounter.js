@@ -79,13 +79,14 @@ define([
     // Escape from encounter
     ,escape: function(options){
       var me = this;
-      me.set(me.defaults);
+      options = options || {};
+      !options.silent && me.trigger('escape');
+
       me.sync(null, me, {
         url: me.url + '/escape'
         ,type: 'POST'
         ,success: function(){
-          if (options && options.silent) return;
-          me.trigger('escape');
+          me.set(me.defaults, options);
         }
       });
     }

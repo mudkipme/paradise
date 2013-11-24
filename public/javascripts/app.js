@@ -137,6 +137,16 @@ define([
     vent.on('trainer:fetch', function(){
       App.trainer.fetch();
     });
+
+    vent.on('logout', function(e){
+      $.get('/bbs/logout', function(){
+        if (e.jumpUrl) {
+          location.href = e.jumpUrl;
+        } else {
+          location.reload();
+        }
+      });
+    });
   });
 
   // initialize roadmap

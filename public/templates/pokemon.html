@@ -5,7 +5,7 @@
     <div class="left-info">
       <p>ID. <span title="<%= pokemon.id %>" data-placement="right"><%= pokemon.displayId %></span></p>
       <p><%= t('stat.nature') %>: <%= t('nature.'+pokemon.nature.name) %></p>
-      <p><%= t('stat.experience') %>: <%= pokemon.experience %></p>
+      <p><%= t('stat.experience') %>: <% if (pokemon.experience <= 0) { %>0<% } else { %><%= pokemon.experience %><% } %></p>
     </div>
     <div class="right-info">
       <p class="alt">No. <%= ('00'+pokemon.species.number).substr(-3) %></p>
