@@ -81,13 +81,11 @@ define([
       var me = this;
       options = options || {};
       !options.silent && me.trigger('escape');
+      me.set(me.defaults, options);
 
       me.sync(null, me, {
         url: me.url + '/escape'
         ,type: 'POST'
-        ,success: function(){
-          me.set(me.defaults, options);
-        }
       });
     }
 
