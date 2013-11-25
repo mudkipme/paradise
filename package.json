@@ -3,7 +3,8 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node app",
+    "install": "bower install"
   },
   "dependencies": {
     "express": "*",
@@ -22,5 +23,10 @@
     "geolib": "*",
     "node-schedule": "*",
     "connect-redis": "*"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-less": "~0.8.2",
+    "grunt-contrib-requirejs": "~0.4.1"
   }
 }
