@@ -1,14 +1,16 @@
 var async = require('async');
 var _ = require('underscore');
+var Msg = require('../models/msg');
+var io = require('../io');
 
 var msgAction = function(req, res, type){
   Msg.findOne({ _id: req.params.msgId }, function(err, msg){
     if (err) return res.json(500, {error: err.message});
     if (!msg) return res.json(404, {error: 'MSG_NOT_FOUND'});
 
-    if (req.trainer.equals(msg.receiver)
-      && (!type == 'initData' || !req.trainer.equals(msg.sender)))
-      res.json(403, {error: 'PERMISSION_DENIED'});
+    if (!req.trainer._id.equals(msg.receiver)
+      && (type != 'initData' || !req.trainer._id.equals(msg.sender)))
+      return res.json(403, {error: 'PERMISSION_DENIED'});
 
     msg[type](function(err){
       if (err) res.json(403, {error: err.message});
@@ -24,18 +26,25 @@ exports.list = function(req, res){
   limit > 100 && (limit = 100);
 
   var condition = req.query.type == 'sent'
-    ? {receiver: req.trainer._id} : {sender: req.trainer._id};
+    ? {sender: req.trainer._id} : {receiver: req.trainer._id};
 
-  Msg.find(condition)
-  .skip(skip).limit(limit)
-  .exec(function(err, msgs){
+  async.series([
+    Msg.find.bind(Msg, condition, null, {skip: skip, limit: limit, sort: 'read -createTime'})
+    ,Msg.count.bind(Msg, condition)
+    ,Msg.count.bind(Msg, _.extend({read: false}, condition))
+  ], function(err, results){
     if (err) return res.json(500, { error: err.message });
-    async.eachSeries(msgs, function(msg, next){
+
+    async.eachSeries(results[0], function(msg, next){
       msg.initData(next);
     }, function(err){
       if (err) return res.json(500, { error: err.message });
-      res.json(msgs);
-    })
+      res.json({
+        msgs: results[0]
+        ,total: results[1]
+        ,unread: results[2]
+      });
+    });
   });
 };
 
@@ -46,14 +55,17 @@ exports.get = function(req, res){
 // Read a message
 exports.read = function(req, res){
   msgAction(req, res, 'setRead');
+  io.emit(req, 'msg:update');
 };
 
 // Accept a message
 exports.accept = function(req, res){
   msgAction(req, res, 'accept');
+  io.emit(req, 'msg:update');
 };
 
 // Decline a message
 exports.decline = function(req, res){
   msgAction(req, res, 'decline');
+  io.emit(req, 'msg:update');
 };

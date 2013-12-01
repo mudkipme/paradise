@@ -24,7 +24,7 @@ define([
           return item.item.pocket == me.options.pocket;
         });
       }
-      return {items: items, pocket: this.options.pocket};
+      return {items: items, pocket: me.options.pocket};
     }
 
     ,events: {

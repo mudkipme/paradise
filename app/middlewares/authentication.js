@@ -18,7 +18,7 @@ exports.login = function(req, res, next){
       }
       return res.json(403, { error: err.message });
     }
-    res.locals.member = req.member = member;
+    req.member = member;
     next();
   });
 };
@@ -33,7 +33,7 @@ exports.trainer = function(req, res, next){
     if (err) return res.json(500, { error: err.message });
     if (!trainer) return next();
 
-    res.locals.me = req.trainer = trainer;
+    req.trainer = trainer;
     next();
   });
 };

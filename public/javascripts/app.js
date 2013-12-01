@@ -13,14 +13,15 @@ define([
   ,'views/alert'
   ,'views/modal'
   ,'models/trainer'
+  ,'collections/msgs'
   ,'collections/pokemart'
   ,'moment/lang/zh-cn'
   ,'moment/lang/zh-tw'
   ,'util'
 ], function($, _, Backbone, Marionette, AppBase, i18n, moment,
-  vent, Router, Controller, io, AlertView, ModalView, Trainer, PokeMart){
+  vent, Router, Controller, io, AlertView, ModalView, Trainer, Msgs, PokeMart){
 
-  var App = new AppBase();
+  var App = new AppBase;
 
   // Main region, expand & collapse for home view
   var MainRegion = Marionette.Region.extend({
@@ -91,7 +92,7 @@ define([
     moment.lang(momentLngName[PARADISE.locale] || PARADISE.locale);
   });
 
-  // Alert and Model support
+  // Alert, Model & Notification
   App.addInitializer(function(){
     // Display an alert
     vent.on('alert', function(options){
@@ -101,6 +102,18 @@ define([
     // Display an alert
     vent.on('modal', function(options){
       App.modalRegion.show(new ModalView(options));
+    });
+
+    vent.on('notification', function(msg){
+      if (!('Notification' in window) || !msg) return;
+      var noti = new Notification('神奇宝贝乐园消息', {
+        icon: '/images/favicon.png'
+        ,body: msg.content()
+      });
+      noti.onclick = function(){
+        window.focus();
+        Backbone.history.navigate('/msg', {trigger: true});
+      };
     });
   });
 
@@ -124,10 +137,15 @@ define([
   // initialize trainer, router and controller
   App.addInitializer(function(){
     App.trainer = new Trainer(PARADISE.me);
+    App.msgs = new Msgs;
     App.pokeMart = new PokeMart;
 
     App.appRouter = new Router({
       controller: new Controller
+    });
+
+    App.msgs.on('sync unread', function(){
+      vent.trigger('msg:update', App.msgs);
     });
 
     App.trainer.on('change:language', function(){
@@ -168,6 +186,11 @@ define([
   // After all initialize events
   App.on('initialize:after', function(){
     Backbone.history.start({pushState: true});
+
+    App.msgs.fetch();
+    App.msgs.once('sync', function(){
+      vent.trigger('notification', App.msgs.at(0));
+    });
   });
 
   return App;

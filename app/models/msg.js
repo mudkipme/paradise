@@ -1,6 +1,8 @@
-var mongoose = require('mongoose');
 var async = require('async');
 var _ = require('underscore');
+var mongoose = require('mongoose');
+var Item = require('./item');
+var io = require('../io');
 var Schema = mongoose.Schema;
 
 var Status = { normal: 0, waiting: 1, accepted: 2, declined: 3, expired: 4 };
@@ -15,6 +17,8 @@ var MsgSchema = new Schema({
   senderPokemon:   { type: Schema.Types.ObjectId, ref: 'Pokemon' },
   receiverPokemon: { type: Schema.Types.ObjectId, ref: 'Pokemon' },
   relatedDayCare:  { type: Schema.Types.ObjectId, ref: 'DayCare' },
+  relatedItemId:   Number,
+  relatedNumber:   Number,
   createTime:      { type: Date, default: Date.now }
 }, {
   toJSON: { virtuals: true, minimize: false }
@@ -25,12 +29,20 @@ MsgSchema.virtual('needAccept').get(function(){
   return _.contains(needAccept, this.type);
 });
 
+MsgSchema.virtual('relatedItem').get(function(){
+  return this._relatedItem;
+});
+
 MsgSchema.methods.initData = function(callback){
   var me = this;
   if (me._inited) return callback(null, me);
 
-  var actions = [ me.populate.bind(me) ];
+  var actions = [
+    me.populate.bind(me, 'sender receiver senderPokemon receiverPokemon relatedDayCare')
+  ];
 
+  me.relatedItemId &&
+    actions.push(async.apply(Item, me.relatedItemId));
   me.relatedDayCare &&
     actions.push(me.relatedDayCare.initData.bind(me.relatedDayCare));
   me.senderPokemon &&
@@ -38,8 +50,9 @@ MsgSchema.methods.initData = function(callback){
   me.receiverPokemon &&
     actions.push(me.receiverPokemon.initData.bind(me.receiverPokemon));
 
-  async.series(actions, function(err){
+  async.series(actions, function(err, results){
     if (err) callback(err);
+    me.relatedItemId && (me._relatedItem = results[1]);
     callback(null, me);
   });
 };
@@ -88,35 +101,48 @@ MsgSchema.methods.setRead = function(callback){
   if (this.needAccept)
     return callback(new Error('MSG_TAKE_ACTION'));
   this.read = true;
-  this.save(callback);
+  async.series([
+    this.initData.bind(this)
+    ,this.save.bind(this)
+  ], callback);
 };
 
 // Decline a message
 MsgSchema.methods.decline = function(callback){
+  if (!this.needAccept)
+    return callback(new Error('MSG_NO_ACTION'));
+
   this.read = true;
   this.status = this.status && Status.declined;
 
   async.series([
-    me.save.bind(me)
+    this.initData.bind(this)
+    ,this.save.bind(this)
     ,Msg.sendMsg.bind(Msg, {
-      type: 'decline-' + me.type
-      ,sender: me.receiver
-      ,receiver: me.sender
-      ,senderPokemon: me.receiverPokemon
-      ,receiverPokemon: me.senderPokemon
-      ,relatedDayCare: me.relatedDayCare
+      type: 'decline-' + this.type
+      ,sender: this.receiver
+      ,receiver: this.sender
+      ,senderPokemon: this.receiverPokemon
+      ,receiverPokemon: this.senderPokemon
+      ,relatedDayCare: this.relatedDayCare
     })
   ], callback);
 };
 
 MsgSchema.statics.sendMsg = function(options, callback){
+  if (!options.sender || !options.receiver)
+    return callback(new Error('ERR_INVALID_PARAM'));
   var msg = new Msg(options);
   if (msg.needAccept) {
     msg.status = options.status || Status.waiting;
   }
-  msg.save(function(err){
+  async.series([
+    msg.save.bind(msg)
+    ,msg.initData.bind(msg)
+  ], function(err){
     if (err) return callback(err);
     callback(null, msg);
+    io.emitTrainer(options.receiver, 'msg:new', msg);
   });
 };
 

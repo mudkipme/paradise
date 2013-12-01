@@ -47,6 +47,15 @@ define([
       App.trainer.set({'currentBox': 0});
       App.trainer.storage.fetch({reset: true});
     }
+    ,'msg:new': function(msg){
+      App.msgs.unread++;
+      App.msgs.unshift(msg);
+      App.msgs.trigger('unread');
+      vent.trigger('notification', App.msgs.get(msg));
+    }
+    ,'msg:update': function(msg){
+      App.msgs.fetch();
+    }
   };
 
   var initEvents = function(){

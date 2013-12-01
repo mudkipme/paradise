@@ -6,6 +6,7 @@ var Geode = require('geode');
 var time = require('time');
 var Species = require('./species');
 var Pokemon = require('./pokemon');
+var Msg = require('./msg');
 var config = require('../../config.json');
 
 var Schema = mongoose.Schema;
@@ -433,6 +434,11 @@ TrainerSchema.methods.available = function(pokemon){
       && !pm._id.equals(pokemon._id);
   });
   return party.length;
+};
+
+// Get the unread msg number
+TrainerSchema.methods.unreadMsg = function(callback){
+  Msg.where({receiver: this._id, read: false}).count(callback);
 };
 
 // Hide some information from toJSON

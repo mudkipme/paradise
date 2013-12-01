@@ -85,8 +85,9 @@ module.exports = function(app){
   // Message actions
   app.get('/api/msg', defaults, msg.list);
   app.get('/api/msg/:msgId', defaults, msg.get);
-  app.get('/api/msg/:msgId/accept', defaults, msg.accept);
-  app.get('/api/msg/:msgId/decline', defaults, msg.decline);
+  app.post('/api/msg/:msgId/read', defaults, msg.read);
+  app.post('/api/msg/:msgId/accept', defaults, msg.accept);
+  app.post('/api/msg/:msgId/decline', defaults, msg.decline);
 
   // Admin
   app.post('/api/admin/event-pokemon', isAdmin, admin.eventPokemon);

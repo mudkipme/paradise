@@ -1,0 +1,40 @@
+#msg-list-view {
+  .msg-container {
+    .list-group;
+  }
+
+  .msg-pages {
+    text-align: center;
+  }
+}
+
+.msg-view {
+  .list-group-item;
+  
+  .msg-title {
+    font-weight: normal;
+    font-size: 14px;
+    span {
+      margin-left: 15px;
+      font-size: 12px;
+      font-weight: normal;
+    }
+  }
+
+  .item-img {
+    vertical-align: middle;
+  }
+
+  &.unread {
+    background-color: @gray-lighter;
+    .msg-title {
+      font-weight: bold;
+    }
+    &:hover {
+      background-color: #ddd;
+    }
+    &:not(.need-accept) {
+      cursor: pointer;
+    }
+  }
+}

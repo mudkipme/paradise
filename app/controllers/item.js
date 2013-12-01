@@ -8,6 +8,7 @@ var async = require('async');
 var _ = require('underscore');
 var Item = require('../models/item');
 var Trainer = require('../models/trainer');
+var Msg = require('../models/msg');
 var config = require('../../config.json');
 
 // List all items in Poké Mart
@@ -65,6 +66,13 @@ exports.gift = function(req, res){
       async.apply(Item, itemId)
       ,trainer.addItem.bind(trainer, itemId, number)
       ,req.trainer.removeItem.bind(req.trainer, itemId, number)
+      ,Msg.sendMsg.bind(Msg, {
+        type: 'gift-item'
+        ,sender: req.trainer
+        ,receiver: trainer
+        ,relatedItemId: itemId
+        ,relatedNumber: number
+      })
     ], function(err, results){
       if (err) return res.json(500, {error: err.message});
       res.json({

@@ -11,6 +11,13 @@ exports.emit = function(req, eventName, data){
   sockets.emit.apply(sockets, _.toArray(arguments).slice(1));
 };
 
+exports.emitTrainer = function(trainer, eventName, data){
+  if (!sio || !trainer) return;
+
+  var sockets = sio.sockets.in(trainer.id || trainer);
+  sockets.emit.apply(sockets, _.toArray(arguments).slice(1));
+};
+
 exports.connect = function(server){
   sio = io.listen(server);
   sio.set('authorization', auth.sio);

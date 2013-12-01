@@ -15,9 +15,10 @@ define([
   ,'views/pokedex'
   ,'views/daycare'
   ,'views/intro'
+  ,'views/msg-list'
 ], function(Marionette, vent, io, NavBarView, MenuView, HomeView, PartyView
   , BagView, PokeMartView, StorageView, WorldView, RegionView
-  , EncounterView, PokedexView, DayCareView, IntroView){
+  , EncounterView, PokedexView, DayCareView, IntroView, MsgListView){
 
   // Avoid circular dependencies
   var App = null;
@@ -98,6 +99,11 @@ define([
       App.trainer.fetch();
     }
 
+    ,msg: function(){
+      App.mainRegion.show(new MsgListView({collection: App.msgs}));
+      App.msgs.getPage(1);
+    }
+
     ,trainer: function(){
       vent.trigger('roadmap', 'trainer', true);
     }
@@ -132,10 +138,6 @@ define([
 
     ,help: function(){
       vent.trigger('roadmap', 'help', true);
-    }
-
-    ,msg: function(){
-      vent.trigger('roadmap', 'msg', true);
     }
   });
 });

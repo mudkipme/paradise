@@ -13,11 +13,13 @@ define([
       'click a.switch-language': 'switchLaguage'
       ,'click a.logout, a.re-login': 'logout'
       ,'click a[href]': 'navigate'
+      ,'click a.username': 'notification'
     }
 
     ,initialize: function(){
       $(document).ajaxStart(_.bind(this.ajaxStart, this));
       $(document).ajaxStop(_.bind(this.ajaxStop, this));
+      vent.on('msg:update', _.bind(this.msgUpdate, this));
     }
 
     ,ajaxStart: function(){
@@ -56,6 +58,23 @@ define([
         e.preventDefault();
         Backbone.history.navigate(e.target.pathname, {trigger: true});
       }
+    }
+
+    ,msgUpdate: function(msgs){
+      this.$('.unread-number').text(msgs.unread)
+      .toggleClass('hide', !msgs.unread);
+    }
+
+    ,notification: function(){
+      if (!('Notification' in window)) return;
+      if (Notification.permission == 'denied' || Notification.permission == 'granted')
+        return;
+      
+      Notification.requestPermission(function(permission){
+        if (!('permission' in Notification)) {
+          Notification.permission = permission;
+        }
+      });
     }
   });
   

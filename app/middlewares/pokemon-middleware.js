@@ -20,7 +20,7 @@ exports.pokemon = function(req, res, next, pokemonId){
 };
 
 /**
- * Limit request 
+ * Restrict request 
  */
 exports.myPokemon = function(req, res, next){
   if (req.trainer && req.pokemon.trainer
