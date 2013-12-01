@@ -186,11 +186,6 @@ define([
   // After all initialize events
   App.on('initialize:after', function(){
     Backbone.history.start({pushState: true});
-
-    App.msgs.fetch();
-    App.msgs.once('sync', function(){
-      vent.trigger('notification', App.msgs.at(0));
-    });
   });
 
   return App;

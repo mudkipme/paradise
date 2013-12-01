@@ -83,7 +83,9 @@
               <a href="#" class="dropdown-toggle username" data-toggle="dropdown"><%= member.username %> <span class="unread-number badge <% if (unreadMsg == 0) { %>hide<% } %>"><%= unreadMsg %></span> <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header"><%= t('app.msg') %></li>
-                <li><a href="/msg"><span class="unread-number badge pull-right <% if (unreadMsg == 0) { %>hide<% } %>"><%= unreadMsg %></span><%= t('app.my-msg') %></a></li>
+                <% if (me) { %>
+                  <li><a href="/msg"><span class="unread-number badge pull-right <% if (unreadMsg == 0) { %>hide<% } %>"><%= unreadMsg %></span><%= t('app.my-msg') %></a></li>
+                <% } %>
                 <li><a href="http://bbs.52poke.com/messenger.php?job=receivebox"><%= t('forum.primsg') %></a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header"><%= t('app.language') %></li>
