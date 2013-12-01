@@ -1,16 +1,15 @@
 {
   "name": "paradise",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
-    "start": "node app",
-    "install": "bower install"
+    "start": "node app"
   },
   "dependencies": {
     "express": "*",
     "socket.io": "*",
     "sqlite3": "*",
-    "mongoose": "3.6.*",
+    "mongoose": "*",
     "async": "*",
     "ejs": "*",
     "mysql": "2.0.0-alpha9",
