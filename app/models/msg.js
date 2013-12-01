@@ -20,64 +20,62 @@ var MsgSchema = new Schema({
   toJSON: { virtuals: true, minimize: false }
 });
 
-MsgSchema.methods.acceptDayCare = function(callback){
+MsgSchema.methods.initData = function(callback){
   var me = this;
+  if (me._inited) return callback(null, me);
 
-  async.series([
-    me.populate.bind(me, 'relatedDayCare sender senderPokemon')
-    ,function(next){
-      if (!me.relatedDayCare || !me.relatedDayCare.trainerA)
-        return next(new Error('MSG_EXPIRED'));
-      me.relatedDayCare.initData(next);
-    }
-    ,function(next){
-      var found = _.find(me.sender.party, function(pokemon){
-        return _.isEqual(me.senderPokemon._id, pokemon);
-      });
-      if (!found) return next(new Error('POKEMON_NOT_IN_PARTY'));
-      me.senderPokemon.initData(next);
-    }
-    ,function(next){
-      me.relatedDayCare.deposit(me.senderPokemon, next);
-    }
-    ,function(next){
-      me.sender.party.pull(me.senderPokemon._id);
-      me.sender.save(next);
-    }
-  ], function(err){
+  var actions = [ me.populate.bind(me) ];
+
+  me.relatedDayCare &&
+    actions.push(me.relatedDayCare.initData.bind(me.relatedDayCare));
+  me.senderPokemon &&
+    actions.push(me.senderPokemon.initData.bind(me.senderPokemon));
+  me.receiverPokemon &&
+    actions.push(me.receiverPokemon.initData.bind(me.receiverPokemon));
+
+  async.series(actions, function(err){
     if (err) callback(err);
-    me.save(callback);
+    callback(null, me);
   });
 };
 
+// Accept a message
 MsgSchema.methods.accept = function(callback){
-  var acceptMethods = {'day-care': 'acceptDayCare'};
   var me = this;
-  
-  if (!me.acceptMethods[me.type]) 
-    return callback(new Error('MSG_NOT_ACCEPTABLE'));
-  
-  me.acceptMethods[me.type](function(err){
-    me.read = true;
-    if (err) {
-      me.status = Status.expired;
-      me.save(function(error){
-        if (error) return callback(error);
-        return callback(err);
-      });
+
+  var acceptMethods = {
+    // Accept Day Care joining message
+    'day-care': function(){
+      if (!me.relatedDayCare || !me.relatedDayCare.trainerA)
+        return cb(new Error('MSG_EXPIRED'));
+      me.relatedDayCare.deposit(me.sender, me.senderPokemon, cb);
     }
-    me.status = Status.accepted;
-    async.series([
-      me.save.bind(me)
-      ,Msg.sendMsg.bind(Msg, {
-        type: 'accept-' + me.type
-        ,sender: me.receiver
-        ,receiver: me.sender
-        ,senderPokemon: me.receiverPokemon
-        ,receiverPokemon: me.senderPokemon
-        ,relatedDayCare: me.relatedDayCare
-      })
-    ], callback);
+  };
+  
+  if (!acceptMethods[me.type])
+    return callback(new Error('MSG_NOT_ACCEPTABLE'));
+
+  async.series([
+    me.initData.bind(me)
+    ,acceptMethods[me.type].bind(me)
+    ,function(next){
+      me.status = Status.accpeted;
+      me.save(next);
+    }
+    ,Msg.sendMsg.bind(Msg, {
+      type: 'accept-' + me.type
+      ,sender: me.receiver
+      ,receiver: me.sender
+      ,senderPokemon: me.receiverPokemon
+      ,receiverPokemon: me.senderPokemon
+      ,relatedDayCare: me.relatedDayCare
+    })
+  ], function(err){
+    if (err && err.message == 'MSG_EXPIRED') {
+      me.status = Status.expired;
+      return me.save(callback);
+    }
+    callback(err);
   });
 };
 
@@ -88,7 +86,6 @@ MsgSchema.methods.ignore = function(callback){
 };
 
 MsgSchema.statics.sendMsg = function(options, callback){
-  var needAccept = ['day-care', 'trade', 'battle'];
   if (_.contains(needAccept, options.type)) {
     options.status = options.status || Status.waiting;
   }

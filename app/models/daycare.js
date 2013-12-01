@@ -24,6 +24,8 @@ var DayCareSchema = new Schema({
 // Init the Day Care
 DayCareSchema.methods.initData = function(callback){
   var me = this;
+  if (me._inited) return callback(null, me);
+
   me.populate('pokemonA pokemonB egg', function(err){
     if (err) return callback(err);
     async.eachSeries(_.compact([me.pokemonA, me.pokemonB, me.egg])
@@ -32,12 +34,12 @@ DayCareSchema.methods.initData = function(callback){
       }, function(err){
         if (err) return callback(err);
         me._inited = true;
-        callback(null);
+        callback(null, me);
       });
   });
 };
 
-DayCareSchema.methods.deposit = function(pokemon, callback){
+DayCareSchema.methods.deposit = function(trainer, pokemon, callback){
   var me = this;
   if (me.pokemonB) return callback(new Error('DAY_CARE_FULL'));
   if (me.egg) return callback(new Error('TAKE_EGG_FIRST'));
@@ -46,6 +48,13 @@ DayCareSchema.methods.deposit = function(pokemon, callback){
 
   if (me.pokemonA && _.isEqual((me.pokemonA._id || me.pokemonA), pokemon._id))
     return callback(new Error('ALREADY_JOINED'));
+
+  var found = _.find(trainer.party, function(pm){
+    return _.isEqual(pokemon._id, pm._id || pm);
+  });
+
+  if (!found) return next(new Error('POKEMON_NOT_IN_PARTY'));
+  if (!trainer.available(pokemon)) return next(new Error('ONE_POKEMON_LEFT'));
 
   if (!me.pokemonA) {
     me.pokemonA = pokemon;
@@ -57,11 +66,17 @@ DayCareSchema.methods.deposit = function(pokemon, callback){
     me.fillTime = new Date();
   }
 
-  me.initData(function(err){
-    if (err) return callback(err);
-    me.breedRate = me.getBreedRate();
-    me.save(callback);
-  });
+  async.series([
+    me.initData.bind(me)
+    ,function(next){
+      me.breedRate = me.getBreedRate();
+      me.save(next);
+    }
+    ,function(next){
+      trainer.party.pull(found);
+      trainer.save(next);
+    }
+  ], callback);
 };
 
 DayCareSchema.methods.withdraw = function(pokemon, callback){

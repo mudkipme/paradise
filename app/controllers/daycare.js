@@ -86,21 +86,13 @@ exports.deposit = function(req, res){
     return pokemon._id.equals(req.body.pokemonId);
   });
   if (!pokemon) return res.json(404, {error: 'POKEMON_NOT_IN_PARTY'});
-  if (!req.trainer.available(pokemon))
-    return res.json(403, { error: 'ONE_POKEMON_LEFT' });
 
   DayCare.findOne({ _id: req.params.dayCareId }, function(err, dayCare){
     if (err) return res.json(500, {error: err.message});
     if (dayCare.trainerA && !dayCare.trainerA.equals(req.trainer._id))
       return res.json(403, {error: 'PERMISSION_DENIED'});
 
-    async.series([
-      dayCare.deposit.bind(dayCare, pokemon)
-      ,function(next){
-        req.trainer.party.pull(pokemon);
-        req.trainer.save(next);
-      }
-    ], function(err){
+    dayCare.deposit(req.trainer, pokemon, function(err){
       if (err) return res.json(403, {error: err.message});
       res.json(dayCare);
     });
