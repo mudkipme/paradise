@@ -3,7 +3,7 @@ var async = require('async');
 var _ = require('underscore');
 var Schema = mongoose.Schema;
 
-var Status = { normal: 0, waiting: 1, accepted: 2, refused: 3, ignored: 4, expired: 5 };
+var Status = { normal: 0, waiting: 1, accepted: 2, declined: 3, expired: 4 };
 
 var MsgSchema = new Schema({
   type:            { type: String, default: 'default' },
@@ -15,9 +15,14 @@ var MsgSchema = new Schema({
   senderPokemon:   { type: Schema.Types.ObjectId, ref: 'Pokemon' },
   receiverPokemon: { type: Schema.Types.ObjectId, ref: 'Pokemon' },
   relatedDayCare:  { type: Schema.Types.ObjectId, ref: 'DayCare' },
-  createTime:      Date
+  createTime:      { type: Date, default: Date.now }
 }, {
   toJSON: { virtuals: true, minimize: false }
+});
+
+MsgSchema.virtual('needAccept').get(function(){
+  var needAccept = ['day-care', 'trade', 'battle'];
+  return _.contains(needAccept, this.type);
 });
 
 MsgSchema.methods.initData = function(callback){
@@ -55,13 +60,12 @@ MsgSchema.methods.accept = function(callback){
   if (!acceptMethods[me.type])
     return callback(new Error('MSG_NOT_ACCEPTABLE'));
 
+  me.status = Status.accepted;
+
   async.series([
     me.initData.bind(me)
     ,acceptMethods[me.type].bind(me)
-    ,function(next){
-      me.status = Status.accpeted;
-      me.save(next);
-    }
+    ,me.save.bind(me)
     ,Msg.sendMsg.bind(Msg, {
       type: 'accept-' + me.type
       ,sender: me.receiver
@@ -79,24 +83,44 @@ MsgSchema.methods.accept = function(callback){
   });
 };
 
-MsgSchema.methods.ignore = function(callback){
+// Read a message
+MsgSchema.methods.setRead = function(callback){
+  if (this.needAccept)
+    return callback(new Error('MSG_TAKE_ACTION'));
   this.read = true;
-  this.status = this.status && Status.ignored;
   this.save(callback);
 };
 
-MsgSchema.statics.sendMsg = function(options, callback){
-  if (_.contains(needAccept, options.type)) {
-    options.status = options.status || Status.waiting;
-  }
-  options.createTime = options.createTime || new Date();
+// Decline a message
+MsgSchema.methods.decline = function(callback){
+  this.read = true;
+  this.status = this.status && Status.declined;
 
+  async.series([
+    me.save.bind(me)
+    ,Msg.sendMsg.bind(Msg, {
+      type: 'decline-' + me.type
+      ,sender: me.receiver
+      ,receiver: me.sender
+      ,senderPokemon: me.receiverPokemon
+      ,receiverPokemon: me.senderPokemon
+      ,relatedDayCare: me.relatedDayCare
+    })
+  ], callback);
+};
+
+MsgSchema.statics.sendMsg = function(options, callback){
   var msg = new Msg(options);
+  if (msg.needAccept) {
+    msg.status = options.status || Status.waiting;
+  }
   msg.save(function(err){
     if (err) return callback(err);
     callback(null, msg);
   });
 };
+
+MsgSchema.index({ sender: 1, receiver: 1 });
 
 var Msg = mongoose.model('Msg', MsgSchema);
 module.exports = Msg;

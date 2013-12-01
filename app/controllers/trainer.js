@@ -81,10 +81,8 @@ exports.post = function(req, res){
 // Get one's Pokémon list
 exports.pokemon = function(req, res){
   var skip = req.query.skip || 0;
-  var limit = req.query.limit || 100;
-  if (limit > 100) {
-    limit == 100;
-  }
+  var limit = req.query.limit || 6;
+  limit > 30 && (limit = 30);
 
   Trainer.findOne({ name: req.params.name })
   .exec(function(err, trainer){
@@ -99,6 +97,7 @@ exports.pokemon = function(req, res){
     Pokemon.find(condition)
     .skip(skip).limit(limit)
     .exec(function(err, pokemon){
+      if (err) return res.json(500, { error: err.message });
       async.eachSeries(pokemon, function(pm, next){
         pm.initData(next);
       }, function(err){

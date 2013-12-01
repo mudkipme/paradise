@@ -634,5 +634,7 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
   });
 };
 
+PokemonSchema.index({ trainer: 1 });
+
 var Pokemon = mongoose.model('Pokemon', PokemonSchema);
 module.exports = Pokemon;
