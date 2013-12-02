@@ -91,7 +91,7 @@
     ,"use-item": "Use Item"
     ,"hold-item": "Hold Item"
     ,"take-item": "Take Item"
-    ,"gift-done": "Gifted __number__ __item__ to __trainer__."
+    ,"gift-done": "Gifted __number__ __item__(s) to __trainer__."
     ,"hold-done": "__pokemon__ is now holding __item__."
     ,"take-done": "Took __item__ from __pokemon__."
     ,"gift-trainer": "Gift to"
@@ -140,6 +140,11 @@
     ,"search": "Search Day Care Room"
     ,"withdraw-confirm": "Do you want to withdraw __pokemon__?"
     ,"deposited": "__pokemon__ is now in Pokémon Day Care."
+  }
+  ,"msg": {
+    "received": "Received Messages"
+    ,"notification-title": "52Poké Paradise Notification"
+    ,"gift-item": "__sender__ sent you __number__ __item__(s)"
   }
   ,"forme": {
     "a": "A"
@@ -405,12 +410,11 @@
     ,"daycare": "Day Care room sharing will be available <strong>later this month</strong>. Thanks for your patience."
     ,"trade": "Trade Station will be available <strong>later this month</strong>. Thanks for your patience."
     ,"trainer": "Trainer Card will be available <strong>later this month</strong>. Thanks for your patience."
-    ,"battle": "Battle Tower will be available <strong>later this year</strong>. Thanks for your patience."
-    ,"rank": "Rank will be available <strong>later this year</strong>. Thanks for your patience."
+    ,"battle": "Battle Tower will be available <strong>at the beginning of 2014</strong>. Thanks for your patience."
+    ,"rank": "Rank will be available <strong>at the beginning of 2014</strong>. Thanks for your patience."
     ,"help": "Please visit 52Poké Forums for help."
     ,"migrate": "Poké Transfer will be available <strong>by the end of January 2014</strong>. Thanks for your patience."
     ,"record": "Records will be available during <strong>Spring 2014</strong>. Thanks for your patience."
     ,"setting": "Trainer Settings will be available <strong>later this month</strong>. Thanks for your patience."
-    ,"msg": "Notifications will be available <strong>later this month</strong>. Thanks for your patience."
   }
 }

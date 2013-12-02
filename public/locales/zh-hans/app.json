@@ -141,6 +141,11 @@
     ,"withdraw-confirm": "确定要取出 __pokemon__ 吗？"
     ,"deposited": "__pokemon__ 已经存放到了饲育屋。"
   }
+  ,"msg": {
+    "received": "我收到的消息"
+    ,"notification-title": "神奇宝贝乐园消息"
+    ,"gift-item": "__sender__ 向你赠送了 __number__ 个 __item__"
+  }
   ,"forme": {
     "a": "A"
     ,"normal": "一般"
@@ -405,12 +410,11 @@
     ,"daycare": "加入其他训练家的饲育屋功能预计将于 <strong>近日</strong> 开放，请耐心等待。"
     ,"trade": "通信交换预计将于 <strong>近日</strong> 开放，请耐心等待。"
     ,"trainer": "训练家卡片预计将于 <strong>近日</strong> 开放，请耐心等待。"
-    ,"battle": "对战塔预计将于 <strong>2013年内</strong> 开放，请耐心等待。"
-    ,"rank": "排行榜预计将于 <strong>2013年内</strong> 开放，请耐心等待。"
+    ,"battle": "对战塔预计将于 <strong>2014年初</strong> 开放，请耐心等待。"
+    ,"rank": "排行榜预计将于 <strong>2014年初</strong> 开放，请耐心等待。"
     ,"help": "在神奇宝贝乐园测试期间，请到神奇宝贝部落讨论区「V6测试版」寻求帮助。"
     ,"migrate": "神奇传送预计将于 <strong>2014年初春时分</strong> 开放，请耐心等待。"
     ,"record": "历史记录预计将于 <strong>2014年寒假内</strong> 开放，请耐心等待。"
     ,"setting": "训练家设置预计将于 <strong>近日</strong> 开放，请耐心等待。"
-    ,"msg": "消息提醒预计将于 <strong>近日</strong> 开放，请耐心等待。"
   }
 }

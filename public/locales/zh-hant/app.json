@@ -141,6 +141,11 @@
     ,"withdraw-confirm": "確定要取出 __pokemon__ 嗎？"
     ,"deposited": "__pokemon__ 已經存放到了飼育屋。"
   }
+  ,"msg": {
+    "received": "我收到的消息"
+    ,"notification-title": "神奇寶貝樂園消息"
+    ,"gift-item": "__sender__ 向你贈送了 __number__ 個 __item__"
+  }
   ,"forme": {
     "a": "A"
     ,"normal": "一般"
@@ -402,15 +407,14 @@
   ,"roadmap": {
     "title": "正在開發中"
     ,"timeline": "溝通廣場預計將於 <strong>2014年寒假內</strong> 開放，請耐心等待。"
-    ,"daycare": "加入其他訓練家的飼育屋功能預計將於 <strong>2013年10月內</strong> 開放，請耐心等待。"
-    ,"trade": "通信交換預計將於 <strong>2013年10月內</strong> 開放，請耐心等待。"
-    ,"trainer": "訓練家卡片預計將於 <strong>2013年10月內</strong> 開放，請耐心等待。"
-    ,"battle": "對戰塔預計將於 <strong>2013年內</strong> 開放，請耐心等待。"
-    ,"rank": "排行榜預計將於 <strong>2013年內</strong> 開放，請耐心等待。"
+    ,"daycare": "加入其他訓練家的飼育屋功能預計將於 <strong>近日</strong> 開放，請耐心等待。"
+    ,"trade": "通信交換預計將於 <strong>近日</strong> 開放，請耐心等待。"
+    ,"trainer": "訓練家卡片預計將於 <strong>近日</strong> 開放，請耐心等待。"
+    ,"battle": "對戰塔預計將於 <strong>2014年初</strong> 開放，請耐心等待。"
+    ,"rank": "排行榜預計將於 <strong>2014年初</strong> 開放，請耐心等待。"
     ,"help": "在神奇寶貝樂園測試期間，請到神奇寶貝部落討論區「V6測試版」尋求幫助。"
-    ,"migrate": "神奇傳送預計將於 <strong>2014年春節前</strong> 開放，請耐心等待。"
+    ,"migrate": "神奇傳送預計將於 <strong>2014年初春時分</strong> 開放，請耐心等待。"
     ,"record": "歷史記錄預計將於 <strong>2014年寒假內</strong> 開放，請耐心等待。"
-    ,"setting": "訓練家設置預計將於 <strong>2013年10月內</strong> 開放，請耐心等待。"
-    ,"msg": "消息提醒預計將於 <strong>2013年10月內</strong> 開放，請耐心等待。"
+    ,"setting": "訓練家設置預計將於 <strong>近日</strong> 開放，請耐心等待。"
   }
 }

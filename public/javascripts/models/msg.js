@@ -6,7 +6,7 @@ define([
 ], function($, _, Backbone, i18n){
 
   var contentTemplates = {
-    'gift-item': "<%= sender.name %> 向你赠送了 <%= relatedNumber %> 个 <%= t('item:'+relatedItem.name) %>"
+    'gift-item': "<%= t('msg.gift-item', {sender: sender.name, number: relatedNumber, item: t('item:'+relatedItem.name)}) %>"
   };
 
   var Msg = Backbone.Model.extend({

@@ -7,7 +7,7 @@ define([
 
   var Msgs = Backbone.Collection.extend({
     model: Msg
-    ,pageSize: 15
+    ,pageSize: 10
 
     ,initialize: function(models, options){
       options = options || {};
@@ -19,7 +19,7 @@ define([
 
     ,url: function(){
       return '/api/msg?'
-        + $.param({ skip: (this.page - 1) * 25, limit: this.pageSize, type: this.type });
+        + $.param({ skip: (this.page - 1) * this.pageSize, limit: this.pageSize, type: this.type });
     }
 
     ,parse: function(resp){

@@ -1,7 +1,7 @@
 <% if (type == 'gift-item') {%>
   <h4 class="msg-title">
     <span class="pull-right create-time" title="<%= moment(createTime).format('lll') %>"><%= moment(createTime).fromNow() %></span>
-    <%= sender.name %> 向你赠送了 <%= relatedNumber %> 个 <%= t('item:'+relatedItem.name) %>
+    <%= t('msg.gift-item', {sender: sender.name, number: relatedNumber, item: t('item:'+relatedItem.name)}) %>
     <img class="item-img" src="<%= PARADISE.imgBase %>/items/<%= (relatedItem.name) %>.png" alt="<%= t('item:' + relatedItem.name) %>" />
   </h4>
   <p><%= content || t('item:description.' + relatedItem.name) %></p>

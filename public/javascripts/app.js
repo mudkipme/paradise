@@ -106,7 +106,7 @@ define([
 
     vent.on('notification', function(msg){
       if (!('Notification' in window) || !msg) return;
-      var noti = new Notification('神奇宝贝乐园消息', {
+      var noti = new Notification(i18n.t('msg.notification-title'), {
         icon: '/images/favicon.png'
         ,body: msg.content()
       });
