@@ -83,12 +83,9 @@ define([
       }
     }
 
-    ,constructor: function(options){
-      Marionette.ItemView.prototype.constructor.apply(this, arguments);
-      this.options = _.extend({
-          collapsed: true
-          ,collapsible: true
-        }, options);
+    ,options: {
+      collapsed: true
+      ,collapsible: true
     }
 
     // Wrap model data to avoid undefined error

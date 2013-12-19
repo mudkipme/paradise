@@ -1,8 +1,8 @@
 define([
-  'jquery',
-  'underscore',
-  'backbone',
-  'models/pokemon'
+  'jquery'
+  ,'underscore'
+  ,'backbone'
+  ,'models/pokemon'
 ], function($, _, Backbone, Pokemon){
 
   var Encounter = Backbone.Model.extend({

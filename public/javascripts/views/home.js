@@ -26,7 +26,7 @@ define([
     ,template: _.template(homeTemplate)
     ,templateHelpers: { t: i18n.t }
 
-    ,config: {
+    ,options: {
       width: 810,
       height: 422,
       centerRadius: 110,
@@ -89,7 +89,7 @@ define([
     }
 
     ,initialize: function(){
-      var opt = this.config;
+      var opt = this.options;
 
       this.angles = [
         opt.smallAngle / 2 + opt.bigAngle,
@@ -110,7 +110,7 @@ define([
     }
 
     ,drawSector: function(data, pos){
-      var me = this, opt = me.config;
+      var me = this, opt = me.options;
 
       // determine arc path
       var beginAngle = me.angles[pos];
@@ -165,7 +165,7 @@ define([
             group.add(patternShape);
             tween = new Kinetic.Tween({
               node: patternShape, 
-              duration: me.config.hoverDuration,
+              duration: me.options.hoverDuration,
               opacity: 1,
               easing: Kinetic.Easings.EaseInOut
             });
@@ -187,7 +187,7 @@ define([
     }
 
     ,drawCenter: function(){
-      var me = this, opt = me.config;
+      var me = this, opt = me.options;
 
       return $.loadImage(opt.centerImage).done(function(img){
         var tween, image = new Kinetic.Image({
@@ -223,7 +223,7 @@ define([
     }
 
     ,onRender: function(){
-      var me = this, opt = me.config;
+      var me = this, opt = me.options;
 
       var stage = new Kinetic.Stage({
         container: me.ui.nav.get(0),
@@ -246,7 +246,7 @@ define([
     }
 
     ,scatter: function(group, callback){
-      var me = this, opt = me.config;
+      var me = this, opt = me.options;
 
       $.when.apply($, _.map(me.layer.children, function(item){
         var angle, tween, deferred = $.Deferred();
