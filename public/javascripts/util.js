@@ -6,7 +6,7 @@ define([
   ,'kinetic'
   ,'jquery.transit'
   ,'jquery.mousewheel'
-  ,'hammer'
+  ,'jquery.hammer'
   ,'bootstrap'
 ], function($, _, Kinetic){
 
