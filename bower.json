@@ -15,7 +15,7 @@
     "backbone.wreqr": "*",
     "backbone.babysitter": "*",
     "socket.io-client": "*",
-    "hammerjs": "*",
+    "jquery-hammerjs": "*",
     "jquery-mousewheel": "*",
     "almond": "*",
     "kineticjs": "http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.7.4.js"

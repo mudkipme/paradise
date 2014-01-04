@@ -7,7 +7,7 @@ requirejs.config({
     ,'jquery.mousewheel': '../components/jquery-mousewheel/jquery.mousewheel'
     ,bootstrap: '../components/bootstrap/dist/js/bootstrap'
     ,underscore: '../components/underscore/underscore'
-    ,hammer: '../components/hammerjs/dist/jquery.hammer'
+    ,hammer: '../components/jquery-hammerjs/jquery.hammer'
     ,backbone: '../components/backbone/backbone'
     ,marionette: '../components/backbone.marionette/lib/core/amd/backbone.marionette'
     ,'backbone.wreqr': '../components/backbone.wreqr/lib/amd/backbone.wreqr'
