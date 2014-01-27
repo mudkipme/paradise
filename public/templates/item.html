@@ -10,7 +10,7 @@
     <% if (!_.contains(['machines', 'key'], item.pocket)) { %>
       <button class="btn btn-hold"><%= t('action.hold') %></button>
     <% } %>
-    <% if (!_.contains(['machines', 'key'], item.pocket)) { %>
+    <% if (!_.contains(['machines', 'key'], item.pocket) && !item.ungiftable) { %>
       <button class="btn btn-gift"><%= t('action.gift') %></button>
     <% } %>
   </div>

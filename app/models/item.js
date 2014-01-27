@@ -8,6 +8,7 @@ var async = require('async');
 var _ = require('underscore');
 var Type = require('./type');
 var db = require('../common').baseData;
+var config = require('../../config.json');
 
 var itemCache = {};
 
@@ -27,6 +28,7 @@ var Item = function(identifier, cb) {
       item.id = raw.id;
       item.name = raw.identifier;
       item.effects = [];
+      _.contains(config.app.ungiftable, item.name) && (item.ungiftable = true);
 
       db.all('SELECT effect_type, param_1, param_2, param_3, is_default FROM item_effects WHERE item_id = ?', [item.id], next);
     }
