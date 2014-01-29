@@ -47,7 +47,7 @@
       <%= t('stat.original-trainer') %>: <%- pokemon.displayOT || pokemon.originalTrainer.name %>
     </p>
     <p class="meet-date">
-      <%= t('stat.meet-date', {meetDate: moment(pokemon.meetDate).format('L'), meetPlace: t('location:' + pokemon.meetPlaceIndex), meetLevel: pokemon.meetLevel }) %>
+      <%= t('stat.meet-date', {meetDate: moment(pokemon.meetDate).format('L'), meetPlace: t('location:' + pokemon.meetPlaceIndex).replace(/^location:/, ''), meetLevel: pokemon.meetLevel }) %>
     </p>
   <% } else { %>
     <p class="hatch-rate">
@@ -95,9 +95,9 @@
 <!-- Sprite and name -->
 <img class="sprite" src="<%= spriteUrl() %>" alt="<%- pokemonName() %>" draggable="false" />
 <div class="name">
-  <% if (!pokemon.isEgg) { %>
+  <% if (!pokemon.isEgg && pokemon.originalTrainer && pokemon.originalTrainer.id == pokemon.trainer ) { %>
     <span><%- pokemonName() %></span>
-    <input style="display:none" type="text" placeholder="<%- t('pokemon:'+pokemon.species.name) %>" value="<%- pokemon.nickname %>" />
+    <input style="display:none" type="text" placeholder="<%- t('pokemon:'+pokemon.species.name) %>" value="<%- pokemon.nickname %>" maxlength="12" />
   <% } else { %>
     <%- pokemonName() %>
   <% } %>

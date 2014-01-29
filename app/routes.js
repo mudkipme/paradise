@@ -23,7 +23,7 @@ var isAdmin = [auth.login, auth.isAdmin];
 
 module.exports = function(app){
   app.get('/', page, index.index);
-  app.get(/^\/(party|pokedex|bag|trainer|storage|world|encounter|timeline|pokemart|daycare|trade|battle|rank|migrate|setting|record|help|msg)(\/.*)?$/, page, index.defaults);
+  app.get(/^\/(party|pokedex|bag|trainer|storage|world|encounter|timeline|pokemart|daycare|trade|battle|rank|migrate|setting|record|help|msg|admin)(\/.*)?$/, page, index.defaults);
   app.get('/bbs', bbs.login);
   app.get('/bbs/logout', bbs.logout);
 
@@ -90,6 +90,6 @@ module.exports = function(app){
   app.post('/api/msg/:msgId/decline', defaults, msg.decline);
 
   // Admin
+  app.get('/api/admin/info', isAdmin, admin.info);
   app.post('/api/admin/event-pokemon', isAdmin, admin.eventPokemon);
-  app.post('/api/admin/halloween', isAdmin, admin.halloween);
 };

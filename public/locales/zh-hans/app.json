@@ -50,6 +50,7 @@
     ,"trainer-setting": "训练家设置"
     ,"record": "历史记录"
     ,"help": "帮助"
+    ,"admin": "系统管理"
   }
   ,"stat": {
     "nature": "性格"
@@ -145,6 +146,7 @@
     "received": "我收到的消息"
     ,"notification-title": "神奇宝贝乐园消息"
     ,"gift-item": "__sender__ 向你赠送了 __number__ 个 __item__"
+    ,"event-pokemon": "神奇宝贝乐园向你赠送了 __pokemon__！"
   }
   ,"forme": {
     "a": "A"
@@ -158,7 +160,7 @@
     ,"standard": "一般"
     ,"spring": "春天"
     ,"incarnate": "化身"
-    ,"ordinary": ""
+    ,"ordinary": "普通"
     ,"aria": "歌声"
     ,"b": "B"
     ,"c": "C"

@@ -4,11 +4,12 @@ define([
   'jquery'
   ,'underscore'
   ,'kinetic'
+  ,'backbone'
   ,'jquery.transit'
   ,'jquery.mousewheel'
   ,'jquery.hammer'
   ,'bootstrap'
-], function($, _, Kinetic){
+], function($, _, Kinetic, Backbone){
 
   // Deferred image loading
   $.loadImage = function(src){
@@ -187,6 +188,19 @@ define([
       });
       $.when.apply($, dfds).done(next);
     });
+
+    // Synchronize ajax requests
+    Bakcbone.ajax = function(){
+      var args = arguments.length ? Array.prototype.slice.call(arguments, 0) : [];
+      if (Bakcbone._ajax) {
+        return Bakcbone._ajax.then(function(){
+          return $.ajax.apply($, args);
+        });
+      }
+
+      Bakcbone._ajax = $.ajax.apply($, args);
+      return Bakcbone._ajax;
+    };
 
     return this;
   };

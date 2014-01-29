@@ -16,9 +16,11 @@ define([
   ,'views/daycare'
   ,'views/intro'
   ,'views/msg-list'
+  ,'views/admin'
 ], function(Marionette, vent, io, NavBarView, MenuView, HomeView, PartyView
   , BagView, PokeMartView, StorageView, WorldView, RegionView
-  , EncounterView, PokedexView, DayCareView, IntroView, MsgListView){
+  , EncounterView, PokedexView, DayCareView, IntroView, MsgListView
+  , AdminView){
 
   // Avoid circular dependencies
   var App = null;
@@ -102,6 +104,14 @@ define([
     ,msg: function(){
       App.mainRegion.show(new MsgListView({collection: App.msgs}));
       App.msgs.getPage(1);
+    }
+
+    ,admin: function(){
+      if (App.adminInfo) {
+
+      }
+      App.mainRegion.show(new AdminView({model: App.adminInfo}));
+      App.adminInfo.fetch();
     }
 
     ,trainer: function(){

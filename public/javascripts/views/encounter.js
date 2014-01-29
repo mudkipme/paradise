@@ -176,7 +176,8 @@ define([
 
       $.when(me.pokemonCanvas(), $.loadImage(pokeBallImg))
       .done(function(sprite, pokeBallImg){
-        sprite.setFilter(Kinetic.Filters.Brighten);
+        sprite.cache();
+        sprite.filters([Kinetic.Filters.Brighten]);
         if (me._pokeBall) {
           me._pokeBall.destroy();
         }
@@ -190,13 +191,14 @@ define([
           ,scaleY: 0
           ,offsetX: 11
           ,offsetY: 11
-          ,filter: Kinetic.Filters.Brighten
         });
         me.layer.add(pokeBall);
+        pokeBall.cache();
+        pokeBall.filters([Kinetic.Filters.Brighten]);
 
         // Show the Poké Ball
         me.ui.sprite
-        .tweenChain({ node: sprite, filterBrightness: 255 })
+        .tweenChain({ node: sprite, brightness: 1 })
         .tweenChain({ node: sprite, scaleX: 0, scaleY: 0 }
           ,{ node: pokeBall, scaleX: 1, scaleY: 1 });
 
@@ -211,11 +213,11 @@ define([
         if (e.shake == 4) {
           // Capture Done!
           me.ui.sprite.delay(500)
-          .tweenChain({ node: pokeBall, filterBrightness: 64 });
+          .tweenChain({ node: pokeBall, brightness: 0.25 });
         } else {
           // Capture Failed
           me.ui.sprite.delay(500)
-          .tweenChain({ node: sprite, scaleX: 1, scaleY: 1, filterBrightness: 0 }
+          .tweenChain({ node: sprite, scaleX: 1, scaleY: 1, brightness: 0 }
             ,{ node: pokeBall, scaleX: 0, scaleY: 0 });
         }
 
@@ -291,12 +293,11 @@ define([
       return dfd;
     }
 
-    // Will switch to CSS solution once Firefox support that
     ,blurPokemon: function(){
       var me = this;
       me.pokemonCanvas().done(function(sprite){
-        sprite.setFilter(Kinetic.Filters.Blur);
-        sprite.setFilterRadius(3);
+        sprite.filters([Kinetic.Filters.Blur]);
+        sprite.blurRadius(3);
         me.layer.batchDraw();
       });
     }

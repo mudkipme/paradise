@@ -27,7 +27,7 @@
         imgBase: '<%= config.app.imgBase %>'
         ,locale: '<%= i18n.lng() %>'
         ,me: <%- JSON.stringify(me) -%>
-        ,unreadMsg: <%- parseInt(unreadMsg) %>
+        ,isAdmin: <%- member.isAdmin %>
       };
     </script>
     <% if (settings.env == 'development') { %>

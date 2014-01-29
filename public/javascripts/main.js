@@ -17,7 +17,7 @@ requirejs.config({
     ,moment: '../components/moment/moment'
     ,'moment/lang': '../components/moment/lang'
     ,'socket.io': '../components/socket.io-client/dist/socket.io'
-    ,kinetic: '../components/kineticjs/index'
+    ,kinetic: '../components/kineticjs/kinetic'
   }
   ,shim: {
     underscore: { exports: '_' }

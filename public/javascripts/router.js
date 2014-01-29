@@ -23,6 +23,7 @@ define([
       ,'record': 'record'
       ,'help': 'help'
       ,'msg': 'msg'
+      ,'admin': 'admin'
     }
   });
 });

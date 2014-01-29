@@ -2,7 +2,7 @@ var db = require('../common').baseData;
 
 var natureCache = {};
 
-var Nature = function(id, callback) {
+var Nature = function(id, callback){
   if (natureCache[id]) {
     return callback(null, natureCache[id]);
   }
@@ -28,6 +28,10 @@ var Nature = function(id, callback) {
       natureCache[id] = nature;
       callback(null, nature);
     });
+};
+
+Nature.allNatures = function(callback){
+  db.all('SELECT id, identifier AS name FROM natures', callback);
 };
 
 Nature.max = 25;

@@ -1,10 +1,42 @@
 var _ = require('underscore');
 var async = require('async');
+var Species = require('../models/species');
 var Pokemon = require('../models/pokemon');
 var Trainer = require('../models/trainer');
 var Item = require('../models/item');
 var Location = require('../models/location');
+var Nature = require('../models/nature');
+var Msg = require('../models/msg');
+var config = require('../../config.json');
+var io = require('../io');
 
+// List basic information of 52Poké Paradise
+exports.info = function(req, res){
+  async.series({
+    forms: Species.allForms.bind(Species)
+    ,trainerCount: Trainer.count.bind(Trainer)
+    ,pokemonCount: Pokemon.count.bind(Pokemon, {trainer: {'$exists': true, '$ne': null}})
+    ,natures: Nature.allNatures.bind(Nature)
+    ,items: Item.getItemNames.bind(Item, config.admin.availableItems)
+    ,pokeBalls: Item.getItemNames.bind(Item, config.admin.availablePokeBalls)
+  }, function(err, results){
+    if (err) return res.json(500, {error: err.message});
+    var forms = [];
+    _.each(results.forms, function(species, speciesNumber){
+      forms.push({
+        speciesNumber: speciesNumber
+        ,name: species.name
+        ,forms: _.values(species.forms)
+      });
+    });
+    results.forms = forms;
+    results.onlineCount = _.size(io.sio.rooms);
+    results.onlineCount && (results.onlineCount -= 1);
+    res.json(results);
+  });
+};
+
+// Send event Pokémon to trainers
 exports.eventPokemon = function(req, res){
   var opts = {
     speciesNumber: parseInt(req.body.speciesNumber)
@@ -12,59 +44,55 @@ exports.eventPokemon = function(req, res){
     ,gender: parseInt(req.body.gender)
     ,level: parseInt(req.body.level)
     ,isEgg: Boolean(req.body.isEgg)
+    ,isShiny: Boolean(req.body.isShiny)
+    ,natureId: parseInt(req.body.natureId)
+    ,holdItemId: parseInt(req.body.holdItemId)
   };
 
-  if (_.isBoolean(req.body.isShiny)) {
-    opts.isShiny = req.body.isShiny;
+  isNaN(req.body.holdItemId) || (opts.holdItemId = parseInt(req.body.holdItemId));
+  _.isBoolean(req.body.isShiny) && (opts.isShiny = req.body.isShiny);
+  _.isObject(req.body.individual) && (opts.individual = req.body.individual);
+
+  if (req.body.originalTrainer) {
+    opts.originalTrainer = config.admin.defaultOT;
+    opts.displayOT = req.body.originalTrainer;
   }
 
-  if (req.body.holdItemId) {
-    opts.holdItemId = req.body.holdItemId;
-  }
+  if (!_.isArray(req.body.trainer))
+    return res.json(400, {error: 'ERR_INVALID_PARAM'});
 
-  Trainer.findByName(req.body.trainer, function(err, trainer){
-    if (err) return res.json(500, {error: err.message});
-    if (!trainer) return res.json(404, {error: 'TRAINER_NOT_FOUND'});
+  async.mapSeries(req.body.trainer, function(trainer, next){
 
     async.series({
-      pokemon: Pokemon.createPokemon.bind(Pokemon, opts)
-      ,pokeBall: async.apply(Item, req.body.pokeBall || 'poke-ball')
+      trainer: Trainer.findByName.bind(Trainer, trainer.trim())
+      ,pokemon: Pokemon.createPokemon.bind(Pokemon, opts)
+      ,pokeBall: async.apply(Item, parseInt(req.body.pokeBall) || 'poke-ball')
       ,location: async.apply(Location, req.body.location || 'pokemon-event')
     }, function(err, ret){
-      if (err) return res.json(500, { error: err.message });
-      trainer.catchPokemon(ret.pokemon, ret.pokeBall, ret.location, function(err){
-        if (err) return res.json(500, { error: err.message });
-        res.json(ret.pokemon);
+      if (err) return next(err);
+      if (!ret.trainer) return next(null, null);
+      if (_.isString(req.body.nickname)) {
+        ret.pokemon.nickname = req.body.nickname.substr(0, 12);
+      }
+
+      ret.trainer.catchPokemon(ret.pokemon, ret.pokeBall, ret.location, function(err){
+        if (err) return next(err);
+
+        Msg.sendMsg({
+          type: 'event-pokemon'
+          ,sender: config.admin.defaultOT
+          ,receiver: ret.trainer
+          ,receiverPokemon: ret.pokemon
+          ,content: req.body.message
+        }, function(err){
+          if (err) return next(err);
+          next(null, ret.pokemon);
+        });
       });
     });
-  });
-};
 
-exports.halloween = function(req, res){
-  var randomSpecies = [200, 353, 355, 562, 92, 425, 442, 607, 302, 479, 592, 622];
-  var randomItem = [302, 287, 224, 50];
-
-  var opts = {
-    speciesNumber: _.sample(randomSpecies),
-    holdItemId: _.sample(randomItem),
-    originalTrainer: '5273d1f14a13ea20b5faf868',
-    displayOT: 'Trick-or-Treat'
-  };
-
-  Trainer.findByName(req.body.trainer, function(err, trainer){
-    if (err) return res.json(500, {error: err.message});
-    if (!trainer) return res.json(404, {error: 'TRAINER_NOT_FOUND'});
-
-    async.series({
-      pokemon: Pokemon.createPokemon.bind(Pokemon, opts)
-      ,pokeBall: async.apply(Item, 'cherish-ball')
-      ,location: async.apply(Location, '2013-halloween')
-    }, function(err, ret){
-      if (err) return res.json(500, { error: err.message });
-      trainer.catchPokemon(ret.pokemon, ret.pokeBall, ret.location, function(err){
-        if (err) return res.json(500, { error: err.message });
-        res.json(ret.pokemon);
-      });
-    });
+  }, function(err, results){
+    if (err) return res.json(500, { error: err.message });
+    res.json(results);
   });
 };

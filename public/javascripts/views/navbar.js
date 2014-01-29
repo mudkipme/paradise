@@ -66,7 +66,7 @@ define([
     }
 
     ,notification: function(){
-      if (!('Notification' in window) || navigator.userAgent.match(/360/)) return;
+      if (!('Notification' in window) || navigator.userAgent.match(/Chrome\/21/)) return;
       if (Notification.permission == 'denied' || Notification.permission == 'granted')
         return;
       

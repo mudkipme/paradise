@@ -1,4 +1,5 @@
 var crypto = require('crypto');
+var time = require('time');
 var db = require('../common').mysqlConnection;
 
 var Member = function(){
@@ -59,6 +60,25 @@ Member.getLogin = function(req, callback){
     });
 };
 
+Member.prototype.getCheckIn = function(callback){
+  var me = this;
+  var today = new time.Date();
+  today.setTimezone('Asia/Shanghai');
+  today.setHours(0, 0, 0, 0);
+
+  db.query(
+    db._('SELECT * FROM {prefix}sign_history WHERE userid = ? AND sign_time >= ?')
+    ,[me.userid, Math.floor(today.getTime() / 1000)]
+    ,function(err, result){
+      if (err) return callback(err);
+
+      callback(null, {
+        checked: result.length > 0
+        ,postNum: result[0] && result[0].post_
+      });
+    });
+};
+
 Member.prototype.addMoney = function(amount, callback){
   var me = this;
 
@@ -98,7 +118,7 @@ Member.prototype.addPoint = function(amount, callback){
           if (!result.length) return callback(new Error('MEMBER_NOT_FOUND'));
 
           me._rawUserInfo['point'] = result[0].point;
-          callback(null, result[0].point);
+          callback(null, me);
         });
     });
 };

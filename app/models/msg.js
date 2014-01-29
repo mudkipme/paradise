@@ -37,23 +37,26 @@ MsgSchema.methods.initData = function(callback){
   var me = this;
   if (me._inited) return callback(null, me);
 
-  var actions = [
-    me.populate.bind(me, 'sender receiver senderPokemon receiverPokemon relatedDayCare')
-  ];
+  me.populate('sender receiver senderPokemon receiverPokemon relatedDayCare', function(err){
+    if (err) return callback(err);
 
-  me.relatedItemId &&
-    actions.push(async.apply(Item, me.relatedItemId));
-  me.relatedDayCare &&
-    actions.push(me.relatedDayCare.initData.bind(me.relatedDayCare));
-  me.senderPokemon &&
-    actions.push(me.senderPokemon.initData.bind(me.senderPokemon));
-  me.receiverPokemon &&
-    actions.push(me.receiverPokemon.initData.bind(me.receiverPokemon));
+    var actions = [];
 
-  async.series(actions, function(err, results){
-    if (err) callback(err);
-    me.relatedItemId && (me._relatedItem = results[1]);
-    callback(null, me);
+    me.relatedItemId &&
+      actions.push(async.apply(Item, me.relatedItemId));
+    me.relatedDayCare &&
+      actions.push(me.relatedDayCare.initData.bind(me.relatedDayCare));
+    me.senderPokemon &&
+      actions.push(me.senderPokemon.initData.bind(me.senderPokemon));
+    me.receiverPokemon &&
+      actions.push(me.receiverPokemon.initData.bind(me.receiverPokemon));
+
+    async.series(actions, function(err, results){
+      if (err) callback(err);
+      me.relatedItemId && (me._relatedItem = results[0]);
+      me._inited = true;
+      callback(null, me);
+    });
   });
 };
 

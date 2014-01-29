@@ -142,9 +142,9 @@ define([
       this.listScroll(e.gesture.deltaY / 2);
     }
 
-    ,listWheel: function(e, delta){
+    ,listWheel: function(e){
       e.preventDefault();
-      this.listScroll(delta);
+      this.listScroll(e.deltaFactor * e.deltaY);
     }
 
     ,clickScroll: function(e){

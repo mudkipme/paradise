@@ -72,11 +72,10 @@ define([
           ,width: 96
           ,height: 96
           ,offsetX: 48
-          ,offsetY: 48
-          ,filter: Kinetic.Filters.Brighten
+          ,offsetY: 48 
         }, afterOptions = _.defaults({
           image: afterImage
-          ,filterBrightness: 255
+          ,brightness: 1
           ,scaleX: 0
           ,scaleY: 0
         }, beforeOptions);
@@ -87,10 +86,15 @@ define([
         me.layer.add(before);
         me.layer.add(after);
         stage.add(me.layer);
+
+        before.cache();
+        before.filters([Kinetic.Filters.Brighten]);
+        after.cache();
+        after.filters([Kinetic.Filters.Brighten]);
         
         me.ui.sprite.tweenChain({
           node: before
-          ,filterBrightness: 255
+          ,brightness: 1
           ,duration: 1.5
         });
 
@@ -110,7 +114,7 @@ define([
 
         me.ui.sprite.tweenChain({
           node: after
-          ,filterBrightness: 0
+          ,brightness: 0
         }).promise().done(callback);
       });
     }

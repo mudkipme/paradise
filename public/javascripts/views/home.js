@@ -195,15 +195,17 @@ define([
           y: (opt.height - img.height) / 2,
           image: img,
           width: img.width,
-          height: img.height,
-          filter: Kinetic.Filters.Brighten
+          height: img.height
         });
+        me.layer.add(image);
+        image.cache();
+        image.filters([Kinetic.Filters.Brighten]);
         image.on('mouseenter touchstart', function(){
           if (!tween) {
             tween = new Kinetic.Tween({
               node: image,
               duration: opt.hoverDuration,
-              filterBrightness: 50,
+              brightness: 0.2,
               easing: Kinetic.Easings.EaseInOut
             });
           }
@@ -218,7 +220,6 @@ define([
             Backbone.history.navigate('/party', {trigger: true});
           });
         });
-        me.layer.add(image);
       });
     }
 
@@ -266,6 +267,7 @@ define([
             y: opt.width / 2 * Math.sin(angle)
           });
         } else {
+          item.clearCache();
           _.extend(tweenOpts, {
             opacity: 0
           });

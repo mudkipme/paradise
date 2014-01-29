@@ -23,4 +23,7 @@
     <li><a href="/record"><%= t('menu.record') %></a></li>
   </ul>
 </li>
+<% if (PARADISE.isAdmin) { %>
+  <li><a href="/admin"><%= t('menu.admin') %></a></li>
+<% } %>
 <li><a href="/help"><%= t('menu.help') %></a></li>

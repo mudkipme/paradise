@@ -7,6 +7,7 @@ var _ = require('underscore');
 var db = require('../common').baseData;
 var Pokemon = require('./pokemon');
 var Species = require('./species');
+var config = require('../../config.json');
 
 var locationCache = {};
 
@@ -150,10 +151,18 @@ var locationProto = {
       Species.pokemonId.bind(Species, encounter.pokemon_id)
 
       ,function(res, next){
+
+        // 2014 Lunar New Year Special Event
+        var holdItemId = null;
+        if (config.activity && _.contains(config.activity.heldPokemon, res.species_id)) {
+          holdItemId = _.sample(config.activity.heldItem);
+        }
+
         Pokemon.createPokemon({
           speciesNumber: res.species_id
           ,formIdentifier: res.form_identifier
           ,level: _.random(encounter.min_level, encounter.max_level)
+          ,holdItemId: holdItemId
         }, next);
       }
 

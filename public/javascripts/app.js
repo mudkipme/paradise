@@ -13,13 +13,14 @@ define([
   ,'views/alert'
   ,'views/modal'
   ,'models/trainer'
+  ,'models/admin-info'
   ,'collections/msgs'
   ,'collections/pokemart'
   ,'moment/lang/zh-cn'
   ,'moment/lang/zh-tw'
   ,'util'
 ], function($, _, Backbone, Marionette, AppBase, i18n, moment,
-  vent, Router, Controller, io, AlertView, ModalView, Trainer, Msgs, PokeMart){
+  vent, Router, Controller, io, AlertView, ModalView, Trainer, AdminInfo, Msgs, PokeMart){
 
   var App = new AppBase;
 
@@ -139,6 +140,7 @@ define([
     App.trainer = new Trainer(PARADISE.me);
     App.msgs = new Msgs;
     App.pokeMart = new PokeMart;
+    App.adminInfo = new AdminInfo;
 
     App.appRouter = new Router({
       controller: new Controller

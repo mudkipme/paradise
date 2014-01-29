@@ -396,4 +396,8 @@ var itemProto = {
 Item.usableEffects = ['hp', 'happiness', 'effort', 'level', 'evolution', 'forme'];
 Item.holdablePockets = ['misc', 'medicine', 'pokeballs', 'berries', 'mail'];
 
+Item.getItemNames = function(idList, callback){
+  db.all('SELECT id, identifier AS name FROM items WHERE id IN (' + idList.join(',') + ')', callback);
+};
+
 module.exports = Item;

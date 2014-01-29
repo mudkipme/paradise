@@ -10,7 +10,7 @@ var pokemonIdCache = {};
 var allFormsCache = null;
 
 // Get the Species object
-var Species = function(nationalNumber, form, callback) {
+var Species = function(nationalNumber, form, callback){
   if (!callback) {
     callback = form;
     form = null;

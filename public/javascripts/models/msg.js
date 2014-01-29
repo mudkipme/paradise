@@ -3,10 +3,14 @@ define([
   ,'underscore'
   ,'backbone'
   ,'i18next'
-], function($, _, Backbone, i18n){
+  ,'views/pokemon'
+], function($, _, Backbone, i18n, PokemonView){
+
+  var helpers = PokemonView.prototype.templateHelpers;
 
   var contentTemplates = {
     'gift-item': "<%= t('msg.gift-item', {sender: sender.name, number: relatedNumber, item: t('item:'+relatedItem.name)}) %>"
+    ,'event-pokemon': "<%= t('msg.event-pokemon', {pokemon: pokemonName(receiverPokemon)}) %>"
   };
 
   var Msg = Backbone.Model.extend({
@@ -26,7 +30,12 @@ define([
     ,content: function(){
       if (contentTemplates[this.get('type')]) {
         var render = _.template(contentTemplates[this.get('type')]);
-        return render(_.extend({t: i18n.t}, this.toJSON()));
+        return render(_.extend({
+          t: i18n.t
+          ,pokemonName: function(pokemon){
+            return helpers.pokemonName.apply({pokemon: pokemon});
+          }
+        }, this.toJSON()));
       }
     }
 

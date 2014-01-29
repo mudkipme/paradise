@@ -94,10 +94,11 @@ exports.withdraw = function(req, res){
 
 // Set nickname or tradable status
 exports.put = function(req, res){
-  if (typeof req.body.nickname === 'string') {
+  if (_.isString(req.body.nickname) && req.pokemon.originalTrainer
+    && req.trainer.equals(req.pokemon.originalTrainer)) {
     req.pokemon.nickname = req.body.nickname.substr(0, 12);
   }
-  if (typeof req.body.tradable !== 'undefined') {
+  if (!_.isUndefined(req.body.tradable)) {
     req.pokemon.tradable = Boolean(req.body.tradable);
   }
   req.pokemon.save(function(err){
