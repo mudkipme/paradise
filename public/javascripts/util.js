@@ -190,16 +190,16 @@ define([
     });
 
     // Synchronize ajax requests
-    Bakcbone.ajax = function(){
+    Backbone.ajax = function(){
       var args = arguments.length ? Array.prototype.slice.call(arguments, 0) : [];
-      if (Bakcbone._ajax) {
-        return Bakcbone._ajax.then(function(){
+      if (Backbone._ajax) {
+        return Backbone._ajax.then(function(){
           return $.ajax.apply($, args);
         });
       }
 
-      Bakcbone._ajax = $.ajax.apply($, args);
-      return Bakcbone._ajax;
+      Backbone._ajax = $.ajax.apply($, args);
+      return Backbone._ajax;
     };
 
     return this;
