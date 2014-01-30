@@ -22,12 +22,40 @@ define([
       me.sync(null, me, {
         url: '/api/admin/event-pokemon'
         ,type: 'POST'
-        ,data: params
         ,contentType: 'application/json'
         ,data: JSON.stringify(params)
         ,processData: false
         ,success: function(data){
-          me.trigger('gifted', params);
+          me.trigger('giftedPokemon', data);
+        }
+      });
+    }
+
+    ,giftItem: function(params){
+      var me = this;
+      me.sync(null, me, {
+        url: '/api/admin/event-item'
+        ,type: 'POST'
+        ,contentType: 'application/json'
+        ,data: JSON.stringify(params)
+        ,processData: false
+        ,success: function(data){
+          me.trigger('giftedItem', data);
+        }
+      });
+    }
+
+    ,sendMsg: function(params){
+      var me = this;
+
+      me.sync(null, me, {
+        url: '/api/admin/send-msg'
+        ,type: 'POST'
+        ,contentType: 'application/json'
+        ,data: JSON.stringify(params)
+        ,processData: false
+        ,success: function(data){
+          me.trigger('sentMsg', data);
         }
       });
     }

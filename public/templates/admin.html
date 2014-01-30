@@ -160,17 +160,17 @@
     <h3 class="panel-title">赠送道具</h3>
   </div>
   <div class="panel-body">
-    <form class="form-horizontal .gift-item">
+    <form class="form-horizontal gift-item">
       <div class="form-group">
         <label for="gift-item-trainer" class="col-sm-3 control-label">训练家名字</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" id="gift-item-trainer" placeholder="要赠送的训练家，多人用「,」隔开" />
+          <input type="text" class="form-control" name="trainer" id="gift-item-trainer" placeholder="要赠送的训练家，多人用「,」隔开" />
         </div>
       </div>
       <div class="form-group">
         <label for="gift-item-id" class="col-sm-3 control-label">赠送的道具</label>
         <div class="col-sm-8">
-          <select class="form-control" id="gift-item-id">
+          <select class="form-control" name="itemId" id="gift-item-id">
             <% _.each(items, function(item){ %>
               <option value="<%= item.id %>"><%= t('item:'+item.name) %></option>
             <% }) %>
@@ -180,13 +180,13 @@
       <div class="form-group">
         <label for="gift-item-number" class="col-sm-3 control-label">数量</label>
         <div class="col-sm-8">
-          <input type="number" class="form-control" id="gift-item-number" placeholder="数量" min="1" value="1" />
+          <input type="number" class="form-control" name="number" id="gift-item-number" placeholder="数量" min="1" value="1" />
         </div>
       </div>
       <div class="form-group">
         <label for="gift-item-message" class="col-sm-3 control-label">附言</label>
         <div class="col-sm-8">
-          <textarea class="form-control" rows="3" id="gift-item-message" placeholder="赠送道具的留言"></textarea>
+          <textarea class="form-control" rows="3" name="message" id="gift-item-message" placeholder="赠送道具的留言"></textarea>
         </div>
       </div>
 
@@ -204,23 +204,23 @@
     <h3 class="panel-title">发送消息</h3>
   </div>
   <div class="panel-body">
-    <form class="form-horizontal .send-msg">
+    <form class="form-horizontal send-msg">
       <div class="form-group">
         <label for="send-msg-trainer" class="col-sm-3 control-label">训练家名字</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" id="send-msg-trainer" placeholder="收到消息的训练家，多人用「,」隔开" />
+          <input type="text" class="form-control" name="trainer" id="send-msg-trainer" placeholder="收到消息的训练家，多人用「,」隔开" />
         </div>
       </div>
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
           <div class="checkbox">
             <label>
-              <input type="checkbox" id="send-msg-all"> 全部训练家
+              <input type="checkbox" name="allTrainer"> 全部训练家
             </label>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" id="send-msg-online"> 全部在线训练家
+              <input type="checkbox" name="onlineTrainer"> 全部在线训练家
             </label>
           </div>
         </div>
@@ -228,7 +228,7 @@
       <div class="form-group">
         <label for="send-msg-message" class="col-sm-3 control-label">发送的消息</label>
         <div class="col-sm-8">
-          <textarea class="form-control" rows="3" id="send-msg-message" placeholder="发送的消息"></textarea>
+          <textarea class="form-control" rows="3" name="message" id="send-msg-message" placeholder="发送的消息"></textarea>
         </div>
       </div>
 

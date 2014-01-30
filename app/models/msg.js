@@ -3,6 +3,7 @@ var _ = require('underscore');
 var mongoose = require('mongoose');
 var Item = require('./item');
 var io = require('../io');
+var config = require('../../config.json');
 var Schema = mongoose.Schema;
 
 var Status = { normal: 0, waiting: 1, accepted: 2, declined: 3, expired: 4 };
@@ -147,6 +148,17 @@ MsgSchema.statics.sendMsg = function(options, callback){
     callback(null, msg);
     io.emitTrainer(options.receiver, 'msg:new', msg);
   });
+};
+
+MsgSchema.methods.toJSON = function(options){
+  var res = mongoose.Document.prototype.toJSON.call(this, options);
+  if (res.sender && res.sender.id == config.admin.defaultOT) {
+    res.sender.name = '';
+  }
+  res.sender = _.pick(res.sender, 'id', 'name');
+  res.receiver = _.pick(res.receiver, 'id', 'name');
+
+  return res;
 };
 
 MsgSchema.index({ sender: 1, receiver: 1 });

@@ -108,10 +108,9 @@ define([
 
     ,admin: function(){
       if (App.adminInfo) {
-
+        App.mainRegion.show(new AdminView({model: App.adminInfo}));
+        App.adminInfo.fetch();
       }
-      App.mainRegion.show(new AdminView({model: App.adminInfo}));
-      App.adminInfo.fetch();
     }
 
     ,trainer: function(){

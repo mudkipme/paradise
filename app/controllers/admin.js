@@ -64,7 +64,7 @@ exports.eventPokemon = function(req, res){
   async.mapSeries(req.body.trainer, function(trainer, next){
 
     async.series({
-      trainer: Trainer.findByName.bind(Trainer, trainer.trim())
+      trainer: Trainer.findByName.bind(Trainer, trainer)
       ,pokemon: Pokemon.createPokemon.bind(Pokemon, opts)
       ,pokeBall: async.apply(Item, parseInt(req.body.pokeBall) || 'poke-ball')
       ,location: async.apply(Location, req.body.location || 'pokemon-event')
@@ -86,7 +86,7 @@ exports.eventPokemon = function(req, res){
           ,content: req.body.message
         }, function(err){
           if (err) return next(err);
-          next(null, ret.pokemon);
+          next(null, {pokemon: ret.pokemon, trainer: ret.trainer});
         });
       });
     });
@@ -94,5 +94,68 @@ exports.eventPokemon = function(req, res){
   }, function(err, results){
     if (err) return res.json(500, { error: err.message });
     res.json(results);
+  });
+};
+
+// Send event items to trainers
+exports.eventItem = function(req, res){
+  if (!_.isArray(req.body.trainer))
+    return res.json(400, {error: 'ERR_INVALID_PARAM'});
+
+  var itemId = parseInt(req.body.itemId), number = parseInt(req.body.number);
+
+  async.mapSeries(req.body.trainer, function(trainer, next){
+
+    Trainer.findByName(trainer, function(err, trainer){
+      if (err) return next(err);
+      async.series([
+        async.apply(Item, itemId)
+        ,trainer.addItem.bind(trainer, itemId, number)
+        ,Msg.sendMsg.bind(Msg, {
+          type: 'gift-item'
+          ,sender: config.admin.defaultOT
+          ,receiver: trainer
+          ,relatedItemId: itemId
+          ,relatedNumber: number
+          ,content: req.body.message
+        })
+      ], function(err, results){
+        if (err) return next(err);
+        next(null, {item: results[0], trainer: trainer, number: number});
+      });
+    });
+
+  }, function(err, results){
+    if (err) return res.json(500, { error: err.message });
+    res.json(results);
+  });
+};
+
+// Send messages to trainers
+exports.sendMsg = function(req, res){
+
+  var condition = {name: {'$in': req.body.trainer}};
+  Boolean(req.body.allTrainer) && (condition = {});
+  if (Boolean(req.body.onlineTrainer)) {
+    var onlines = _.map(_.compact(_.keys(io.sio.rooms)), function(id){
+      return id.substr(1);
+    });
+    condition = {_id: {'$in': onlines}};
+  };
+
+  Trainer.find(condition, function(err, trainers){
+    if (err) return res.json(500, { error: err.message });
+
+    async.mapSeries(trainers, function(trainer, next){
+      Msg.sendMsg({
+        type: 'message'
+        ,sender: config.admin.defaultOT
+        ,receiver: trainer
+        ,content: req.body.message
+      }, next);
+    }, function(err, results){
+      if (err) return res.json(500, { error: err.message });
+      res.json(results);
+    });
   });
 };

@@ -9,8 +9,9 @@ define([
   var helpers = PokemonView.prototype.templateHelpers;
 
   var contentTemplates = {
-    'gift-item': "<%= t('msg.gift-item', {sender: sender.name, number: relatedNumber, item: t('item:'+relatedItem.name)}) %>"
+    'gift-item': "<%= t('msg.gift-item', {sender: sender.name || t('app.pokemon-paradise'), number: relatedNumber, item: t('item:'+relatedItem.name)}) %>"
     ,'event-pokemon': "<%= t('msg.event-pokemon', {pokemon: pokemonName(receiverPokemon)}) %>"
+    ,'message': "<%= t('msg.message', {sender: sender.name || t('app.pokemon-paradise')}) %>"
   };
 
   var Msg = Backbone.Model.extend({

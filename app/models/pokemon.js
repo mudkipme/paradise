@@ -588,7 +588,7 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
       gender = Gender.female;
     } else {
       gender = opts.gender
-        || _.random(0, 7) < species.genderRadio ? Gender.female : Gender.male;
+        || (_.random(0, 7) < species.genderRadio ? Gender.female : Gender.male);
     }
 
     // Nature

@@ -2,7 +2,7 @@
   <span class="pull-right create-time" title="<%= moment(createTime).format('lll') %>"><%= moment(createTime).fromNow() %></span>
 
   <% if (type == 'gift-item') { %>
-    <%= t('msg.gift-item', {sender: sender.name, number: relatedNumber, item: t('item:'+relatedItem.name)}) %>
+    <%= t('msg.gift-item', {sender: sender.name || t('app.pokemon-paradise'), number: relatedNumber, item: t('item:'+relatedItem.name)}) %>
     <img class="item-img" src="<%= PARADISE.imgBase %>/items/<%= (relatedItem.name) %>.png" alt="<%= t('item:' + relatedItem.name) %>" />
 
   <% } else if (type == 'event-pokemon') { %>
@@ -11,11 +11,13 @@
       <img src="<%= spriteUrl(receiverPokemon) %>" alt="<%- pokemonName(receiverPokemon) %>" />
     </div>
 
+  <% } else if (type == 'message') { %>
+    <%= t('msg.message', {sender: sender.name || t('app.pokemon-paradise')}) %>
   <% } %>
 </h4>
 <p>
   <% if (type == 'gift-item') { %>
-    <%- content || type == 'gift-item' && t('item:description.' + relatedItem.name) %>
+    <%- content || t('item:description.' + relatedItem.name) %>
   <% } else { %>
     <%- content %>
   <% } %>

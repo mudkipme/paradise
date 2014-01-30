@@ -140,7 +140,10 @@ define([
     App.trainer = new Trainer(PARADISE.me);
     App.msgs = new Msgs;
     App.pokeMart = new PokeMart;
-    App.adminInfo = new AdminInfo;
+
+    if (PARADISE.isAdmin) {
+      App.adminInfo = new AdminInfo;
+    }
 
     App.appRouter = new Router({
       controller: new Controller

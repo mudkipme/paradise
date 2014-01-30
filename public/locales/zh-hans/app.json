@@ -146,7 +146,16 @@
     "received": "我收到的消息"
     ,"notification-title": "神奇宝贝乐园消息"
     ,"gift-item": "__sender__ 向你赠送了 __number__ 个 __item__"
-    ,"event-pokemon": "神奇宝贝乐园向你赠送了 __pokemon__！"
+    ,"event-pokemon": "神奇宝贝乐园 向你赠送了 __pokemon__"
+    ,"message": "__sender__ 向你发送了消息"
+  }
+  ,"admin": {
+    "gift-pokemon": "赠送神奇宝贝"
+    ,"gift-item": "赠送道具"
+    ,"send-msg": "发送消息"
+    ,"gift-pokemon-alert": "向 __trainer__ 赠送了 __pokemon__。"
+    ,"gift-item-alert": "向 __trainer__ 赠送了 __number__ 个 __item__。"
+    ,"send-msg-alert": "向 __trainer__ 发送了消息。"
   }
   ,"forme": {
     "a": "A"

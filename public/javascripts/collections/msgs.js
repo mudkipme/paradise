@@ -34,7 +34,7 @@ define([
     }
 
     ,totalPages: function(){
-      return Math.ceil(this.size() / this.pageSize);
+      return Math.ceil(this.total / this.pageSize);
     }
   });
 

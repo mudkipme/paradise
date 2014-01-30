@@ -37,7 +37,7 @@ define([
       this.ui.pagination.pagination(this.collection.page, this.collection.totalPages());
     }
 
-    ,switchPage: function(){
+    ,switchPage: function(e){
       e.preventDefault();
       var li = $(e.target).closest('li');
       if (li.hasClass('disabled') || li.hasClass('active')) {
