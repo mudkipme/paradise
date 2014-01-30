@@ -135,8 +135,8 @@ exports.eventItem = function(req, res){
 exports.sendMsg = function(req, res){
 
   var condition = {name: {'$in': req.body.trainer}};
-  Boolean(req.body.allTrainer) && (condition = {});
-  if (Boolean(req.body.onlineTrainer)) {
+  req.body.allTrainer && (condition = {});
+  if (req.body.onlineTrainer) {
     var onlines = _.map(_.compact(_.keys(io.sio.rooms)), function(id){
       return id.substr(1);
     });

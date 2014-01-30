@@ -78,6 +78,13 @@
     ,"hatch-wait": "这个神奇宝贝蛋距离孵化似乎还有一段时间。"
     ,"hatch-close": "蛋似乎在摇晃，距离孵化大概不远了。"
     ,"hatch-soon": "神奇宝贝蛋已经发出了响声，它马上就要孵出了！"
+    ,"gender": "性别"
+    ,"genderless": "无性别"
+    ,"forme": "型态"
+    ,"level": "等级"
+    ,"nickname": "昵称"
+    ,"location": "捕获地"
+    ,"individual": "个体值"
   }
   ,"action": {
     "send-pokemon-center": "送到神奇宝贝中心"
@@ -150,12 +157,22 @@
     ,"message": "__sender__ 向你发送了消息"
   }
   ,"admin": {
-    "gift-pokemon": "赠送神奇宝贝"
+    "paradise-info": "神奇宝贝乐园信息"
+    ,"gift-pokemon": "赠送神奇宝贝"
     ,"gift-item": "赠送道具"
     ,"send-msg": "发送消息"
     ,"gift-pokemon-alert": "向 __trainer__ 赠送了 __pokemon__。"
     ,"gift-item-alert": "向 __trainer__ 赠送了 __number__ 个 __item__。"
     ,"send-msg-alert": "向 __trainer__ 发送了消息。"
+    ,"online-trainer": "在线训练家"
+    ,"all-trainer": "全部训练家"
+    ,"total-pokemon": "累计神奇宝贝"
+    ,"trainer": "训练家名字"
+    ,"gift-trainer-placeholder": "要赠送的训练家，多人用「,」隔开"
+    ,"msg-trainer-placeholder": "收到消息的训练家，多人用「,」隔开"
+    ,"random": "随机"
+    ,"message": "发送的消息"
+    ,"owner": "收到者本人"
   }
   ,"forme": {
     "a": "A"
@@ -417,15 +434,15 @@
   }
   ,"roadmap": {
     "title": "正在开发中"
-    ,"timeline": "沟通广场预计将于 <strong>2014年寒假内</strong> 开放，请耐心等待。"
+    ,"timeline": "沟通广场预计将于 <strong>近日</strong> 开放，请耐心等待。"
     ,"daycare": "加入其他训练家的饲育屋功能预计将于 <strong>近日</strong> 开放，请耐心等待。"
     ,"trade": "通信交换预计将于 <strong>近日</strong> 开放，请耐心等待。"
     ,"trainer": "训练家卡片预计将于 <strong>近日</strong> 开放，请耐心等待。"
-    ,"battle": "对战塔预计将于 <strong>2014年初</strong> 开放，请耐心等待。"
-    ,"rank": "排行榜预计将于 <strong>2014年初</strong> 开放，请耐心等待。"
+    ,"battle": "对战塔预计将于 <strong>近日</strong> 开放，请耐心等待。"
+    ,"rank": "排行榜预计将于 <strong>近日</strong> 开放，请耐心等待。"
     ,"help": "在神奇宝贝乐园测试期间，请到神奇宝贝部落讨论区「V6测试版」寻求帮助。"
-    ,"migrate": "神奇传送预计将于 <strong>2014年初春时分</strong> 开放，请耐心等待。"
-    ,"record": "历史记录预计将于 <strong>2014年寒假内</strong> 开放，请耐心等待。"
+    ,"migrate": "神奇传送预计将于 <strong>近日</strong> 开放，请耐心等待。"
+    ,"record": "历史记录预计将于 <strong>近日</strong> 开放，请耐心等待。"
     ,"setting": "训练家设置预计将于 <strong>近日</strong> 开放，请耐心等待。"
   }
 }

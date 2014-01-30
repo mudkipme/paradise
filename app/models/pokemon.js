@@ -575,7 +575,7 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
   Species(opts.speciesNumber, opts.formIdentifier, function(err, species){
     if (err) return callback(err);
 
-    var gender, natureId, level = opts.level || 5,
+    var gender, natureId, level = opts.isEgg ? 1 : (opts.level || 5),
       experience = species.experience(level),
       individual = {}, effort = {};
 
@@ -586,9 +586,10 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
       gender = Gender.male;
     } else if (species.genderRadio == 8) {
       gender = Gender.female;
+    } else if (opts.gender > 0 && opts.gender != 3) {
+      gender = parseInt(opts.gender);
     } else {
-      gender = opts.gender
-        || (_.random(0, 7) < species.genderRadio ? Gender.female : Gender.male);
+      gender = _.random(0, 7) < species.genderRadio ? Gender.female : Gender.male;
     }
 
     // Nature

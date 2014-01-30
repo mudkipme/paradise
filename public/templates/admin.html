@@ -1,14 +1,14 @@
 <div class="panel panel-info">
   <div class="panel-heading">
-    <h3 class="panel-title">神奇宝贝乐园信息</h3>
+    <h3 class="panel-title"><%= t('admin.paradise-info') %></h3>
   </div>
   <div class="panel-body">
     <dl class="dl-horizontal paradise-info">
-      <dt>在线训练家</dt>
+      <dt><%= t('admin.online-trainer') %></dt>
       <dd><%= onlineCount %></dd>
-      <dt>累计训练家</dt>
+      <dt><%= t('admin.all-trainer') %></dt>
       <dd><%= trainerCount %></dd>
-      <dt>累计神奇宝贝</dt>
+      <dt><%= t('admin.total-pokemon') %></dt>
       <dd><%= pokemonCount %></dd>
     </dl>
   </div>
@@ -16,18 +16,18 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">赠送神奇宝贝</h3>
+    <h3 class="panel-title"><%= t('admin.gift-pokemon') %></h3>
   </div>
   <div class="panel-body">
     <form class="form-horizontal gift-pokemon">
       <div class="form-group">
-        <label for="gift-pokemon-trainer" class="col-sm-3 control-label">训练家名字</label>
+        <label for="gift-pokemon-trainer" class="col-sm-3 control-label"><%= t('admin.trainer') %></label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" name="trainer" id="gift-pokemon-trainer" placeholder="要赠送的训练家，多人用「,」隔开" />
+          <input type="text" class="form-control" name="trainer" id="gift-pokemon-trainer" placeholder="<%= t('admin.gift-trainer-placeholder') %>" />
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-pokemon-species" class="col-sm-3 control-label">赠送的神奇宝贝</label>
+        <label for="gift-pokemon-species" class="col-sm-3 control-label"><%= t('admin.gift-pokemon') %></label>
         <div class="col-sm-8">
           <select class="form-control" name="speciesNumber" id="gift-pokemon-species">
             <% _.each(forms, function(species){ %>
@@ -37,33 +37,33 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-pokemon-gender" class="col-sm-3 control-label">性别</label>
+        <label for="gift-pokemon-gender" class="col-sm-3 control-label"><%= t('stat.gender') %></label>
         <div class="col-sm-8">
           <select class="form-control" name="gender" id="gift-pokemon-gender">
-            <option value="">随机</option>
+            <option value=""><%= t('admin.random') %></option>
             <option value="<%= Gender.female %>">♀</option>
             <option value="<%= Gender.male %>">♂</option>
-            <option value="<%= Gender.genderless %>">无性别</option>
+            <option value="<%= Gender.genderless %>"><%= t('stat.genderless') %></option>
           </select>
         </div>
       </div>
       <div class="form-group gift-pokemon-form-line" style="display:none">
-        <label for="gift-pokemon-form" class="col-sm-3 control-label">神奇宝贝型态</label>
+        <label for="gift-pokemon-form" class="col-sm-3 control-label"><%= t('stat.forme') %></label>
         <div class="col-sm-8">
           <select class="form-control" id="gift-pokemon-form" name="formIdentifier"></select>
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-pokemon-level" class="col-sm-3 control-label">等级</label>
+        <label for="gift-pokemon-level" class="col-sm-3 control-label"><%= t('stat.level') %></label>
         <div class="col-sm-8">
-          <input type="number" class="form-control" name="level" id="gift-pokemon-level" placeholder="等级" max="100" min="1" value="5" />
+          <input type="number" class="form-control" name="level" id="gift-pokemon-level" placeholder="<%= t('stat.level') %>" max="100" min="1" value="5" pattern="[0-9]*" />
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-pokemon-nature" class="col-sm-3 control-label">性格</label>
+        <label for="gift-pokemon-nature" class="col-sm-3 control-label"><%= t('stat.nature') %></label>
         <div class="col-sm-8">
           <select class="form-control" name="natureId" id="gift-pokemon-nature">
-          <option value="">随机</option>
+          <option value=""><%= t('admin.random') %></option>
             <% _.each(natures, function(nature){ %>
               <option value="<%= nature.id %>"><%= t('nature.'+nature.name) %></option>
             <% }) %>
@@ -71,10 +71,10 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-pokemon-hold-item" class="col-sm-3 control-label">携带道具</label>
+        <label for="gift-pokemon-hold-item" class="col-sm-3 control-label"><%= t('stat.hold-item') %></label>
         <div class="col-sm-8">
           <select class="form-control" name="holdItemId" id="gift-pokemon-hold-item">
-            <option value="">无</option>
+            <option value=""><%= t('stat.none') %></option>
             <% _.each(items, function(item){ %>
               <option value="<%= item.id %>"><%= t('item:'+item.name) %></option>
             <% }) %>
@@ -82,7 +82,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-pokemon-poke-ball" class="col-sm-3 control-label">神奇宝贝球</label>
+        <label for="gift-pokemon-poke-ball" class="col-sm-3 control-label"><%= t('item:poke-ball') %></label>
         <div class="col-sm-8">
           <select class="form-control" name="pokeBall" id="gift-pokemon-poke-ball">
             <% _.each(pokeBalls, function(item){ %>
@@ -92,9 +92,9 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-pokemon-message" class="col-sm-3 control-label">附言</label>
+        <label for="gift-pokemon-message" class="col-sm-3 control-label"><%= t('admin.message') %></label>
         <div class="col-sm-8">
-          <textarea class="form-control" rows="3" name="message" id="gift-pokemon-message" placeholder="赠送神奇宝贝的留言"></textarea>
+          <textarea class="form-control" rows="3" name="message" id="gift-pokemon-message" placeholder="<%= t('admin.message') %>"></textarea>
         </div>
       </div>
 
@@ -102,53 +102,53 @@
         <div class="col-sm-offset-3 col-sm-9">
           <div class="checkbox">
             <label>
-              <input type="checkbox" name="isEgg" id="gift-pokemon-egg"> 神奇宝贝蛋
+              <input type="checkbox" name="isEgg" id="gift-pokemon-egg"> <%= t('stat.egg') %>
             </label>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" name="isShiny" id="gift-pokemon-shiny"> 异色神奇宝贝
+              <input type="checkbox" name="isShiny" id="gift-pokemon-shiny"> <%= t('stat.shiny') %>
             </label>
           </div>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="gift-pokemon-nickname" class="col-sm-3 control-label">昵称</label>
+        <label for="gift-pokemon-nickname" class="col-sm-3 control-label"><%= t('stat.nickname') %></label>
         <div class="col-sm-8">
           <input type="text" class="form-control" name="nickname" id="gift-pokemon-nickname" maxlength="12" />
         </div>
       </div>
 
       <div class="form-group">
-        <label for="gift-pokemon-ot" class="col-sm-3 control-label">初始训练家</label>
+        <label for="gift-pokemon-ot" class="col-sm-3 control-label"><%= t('stat.original-trainer') %></label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" name="originalTrainer" id="gift-pokemon-ot" placeholder="收到者本人" />
+          <input type="text" class="form-control" name="originalTrainer" id="gift-pokemon-ot" placeholder="<%= t('admin.owner') %>" />
         </div>
       </div>
 
       <div class="form-group">
-        <label for="gift-pokemon-location" class="col-sm-3 control-label">捕获地</label>
+        <label for="gift-pokemon-location" class="col-sm-3 control-label"><%= t('stat.location') %></label>
         <div class="col-sm-8">
           <input type="text" class="form-control" name="location" id="gift-pokemon-location" placeholder="<%= t('location:pokemon-event') %>" />
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-3 control-label">个体值</label>
+        <label class="col-sm-3 control-label"><%= t('stat.individual') %></label>
         <div class="col-sm-8">
-          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="hp" placeholder="<%= t('stat.hp') %>" />
-          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="attack" placeholder="<%= t('stat.attack') %>" />
-          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="defense" placeholder="<%= t('stat.defense') %>" />
-          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="special-attack" placeholder="<%= t('stat.special-attack') %>" />
-          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="special-defense" placeholder="<%= t('stat.special-defense') %>" />
-          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="speed" placeholder="<%= t('stat.speed') %>" />
+          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="hp" placeholder="<%= t('stat.hp') %>" pattern="[0-9]*" />
+          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="attack" placeholder="<%= t('stat.attack') %>" pattern="[0-9]*" />
+          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="defense" placeholder="<%= t('stat.defense') %>" pattern="[0-9]*" />
+          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="special-attack" placeholder="<%= t('stat.special-attack') %>" pattern="[0-9]*" />
+          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="special-defense" placeholder="<%= t('stat.special-defense') %>" pattern="[0-9]*" />
+          <input type="number" min="0" max="31" maxlength="2" class="form-control gift-pokemon-iv" data-stat="speed" placeholder="<%= t('stat.speed') %>" pattern="[0-9]*" />
         </div>
       </div>
 
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
-          <button type="submit" class="btn btn-primary">赠送神奇宝贝</button>
+          <button type="submit" class="btn btn-primary"><%= t('admin.gift-pokemon') %></button>
         </div>
       </div>
     </form>
@@ -157,18 +157,18 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">赠送道具</h3>
+    <h3 class="panel-title"><%= t('admin.gift-item') %></h3>
   </div>
   <div class="panel-body">
     <form class="form-horizontal gift-item">
       <div class="form-group">
-        <label for="gift-item-trainer" class="col-sm-3 control-label">训练家名字</label>
+        <label for="gift-item-trainer" class="col-sm-3 control-label"><%= t('admin.trainer') %></label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" name="trainer" id="gift-item-trainer" placeholder="要赠送的训练家，多人用「,」隔开" />
+          <input type="text" class="form-control" name="trainer" id="gift-item-trainer" placeholder="<%= t('admin.gift-trainer-placeholder') %>" />
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-item-id" class="col-sm-3 control-label">赠送的道具</label>
+        <label for="gift-item-id" class="col-sm-3 control-label"><%= t('admin.gift-item') %></label>
         <div class="col-sm-8">
           <select class="form-control" name="itemId" id="gift-item-id">
             <% _.each(items, function(item){ %>
@@ -178,21 +178,21 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-item-number" class="col-sm-3 control-label">数量</label>
+        <label for="gift-item-number" class="col-sm-3 control-label"><%= t('action.gift-number') %></label>
         <div class="col-sm-8">
-          <input type="number" class="form-control" name="number" id="gift-item-number" placeholder="数量" min="1" value="1" />
+          <input type="number" class="form-control" name="number" id="gift-item-number" placeholder="<%= t('action.gift-number') %>" min="1" value="1" pattern="[0-9]*" />
         </div>
       </div>
       <div class="form-group">
-        <label for="gift-item-message" class="col-sm-3 control-label">附言</label>
+        <label for="gift-item-message" class="col-sm-3 control-label"><%= t('admin.message') %></label>
         <div class="col-sm-8">
-          <textarea class="form-control" rows="3" name="message" id="gift-item-message" placeholder="赠送道具的留言"></textarea>
+          <textarea class="form-control" rows="3" name="message" id="gift-item-message" placeholder="<%= t('admin.message') %>"></textarea>
         </div>
       </div>
 
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
-          <button type="submit" class="btn btn-primary">赠送道具</button>
+          <button type="submit" class="btn btn-primary"><%= t('admin.gift-item') %></button>
         </div>
       </div>
     </form>
@@ -201,40 +201,40 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">发送消息</h3>
+    <h3 class="panel-title"><%= t('admin.send-msg') %></h3>
   </div>
   <div class="panel-body">
     <form class="form-horizontal send-msg">
       <div class="form-group">
-        <label for="send-msg-trainer" class="col-sm-3 control-label">训练家名字</label>
+        <label for="send-msg-trainer" class="col-sm-3 control-label"><%= t('admin.trainer') %></label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" name="trainer" id="send-msg-trainer" placeholder="收到消息的训练家，多人用「,」隔开" />
+          <input type="text" class="form-control" name="trainer" id="send-msg-trainer" placeholder="<%= t('admin.msg-trainer-placeholder') %>" />
         </div>
       </div>
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
           <div class="checkbox">
             <label>
-              <input type="checkbox" name="allTrainer"> 全部训练家
+              <input type="checkbox" name="allTrainer"> <%= t('admin.all-trainer') %>
             </label>
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox" name="onlineTrainer"> 全部在线训练家
+              <input type="checkbox" name="onlineTrainer"> <%= t('admin.online-trainer') %>
             </label>
           </div>
         </div>
       </div>
       <div class="form-group">
-        <label for="send-msg-message" class="col-sm-3 control-label">发送的消息</label>
+        <label for="send-msg-message" class="col-sm-3 control-label"><%= t('admin.message') %></label>
         <div class="col-sm-8">
-          <textarea class="form-control" rows="3" name="message" id="send-msg-message" placeholder="发送的消息"></textarea>
+          <textarea class="form-control" rows="3" name="message" id="send-msg-message" placeholder="<%= t('admin.message') %>"></textarea>
         </div>
       </div>
 
       <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
-          <button type="submit" class="btn btn-primary">发送消息</button>
+          <button type="submit" class="btn btn-primary"><%= t('admin.send-msg') %></button>
         </div>
       </div>
     </form>

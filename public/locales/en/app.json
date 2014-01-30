@@ -10,6 +10,7 @@
     ,"msg": "Message"
     ,"my-msg": "Notifications"
     ,"language": "Languages"
+    ,"admin": "System Manage"
   }
   ,"forum": {
     "apps": "Apps"
@@ -77,6 +78,13 @@
     ,"hatch-wait": "Wonder what's inside? It needs more time, though."
     ,"hatch-close": "It moves around inside sometimes. It must be close to hatching."
     ,"hatch-soon": "It's making sounds inside! It's going to hatch soon!"
+    ,"gender": "Gender"
+    ,"genderless": "Genderless"
+    ,"forme": "Forme"
+    ,"level": "Level"
+    ,"nickname": "Nickname"
+    ,"location": "Location"
+    ,"individual": "IVs"
   }
   ,"action": {
     "send-pokemon-center": "Send to Pokémon Center"
@@ -145,6 +153,26 @@
     "received": "Received Messages"
     ,"notification-title": "52Poké Paradise Notification"
     ,"gift-item": "__sender__ sent you __number__ __item__(s)"
+    ,"event-pokemon": "52Poké Paradise sent you __pokemon__"
+    ,"message": "__sender__ sent you a message"
+  }
+  ,"admin": {
+    "paradise-info": "52Poké Paradise Information"
+    ,"gift-pokemon": "Gift Pokémon"
+    ,"gift-item": "Gift Items"
+    ,"send-msg": "Send Message"
+    ,"gift-pokemon-alert": "Sent __trainer__ __pokemon__."
+    ,"gift-item-alert": "Sent __trainer__ __number__ __item__(s)."
+    ,"send-msg-alert": "Sent __trainer__ a message."
+    ,"online-trainer": "Online Trainers"
+    ,"all-trainer": "All Trainers"
+    ,"total-pokemon": "Total Pokémon"
+    ,"trainer": "Trainer Name"
+    ,"gift-trainer-placeholder": "Trainers' names, splitting by ','"
+    ,"msg-trainer-placeholder": "Trainers' names, splitting by ','"
+    ,"random": "Random"
+    ,"message": "Message"
+    ,"owner": "The receiver"
   }
   ,"forme": {
     "a": "A"
@@ -406,15 +434,15 @@
   }
   ,"roadmap": {
     "title": "In Development"
-    ,"timeline": "Amity Square will be available during <strong>Spring 2014</strong>. Thanks for your patience."
-    ,"daycare": "Day Care room sharing will be available <strong>later this month</strong>. Thanks for your patience."
-    ,"trade": "Trade Station will be available <strong>later this month</strong>. Thanks for your patience."
-    ,"trainer": "Trainer Card will be available <strong>later this month</strong>. Thanks for your patience."
-    ,"battle": "Battle Tower will be available <strong>at the beginning of 2014</strong>. Thanks for your patience."
-    ,"rank": "Rank will be available <strong>at the beginning of 2014</strong>. Thanks for your patience."
+    ,"timeline": "Amity Square will be available in near future. Thanks for your patience."
+    ,"daycare": "Day Care room sharing will be available in near future. Thanks for your patience."
+    ,"trade": "Trade Station will be available in near future. Thanks for your patience."
+    ,"trainer": "Trainer Card will be available in near future. Thanks for your patience."
+    ,"battle": "Battle Tower will be available in near future. Thanks for your patience."
+    ,"rank": "Rank will be available in near future. Thanks for your patience."
     ,"help": "Please visit 52Poké Forums for help."
-    ,"migrate": "Poké Transfer will be available <strong>by the end of January 2014</strong>. Thanks for your patience."
-    ,"record": "Records will be available during <strong>Spring 2014</strong>. Thanks for your patience."
-    ,"setting": "Trainer Settings will be available <strong>later this month</strong>. Thanks for your patience."
+    ,"migrate": "Poké Transfer will be available in near future. Thanks for your patience."
+    ,"record": "Records will be available during in near future. Thanks for your patience."
+    ,"setting": "Trainer Settings will be available in near future. Thanks for your patience."
   }
 }
