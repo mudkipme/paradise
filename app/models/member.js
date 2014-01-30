@@ -65,7 +65,6 @@ Member.prototype.getCheckIn = function(callback){
   var today = new time.Date();
   today.setTimezone('Asia/Shanghai');
   today.setHours(0, 0, 0, 0);
-
   db.query(
     db._('SELECT * FROM {prefix}sign_history WHERE userid = ? AND sign_time >= ?')
     ,[me.userid, Math.floor(today.getTime() / 1000)]
@@ -74,7 +73,7 @@ Member.prototype.getCheckIn = function(callback){
 
       callback(null, {
         checked: result.length > 0
-        ,postNum: result[0] && result[0].post_
+        ,postNum: result[0] && result[0].post_num
       });
     });
 };

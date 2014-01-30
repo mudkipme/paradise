@@ -117,6 +117,8 @@
     ,"buy-number": "购买数量"
     ,"use-done": "__pokemon__ 使用了 __item__。"
     ,"item-not-found": "背包里目前还没有__pocket__。"
+    ,"discount-coupon": "由于拥有特价券，此次购买半价优惠。"
+    ,"discount-coupon-intro": "今天签到并发帖后，之后购买道具可以获得半价优惠。"
   }
   ,"events": {
     "level-up": "__pokemon__ 等级上升到了 __level__ ！"

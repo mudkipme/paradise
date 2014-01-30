@@ -163,6 +163,7 @@
   ,"purple-gummi": "Purple Gummi"
   ,"wonder-gummi": "Wonder Gummi"
   ,"safari-ball": "Safari Ball"
+  ,"discount-coupon": "Discount Coupon"
   ,"description": {
    "sun-stone": "Can be used to evolve Sunkern and Gloom."
     ,"moon-stone": "Can be used to evolve Clefairy, Jigglypuff, Nidorino, Nidorina, and Skitty."
@@ -328,5 +329,6 @@
     ,"wonder-gummi": "Raise the IQ of a Pokémon, has a distinguished taste."
     ,"gracidea": "A flower mearning thankfulness. Allows Shaymin to change form."
     ,"safari-ball": "A special Poké Ball that is used only in the Great Marsh. It is decorated in a camouflage pattern."
+    ,"discount-coupon": "Used at any items in Poké Mart for a one-time 50% discount."
   }
 }

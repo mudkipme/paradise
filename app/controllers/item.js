@@ -96,35 +96,55 @@ exports.buy = function(req, res){
     if (err) return res.json(500, {error: err.message});
 
     var requiredMoney = number * config.pokemart[item.name];
+    var discount = 0;
 
-    if (!requiredMoney)
-      return res.json(403, {error: 'CANNOT_BUY_THIS_ITEM'});
+    var doBuy = function(){
+      if (!requiredMoney)
+        return res.json(403, {error: 'CANNOT_BUY_THIS_ITEM'});
 
-    if (req.member.money < requiredMoney)
-      return res.json(403, {error: 'NO_ENOUGH_MONEY'});
+      if (req.member.money < requiredMoney)
+        return res.json(403, {error: 'NO_ENOUGH_MONEY'});
 
-    var actions = [
-      req.trainer.addItem.bind(req.trainer, itemId, number)
-      ,req.member.addMoney.bind(req.member, -requiredMoney)
-    ];
+      var actions = [
+        req.trainer.addItem.bind(req.trainer, itemId, number)
+        ,req.member.addMoney.bind(req.member, -requiredMoney)
+      ];
 
-    // Gift a Permier Ball when buying more than 10 Poké Balls
-    if (item.name == 'poke-ball' && number >= 10) {
-      actions.push(function(next){
-        Item('premier-ball', function(err, premier){
-          req.trainer.addItem(premier, 1, next);
+      // Gift a Permier Ball when buying more than 10 Poké Balls
+      if (item.name == 'poke-ball' && number >= 10) {
+        actions.push(function(next){
+          Item('premier-ball', function(err, premier){
+            req.trainer.addItem(premier, 1, next);
+          });
+        });
+      }
+
+      async.series(actions, function(err, results){
+        if (err) return res.json(500, {error: err.message});
+        res.json({
+          id: item.id
+          ,item: item
+          ,price: config.pokemart[item.name]
+          ,number: req.trainer.hasItem(item.id)
+          ,discount: discount
         });
       });
-    }
+    };
 
-    async.series(actions, function(err, results){
-      if (err) return res.json(500, {error: err.message});
-      res.json({
-        id: item.id
-        ,item: item
-        ,price: config.pokemart[item.name]
-        ,number: req.trainer.hasItem(item.id)
+    // Discount coupon
+    if (req.trainer.hasItem(10019)) {
+      req.member.getCheckIn(function(err, check){
+        if (err) return res.json(500, {error: err.message});
+        if (check.checked && check.postNum > 0) {
+          discount = 1;
+          requiredMoney = Math.round(requiredMoney / 2);
+        } else {
+          discount = 2;
+        }
+        doBuy();
       });
-    });
+    } else {
+      doBuy();
+    }
   });
 };

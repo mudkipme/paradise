@@ -38,8 +38,8 @@ define([
         ,data: { number: number }
         ,processData: true
         ,success: function(data){
-          me.trigger('buy', me, number);
-          me.set(data);
+          me.trigger('buy', me, number, data.discount);
+          me.set(_.omit(data, 'discount'));
         }
       });
     }

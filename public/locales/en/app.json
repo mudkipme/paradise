@@ -117,6 +117,8 @@
     ,"buy-number": "Buy"
     ,"use-done": "__pokemon__ used __item__."
     ,"item-not-found": "You don't have __pocket__ in your bag."
+    ,"discount-coupon": "This purchase got 50% discount since you have the Discount Coupon."
+    ,"discount-coupon-intro": "After check-in and post in 52Poké Forums today, you will get 50% discount."
   }
   ,"events": {
     "level-up": "__pokemon__ is now Level __level__!"

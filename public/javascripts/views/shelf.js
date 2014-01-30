@@ -140,7 +140,7 @@ define([
     }
 
     // Finish buying an item
-    ,buyDone: function(item, number){
+    ,buyDone: function(item, number, discount){
       var me = this;
       var itemName = i18n.t('item:' + item.get('item').name);
       var message = i18n.t('action.buy-done', {item: itemName, number: number});
@@ -150,6 +150,12 @@ define([
           item: i18n.t('item:premier-ball')
           ,number: 1
         });
+      }
+
+      if (discount == 1) {
+        message += i18n.t('action.discount-coupon');
+      } else if (discount == 2) {
+        message += i18n.t('action.discount-coupon-intro');
       }
 
       me.pokeMart.talk(message, true, 'success');
