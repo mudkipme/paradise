@@ -159,3 +159,14 @@ exports.sendMsg = function(req, res){
     });
   });
 };
+
+exports.allTrainer = function(req, res){
+  var fields = (req.query.pick || 'name,id').split(',');
+
+  Trainer.find({}, fields.join(' '), function(err, trainers){
+    if (err) return res.json(500, { error: err.message });
+    res.json(_.map(trainers, function(trainer){
+      return _.pick(trainer, fields);
+    }));
+  });
+};

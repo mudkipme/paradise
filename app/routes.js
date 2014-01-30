@@ -94,4 +94,5 @@ module.exports = function(app){
   app.post('/api/admin/event-pokemon', isAdmin, admin.eventPokemon);
   app.post('/api/admin/event-item', isAdmin, admin.eventItem);
   app.post('/api/admin/send-msg', isAdmin, admin.sendMsg);
+  app.get('/api/admin/all-trainer', isAdmin, admin.allTrainer);
 };
