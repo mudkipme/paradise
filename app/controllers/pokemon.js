@@ -115,6 +115,9 @@ exports.holdItem = function(req, res){
   if (!req.trainer.hasItem(itemId))
     return res.json(403, { error: 'NO_ENOUGH_ITEM_IN_BAG' });
 
+  if (req.pokemon.isEgg) return res.json(403, { error: 'ERR_POKEMON_IS_EGG' });
+  if (req.pokemon.pokemonCenterTime) return res.json(403, { error: 'POKEMON_IN_PC' });
+
   Item(req.body.itemId, function(err, item){
     if (err) return res.json(500, { error: err.message });
 

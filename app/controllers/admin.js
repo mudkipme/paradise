@@ -108,6 +108,8 @@ exports.eventItem = function(req, res){
 
     Trainer.findByName(trainer, function(err, trainer){
       if (err) return next(err);
+      if (!trainer) return next(null, null);
+
       async.series([
         async.apply(Item, itemId)
         ,trainer.addItem.bind(trainer, itemId, number)
