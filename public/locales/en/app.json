@@ -10,7 +10,6 @@
     ,"msg": "Message"
     ,"my-msg": "Notifications"
     ,"language": "Languages"
-    ,"admin": "System Manage"
   }
   ,"forum": {
     "apps": "Apps"
@@ -51,6 +50,7 @@
     ,"poke-transfer": "Poké Transfer"
     ,"trainer-setting": "Trainer Settings"
     ,"record": "Records"
+    ,"admin": "System Manage"
   }
   ,"stat": {
     "nature": "Nature"
@@ -85,6 +85,11 @@
     ,"nickname": "Nickname"
     ,"location": "Location"
     ,"individual": "IVs"
+    ,"timezone": "Time Zone"
+    ,"region-code": "Region Code"
+    ,"longitude": "Longitude"
+    ,"latitude": "Latitude"
+    ,"unknown": "Unknown"
   }
   ,"action": {
     "send-pokemon-center": "Send to Pokémon Center"
@@ -119,6 +124,10 @@
     ,"item-not-found": "You don't have __pocket__ in your bag."
     ,"discount-coupon": "This purchase got 50% discount since you have the Discount Coupon."
     ,"discount-coupon-intro": "After check-in and post in 52Poké Forums today, you will get 50% discount."
+    ,"update-location": "Update Location"
+    ,"update-location-done": "Your location information is updated."
+    ,"update-location-fail": "Failed to update your location information, please use a mobile device and try again."
+    ,"accept-battle": "Accept Battle"
   }
   ,"events": {
     "level-up": "__pokemon__ is now Level __level__!"

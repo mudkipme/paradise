@@ -17,10 +17,11 @@ define([
   ,'views/intro'
   ,'views/msg-list'
   ,'views/admin'
+  ,'views/setting'
 ], function(Marionette, vent, io, NavBarView, MenuView, HomeView, PartyView
   , BagView, PokeMartView, StorageView, WorldView, RegionView
   , EncounterView, PokedexView, DayCareView, IntroView, MsgListView
-  , AdminView){
+  , AdminView, SettingView){
 
   // Avoid circular dependencies
   var App = null;
@@ -113,6 +114,11 @@ define([
       }
     }
 
+    ,setting: function(){
+      App.mainRegion.show(new SettingView({model: App.trainer}));
+      App.trainer.fetch();
+    }
+
     ,trainer: function(){
       vent.trigger('roadmap', 'trainer', true);
     }
@@ -135,10 +141,6 @@ define([
 
     ,migrate: function(){
       vent.trigger('roadmap', 'migrate', true);
-    }
-
-    ,setting: function(){
-      vent.trigger('roadmap', 'setting', true);
     }
 
     ,record: function(){

@@ -1,0 +1,36 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><%= t('menu.trainer-setting') %></h3>
+  </div>
+  <div class="panel-body">
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="col-sm-3 control-label"><%= t('action.accept-battle') %></label>
+        <div class="col-sm-8">
+          <input class="accept-battle" type="checkbox" <% if (acceptBattle) {%>checked=""<%}%> />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label"><%= t('stat.timezone') %></label>
+        <div class="col-sm-8"><%= realWorld.timezoneId %></div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label"><%= t('stat.region-code') %></label>
+        <div class="col-sm-8"><%= realWorld.countryCode || t('stat.unknown') %></div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label"><%= t('stat.longitude') %></label>
+        <div class="col-sm-8"><%= realWorld.longitude ? realWorld.longitude.toFixed(7) : t('stat.unknown') %></div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-3 control-label"><%= t('stat.latitude') %></label>
+        <div class="col-sm-8"><%= realWorld.latitude ? realWorld.latitude.toFixed(7) : t('stat.unknown') %></div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+          <button class="btn update-location"><%= t('action.update-location') %></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

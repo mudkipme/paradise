@@ -85,6 +85,11 @@
     ,"nickname": "暱稱"
     ,"location": "捕獲地"
     ,"individual": "個體值"
+    ,"timezone": "時區"
+    ,"region-code": "地區代號"
+    ,"longitude": "經度"
+    ,"latitude": "緯度"
+    ,"unknown": "未知"
   }
   ,"action": {
     "send-pokemon-center": "送到神奇寶貝中心"
@@ -119,6 +124,10 @@
     ,"item-not-found": "背包裡目前還沒有__pocket__。"
     ,"discount-coupon": "由於擁有特價券，此次購買半價優惠。"
     ,"discount-coupon-intro": "今天簽到併發帖後，之後購買道具可以獲得半價優惠。"
+    ,"update-location": "更新地點信息"
+    ,"update-location-done": "成功更新了地點信息。"
+    ,"update-location-fail": "更新地點信息失敗，請使用移動設備打開神奇寶貝樂園並重試。"
+    ,"accept-battle": "接受對戰請求"
   }
   ,"events": {
     "level-up": "__pokemon__ 等級上升到了 __level__ ！"

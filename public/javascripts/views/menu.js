@@ -15,6 +15,10 @@ define([
     ,template: _.template(menuTemplate)
     ,templateHelpers: { t: i18n.t }
 
+    ,options: {
+      disableUpdate: false
+    }
+
     ,events: {
       'click a[href]': 'navigate'
     }
@@ -25,7 +29,9 @@ define([
 
     ,navigate: function(e){
       e.preventDefault();
+      this.options.disableUpdate = true;
       Backbone.history.navigate(e.target.pathname, {trigger: true});
+      this.options.disableUpdate = false;
     }
 
     ,update: function(router, route){
@@ -33,10 +39,11 @@ define([
       path = path && path.split('/')[0];
       
       this.$('.selected').removeClass('selected');
-      this.$('a[href="/' + path + '"]')
-      .addClass('selected')
-      .closest('.collapse')
-      .prev().trigger('click');
+      var item = this.$('a[href="/' + path + '"]').addClass('selected');
+
+      if (!this.options.disableUpdate) {
+        item.closest('.collapse').prev().trigger('click');
+      }
     }
   });
   

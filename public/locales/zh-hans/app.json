@@ -85,6 +85,11 @@
     ,"nickname": "昵称"
     ,"location": "捕获地"
     ,"individual": "个体值"
+    ,"timezone": "时区"
+    ,"region-code": "地区代号"
+    ,"longitude": "经度"
+    ,"latitude": "纬度"
+    ,"unknown": "未知"
   }
   ,"action": {
     "send-pokemon-center": "送到神奇宝贝中心"
@@ -119,6 +124,10 @@
     ,"item-not-found": "背包里目前还没有__pocket__。"
     ,"discount-coupon": "由于拥有特价券，此次购买半价优惠。"
     ,"discount-coupon-intro": "今天签到并发帖后，之后购买道具可以获得半价优惠。"
+    ,"update-location": "更新地点信息"
+    ,"update-location-done": "成功更新了地点信息。"
+    ,"update-location-fail": "更新地点信息失败，请使用移动设备打开神奇宝贝乐园并重试。"
+    ,"accept-battle": "接受对战请求"
   }
   ,"events": {
     "level-up": "__pokemon__ 等级上升到了 __level__ ！"
