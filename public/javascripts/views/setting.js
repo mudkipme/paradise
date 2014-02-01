@@ -33,7 +33,7 @@ define([
     }
 
     ,locationFail: function(e){
-      me.$('.update-location').prop('disabled', false);
+      this.$('.update-location').prop('disabled', false);
       vent.trigger('alert', {
         type: 'warning'
         ,title: i18n.t('action.update-location')
@@ -42,7 +42,7 @@ define([
     }
 
     ,locationSuccess: function(e){
-      me.$('.update-location').prop('disabled', false);
+      this.$('.update-location').prop('disabled', false);
       vent.trigger('alert', {
         type: 'success'
         ,title: i18n.t('action.update-location')
