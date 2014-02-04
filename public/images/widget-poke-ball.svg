@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   width="164"
+   height="164">
+  <g
+     id="layer1"
+     transform="translate(76,-445)">
+    <path 
+       style="fill:#b80e11;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;opacity:0.8"
+       d="M 5.71428,445.06978 C -39.32237,445.06978 -75.87946,481.59563 -75.87947,526.63228 C -75.87947,571.66893 -39.32237,608.22602 5.71428,608.22603 C 50.75093,608.22603 87.30802,571.66893 87.30803,526.63228 C 87.30803,481.59563 50.75093,445.06978 5.71428,445.06978 z M 5.71428,502.22603 C 19.2012,502.22602 30.15179,513.14534 30.15178,526.63228 C 30.15178,540.11919 19.20119,551.06977 5.71428,551.06978 C -7.77263,551.06978 -18.72324,540.11917 -18.72322,526.63228 C -18.72322,513.14536 -7.77264,502.22604 5.71428,502.22603 z M -63.44197,531.88228 L -29.25447,531.88228 C -26.72709,548.91582 -12.01867,561.97603 5.71428,561.97603 C 23.44724,561.97603 38.15565,548.91583 40.68303,531.88228 L 74.87053,531.88228 C 72.18054,567.72289 42.23882,596.00728 5.71428,596.00728 C -30.81025,596.00725 -60.75199,567.72287 -63.44197,531.88228 z"
+       id="path3577"
+       />
+  </g>
+</svg>

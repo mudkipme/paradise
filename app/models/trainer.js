@@ -7,6 +7,7 @@ var time = require('time');
 var Species = require('./species');
 var Pokemon = require('./pokemon');
 var Msg = require('./msg');
+var Log = require('./log');
 var config = require('../../config.json');
 
 var Schema = mongoose.Schema;
@@ -60,6 +61,11 @@ var TrainerSchema = new Schema({
   battleTime:       { type: Number, default: 0 },
   battleWin:        { type: Number, default: 0 },
   tradeTime:        { type: Number, default: 0 },
+  catchTime:        { type: Number, default: 0 },
+  eventPokemonTime: { type: Number, default: 0 },
+  eventItemTime:    { type: Number, default: 0 },
+  hatchTime:        { type: Number, default: 0 },
+  evolveTime:       { type: Number, default: 0 },
   lastLogin:        Date,
   todayLuck:        Number,
   battlePoint:      { type: Number, default: 0 }
@@ -272,6 +278,8 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
       me.save(function(err){
         if (err) return callback(err);
         callback(null, slot);
+
+        me.log('catch', {pokemon: pokemon});
       });
     });
   });
@@ -446,6 +454,34 @@ TrainerSchema.methods.toJSON = function(options){
   var res = mongoose.Document.prototype.toJSON.call(this, options);
   res.localTime = this.localTime.toDateString() + ' ' + this.localTime.toLocaleTimeString();
   return _.omit(res, ['pokedexHex', 'storage', 'storagePokemon', 'bag', 'todayLuck']);
+};
+
+// Save a log to me
+TrainerSchema.methods.log = function(type, attrs){
+  attrs = {
+    type: type
+    ,trainer: me
+    ,params: attrs || {}
+  };
+
+  if (attrs.params.relatedTrainer) {
+    attrs.relatedTrainer = attrs.params.relatedTrainer;
+    delete attrs.params.relatedTrainer;
+  }
+
+  var keyMap = {
+    'hatch': 'hatchTime'
+    ,'evolve': 'evolveTime'
+    ,'catch': 'catchTime'
+    ,'event-item': 'eventItemTime'
+    ,'event-pokemon': 'eventPokemonTime'
+  };
+
+  if (keyMap[type]) {
+    attrs.key = type;
+  }
+
+  Log.addLog(attrs);
 };
 
 // Find trainer by name, and init necessary information

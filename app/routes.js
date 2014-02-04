@@ -19,7 +19,7 @@ var defaults = [auth.login, auth.trainer];
 var isSelf = [auth.login, auth.trainer, auth.isSelf];
 var page = [auth.login, auth.trainer, auth.locale];
 var myPokemon = [auth.login, auth.trainer, pm.myPokemon];
-var isAdmin = [auth.login, auth.isAdmin];
+var isAdmin = [auth.login, auth.trainer, auth.isAdmin];
 
 module.exports = function(app){
   app.get('/', page, index.index);

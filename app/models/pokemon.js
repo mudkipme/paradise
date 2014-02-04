@@ -392,57 +392,44 @@ PokemonSchema.methods.initData = function(trainer, callback){
   }
   if (me._inited) return callback(null, me);
 
-  var inits = {
-    species: async.apply(Species, me.speciesNumber, me.formIdentifier)
-    ,nature: async.apply(Nature, me.natureId)
-  };
+  var inits = [];
 
-  if (me.pokeBallId) {
-    inits.pokeBall = async.apply(Item, me.pokeBallId);
-  }
-
-  if (me.holdItemId) {
-    inits.holdItem = async.apply(Item, me.holdItemId);
-  }
+  inits.push(function(next){
+    Pokemon.initPokemon(me, function(err, results){
+      if (err) return next(err);
+      me._species = results.species;
+      me._nature = results.nature;
+      me._pokeBall = results.pokeBall;
+      me._holdItem = results.holdItem;
+      next();
+    });
+  });
 
   if (me.trainer && trainer) {
-    inits.trainer = me.populate.bind(me, 'trainer', _.isString(trainer) ? trainer : true);
-  }
-
-  if (me.hatchRate == 'hatched') {
-    inits.hatch = function(next){
-      me.isEgg = false;
-      me.save(next);
-    };
+    inits.push(me.populate.bind(me, 'trainer', _.isString(trainer) ? trainer : true));
   }
 
   if (me.originalTrainer) {
-    inits.originalTrainer = me.populate.bind(me, 'originalTrainer', 'name');
+    inits.push(me.populate.bind(me, 'originalTrainer', 'name'));
   }
 
   if (me.pokemonCenter && !me.pokemonCenterTime) {
-    inits.pokemonCenter = function(next){
+    inits.push(function(next){
       me.pokemonCenter = null;
       me.lostHp = 0;
       me.save(next);
-    };
+    });
   }
 
   async.series(inits, function(err, results){
     if (err) return callback(err);
-    me._species = results.species;
-    me._nature = results.nature;
-    me._pokeBall = results.pokeBall;
-    me._holdItem = results.holdItem;
     me._inited = true;
 
     // Hatch the Pokémon Egg!
     if (me.hatchRate == 'hatched') {
       me.isEgg = false;
-      me.save(function(err){
-        if (err) return callback(err);
-        callback(null, me);
-      });
+      me.save(callback);
+      me.trainer.log('hatch', {pokemon: me});
     } else {
       callback(null, me);
     }
@@ -541,6 +528,7 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
   if (!resultNumber) return callback(null);
 
   // Evolve this Pokémon
+  var before = me.toObject();
   me.speciesNumber = resultNumber;
   Species(me.speciesNumber, me.formIdentifier, function(err, species){
     if (err) return callback(err);
@@ -552,6 +540,7 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
       me.trainer.save(function(err){
         if (err) return callback(err);
         callback(null, {type: 'evolution', value: me.species.name});
+        me.trainer.log('evolve', {pokemon: me});
       });
     });
   });
@@ -633,6 +622,24 @@ PokemonSchema.statics.createPokemon = function(opts, callback){
 
     callback(null, pokemon);
   });
+};
+
+// Init a Pokémon JSON object
+PokemonSchema.statics.initPokemon = function(pokemon, callback){
+  var inits = {
+    species: async.apply(Species, pokemon.speciesNumber, pokemon.formIdentifier)
+    ,nature: async.apply(Nature, pokemon.natureId)
+  };
+
+  if (pokemon.pokeBallId) {
+    inits.pokeBall = async.apply(Item, pokemon.pokeBallId);
+  }
+
+  if (pokemon.holdItemId) {
+    inits.holdItem = async.apply(Item, pokemon.holdItemId);
+  }
+
+  async.series(inits, callback);
 };
 
 PokemonSchema.index({ trainer: 1 });

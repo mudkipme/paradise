@@ -87,6 +87,7 @@ exports.eventPokemon = function(req, res){
         }, function(err){
           if (err) return next(err);
           next(null, {pokemon: ret.pokemon, trainer: ret.trainer});
+          ret.trainer.log('event-pokemon', {pokemon: ret.pokemon, relatedTrainer: req.trainer});
         });
       });
     });
@@ -124,6 +125,7 @@ exports.eventItem = function(req, res){
       ], function(err, results){
         if (err) return next(err);
         next(null, {item: results[0], trainer: trainer, number: number});
+        ret.trainer.log('event-item', {itemId: itemId, number: number, relatedTrainer: req.trainer});
       });
     });
 

@@ -80,6 +80,7 @@ exports.gift = function(req, res){
         ,item: results[0]
         ,number: req.trainer.hasItem(itemId)
       });
+      req.trainer.log('gift-item', {relatedTrainer: trainer, itemId: itemId, number: number});
     });
   });
 };
@@ -128,6 +129,7 @@ exports.buy = function(req, res){
           ,number: req.trainer.hasItem(item.id)
           ,discount: discount
         });
+        req.trainer.log('buy-item', {itemId: itemId, number: number});
       });
     };
 

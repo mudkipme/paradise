@@ -136,6 +136,7 @@ exports.holdItem = function(req, res){
       if (err) return res.json(500, { error: err.message });
       res.json(req.pokemon);
       io.emit(req, 'pokemon:change', req.pokemon);
+      req.trainer.log('hold-item', {pokemon: req.pokemon, itemId: itemId});
     });
   });
 };
@@ -152,6 +153,7 @@ exports.takeItem = function(req, res){
     if (err) return res.json(500, { error: err.message });
     res.json(req.pokemon);
     io.emit(req, 'pokemon:change', req.pokemon);
+    req.trainer.log('take-item', {pokemon: req.pokemon, itemId: itemId});
   });
 };
 
@@ -178,6 +180,8 @@ exports.useItem = function(req, res){
   if (!req.trainer.hasItem(itemId))
     return res.json(403, {error: 'NO_ENOUGH_ITEM_IN_BAG'});
 
+  var before = req.pokemon.toObject();
+
   Item(itemId, function(err, item){
     if (err) return res.json(500, {error: err.message});
 
@@ -193,6 +197,7 @@ exports.useItem = function(req, res){
       });
 
       io.emit(req, 'pokemon:change', req.pokemon);
+      req.trainer.log('use-item', {before: before, pokemon: req.pokemon, itemId: itemId});
     });
   });
 };
