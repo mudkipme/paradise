@@ -167,6 +167,22 @@
     ,"event-pokemon": "神奇宝贝乐园 向你赠送了 __pokemon__"
     ,"message": "__sender__ 向你发送了消息"
   }
+  ,"log": {
+    "event-pokemon": "收到了神奇宝贝乐园赠送的 __pokemon__"
+    ,"event-pokemon-related": "向 __trainer__ 赠送了 __pokemon__"
+    ,"event-item": "收到了神奇宝贝乐园赠送的 __number__ 个 __item__"
+    ,"event-item-related": "向 __trainer__ 赠送了 __number__ 个 __item__"
+    ,"catch": "在 __location__ 收服了 __pokemon__，等级为 __level__"
+    ,"evolve": "__before__ 进化成为了 __pokemon__"
+    ,"begin": "和 __pokemon__ 一起开始冒险"
+    ,"buy-item": "购买了 __number__ 个 __item__"
+    ,"gift-item": "向 __trainer__ 赠送了 __number__ 个 __item__"
+    ,"gift-item-related": "收到了 __trainer__ 赠送的 __number__ 个 __item__"
+    ,"hold-item": "给 __pokemon__ 带上了 __item__"
+    ,"take-item": "从 __pokemon__ 取下了 __item__"
+    ,"use-item": "__pokemon__ 使用了 __item__"
+    ,"set-location": "修改了地点信息，经度为 __longitude__，纬度为 __latitude__"
+  }
   ,"admin": {
     "paradise-info": "神奇宝贝乐园信息"
     ,"gift-pokemon": "赠送神奇宝贝"

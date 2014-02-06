@@ -125,7 +125,7 @@ exports.eventItem = function(req, res){
       ], function(err, results){
         if (err) return next(err);
         next(null, {item: results[0], trainer: trainer, number: number});
-        ret.trainer.log('event-item', {itemId: itemId, number: number, relatedTrainer: req.trainer});
+        trainer.log('event-item', {itemId: itemId, number: number, relatedTrainer: req.trainer});
       });
     });
 

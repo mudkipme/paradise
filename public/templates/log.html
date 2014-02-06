@@ -1,0 +1,47 @@
+<h4 class="log-title">
+  <% if (type == 'event-pokemon') { %>
+    <% if (related) { %>
+      <%= t('log.event-pokemon-related', {trainer: trainer.name, pokemon: pokemonName(params.pokemon)}) %>
+    <% } else { %>
+      <%= t('log.event-pokemon', {pokemon: pokemonName(params.pokemon)}) %>
+    <% } %>
+  <% } else if (type == 'event-item') { %>
+    <% if (related) { %>
+      <%= t('log.event-item-related', {trainer: trainer.name, item: t('item:' + params.item.name), number: params.number}) %>
+    <% } else { %>
+      <%= t('log.event-item', {item: t('item:' + params.item.name), number: params.number}) %>
+    <% } %>
+  <% } else if (type == 'catch') { %>
+    <%= t('log.catch', {location: t('location:' + params.pokemon.meetPlaceIndex), level: params.pokemon.meetLevel, pokemon: pokemonName(params.pokemon)}) %>
+  <% } else if (type == 'evolve') { %>
+    <%= t('log.evolve', {before: pokemonName(params.before), pokemon: pokemonName(params.pokemon)}) %>
+  <% } else if (type == 'begin') { %>
+    <%= t('log.begin', {pokemon: pokemonName(params.pokemon)}) %>
+  <% } else if (type == 'buy-item') { %>
+    <%= t('log.buy-item', {item: t('item:' + params.item.name), number: params.number}) %>
+  <% } else if (type == 'gift-item') { %>
+    <% if (related) { %>
+      <%= t('log.gift-item-related', {trainer: trainer.name, item: t('item:' + params.item.name), number: params.number}) %>
+    <% } else { %>
+      <%= t('log.gift-item', {trainer: relatedTrainer.name, item: t('item:' + params.item.name), number: params.number}) %>
+    <% } %>
+  <% } else if (type == 'hold-item') { %>
+    <%= t('log.hold-item', {item: t('item:' + params.item.name), pokemon: pokemonName(params.pokemon)}) %>
+  <% } else if (type == 'take-item') { %>
+    <%= t('log.take-item', {item: t('item:' + params.item.name), pokemon: pokemonName(params.pokemon)}) %>
+  <% } else if (type == 'set-location') { %>
+    <%= t('log.set-location', {longitude: params.longitude.toFixed(7), latitude: params.latitude.toFixed(7)}) %>
+  <% } %>
+
+  <% if (params.item) { %>
+    <img class="item-img" src="<%= PARADISE.imgBase %>/items/<%= (params.item.name) %>.png" alt="<%= t('item:' + params.item.name) %>" />
+  <% } %>
+  <span class="label label-info create-time" title="<%= moment(createTime).format('lll') %>"><%= moment(createTime).fromNow() %></span>
+</h4>
+<p>
+  <% if (params.pokemon) { %>
+    <div class="sprite">
+      <img src="<%= spriteUrl(params.pokemon) %>" alt="<%- pokemonName(params.pokemon) %>" />
+    </div>
+  <% } %>
+</p>

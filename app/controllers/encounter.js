@@ -113,6 +113,9 @@ exports.catch = function(req, res){
     async.series(actions, function(err){
       if (err) return res.json(500, {error: err.message});
       res.json(result);
+      if (shakeResult == 4) {
+        req.trainer.log('catch', {pokemon: pokemon});
+      }
     });
   });
 };

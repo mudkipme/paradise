@@ -7,15 +7,17 @@
 
   <% } else if (type == 'event-pokemon') { %>
     <%= t('msg.event-pokemon', {pokemon: pokemonName(receiverPokemon)}) %>
-    <div class="sprite">
-      <img src="<%= spriteUrl(receiverPokemon) %>" alt="<%- pokemonName(receiverPokemon) %>" />
-    </div>
 
   <% } else if (type == 'message') { %>
     <%= t('msg.message', {sender: sender.name || t('app.pokemon-paradise')}) %>
   <% } %>
 </h4>
 <p>
+  <% if (type == 'event-pokemon') { %>
+    <div class="sprite">
+      <img src="<%= spriteUrl(receiverPokemon) %>" alt="<%- pokemonName(receiverPokemon) %>" />
+    </div>
+  <% } %>
   <% if (type == 'gift-item') { %>
     <%- content || t('item:description.' + relatedItem.name) %>
   <% } else { %>

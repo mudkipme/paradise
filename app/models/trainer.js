@@ -62,8 +62,6 @@ var TrainerSchema = new Schema({
   battleWin:        { type: Number, default: 0 },
   tradeTime:        { type: Number, default: 0 },
   catchTime:        { type: Number, default: 0 },
-  eventPokemonTime: { type: Number, default: 0 },
-  eventItemTime:    { type: Number, default: 0 },
   hatchTime:        { type: Number, default: 0 },
   evolveTime:       { type: Number, default: 0 },
   lastLogin:        Date,
@@ -270,16 +268,14 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
     pokemon.meetLevel = pokemon.level;
     pokemon.meetPlaceIndex = _.isString(location) ? location : location.name;
 
-
     pokemon.save(function(err){
       if (err) return callback(err);
 
       me.setPokedexCaught(pokemon);
+      me.catchTime++;
       me.save(function(err){
         if (err) return callback(err);
         callback(null, slot);
-
-        me.log('catch', {pokemon: pokemon});
       });
     });
   });
@@ -319,6 +315,7 @@ TrainerSchema.methods.setLocation = function(latitude, longitude, callback){
     me.realWorld.timezoneId = tz.timezoneId;
     me.realWorld.countryCode = tz.countryCode;
     me.save(callback);
+    me.log('set-location', me.realWorld);
   });
 };
 
@@ -460,7 +457,7 @@ TrainerSchema.methods.toJSON = function(options){
 TrainerSchema.methods.log = function(type, attrs){
   attrs = {
     type: type
-    ,trainer: me
+    ,trainer: this
     ,params: attrs || {}
   };
 
@@ -472,9 +469,6 @@ TrainerSchema.methods.log = function(type, attrs){
   var keyMap = {
     'hatch': 'hatchTime'
     ,'evolve': 'evolveTime'
-    ,'catch': 'catchTime'
-    ,'event-item': 'eventItemTime'
-    ,'event-pokemon': 'eventPokemonTime'
   };
 
   if (keyMap[type]) {

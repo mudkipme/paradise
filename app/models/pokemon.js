@@ -528,7 +528,7 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
   if (!resultNumber) return callback(null);
 
   // Evolve this Pokémon
-  var before = me.toObject();
+  var before = me.toObject({depopulate: true});
   me.speciesNumber = resultNumber;
   Species(me.speciesNumber, me.formIdentifier, function(err, species){
     if (err) return callback(err);
@@ -540,7 +540,7 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
       me.trainer.save(function(err){
         if (err) return callback(err);
         callback(null, {type: 'evolution', value: me.species.name});
-        me.trainer.log('evolve', {pokemon: me});
+        me.trainer.log('evolve', {pokemon: me, before: before});
       });
     });
   });

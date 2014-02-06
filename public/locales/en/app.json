@@ -167,6 +167,22 @@
     ,"event-pokemon": "52Poké Paradise sent you __pokemon__"
     ,"message": "__sender__ sent you a message"
   }
+  ,"log": {
+    "event-pokemon": "Received __pokemon__ from 52Poké Paradise"
+    ,"event-pokemon-related": "Sent __trainer__ __pokemon__"
+    ,"event-item": "Received __number__ __item__(s) from 52Poké Paradise"
+    ,"event-item-related": "Sent __trainer__ __number__ __item__(s)"
+    ,"catch": "Caught __pokemon__ at __location__, level __level__"
+    ,"evolve": "__before__ evolved to __pokemon__"
+    ,"begin": "Began adventure with __pokemon__"
+    ,"buy-item": "Bought __number__ __item__(s)"
+    ,"gift-item": "Sent __trainer__ __number__ __item__(s)"
+    ,"gift-item-related": "Received __number__ __item__(s) from __trainer__"
+    ,"hold-item": "Put __item__ on __pokemon__"
+    ,"take-item": "Took __item__ from __pokemon__"
+    ,"use-item": "__pokemon__ used __item__"
+    ,"set-location": "Changed location information. Longitude: __longitude__, Latitude: __latitude__"
+  }
   ,"admin": {
     "paradise-info": "52Poké Paradise Information"
     ,"gift-pokemon": "Gift Pokémon"

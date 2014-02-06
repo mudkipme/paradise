@@ -74,6 +74,8 @@ exports.post = function(req, res){
     trainer.catchPokemon(ret.pokemon, ret.pokeBall, ret.location, function(err){
       if (err) return res.json(500, { error: err.message });
       res.json(trainer);
+
+      trainer.log('begin', {pokemon: ret.pokemon});
     });
   });
 };

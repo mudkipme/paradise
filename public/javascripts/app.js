@@ -15,12 +15,13 @@ define([
   ,'models/trainer'
   ,'models/admin-info'
   ,'collections/msgs'
+  ,'collections/logs'
   ,'collections/pokemart'
   ,'moment/lang/zh-cn'
   ,'moment/lang/zh-tw'
   ,'util'
-], function($, _, Backbone, Marionette, AppBase, i18n, moment,
-  vent, Router, Controller, io, AlertView, ModalView, Trainer, AdminInfo, Msgs, PokeMart){
+], function($, _, Backbone, Marionette, AppBase, i18n, moment, vent,
+  Router, Controller, io, AlertView, ModalView, Trainer, AdminInfo, Msgs, Logs, PokeMart){
 
   var App = new AppBase;
 
@@ -139,6 +140,7 @@ define([
   App.addInitializer(function(){
     App.trainer = new Trainer(PARADISE.me);
     App.msgs = new Msgs;
+    App.logs = new Logs;
     App.pokeMart = new PokeMart;
 
     if (PARADISE.isAdmin) {

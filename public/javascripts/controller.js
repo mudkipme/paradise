@@ -18,10 +18,11 @@ define([
   ,'views/msg-list'
   ,'views/admin'
   ,'views/setting'
+  ,'views/log-list'
 ], function(Marionette, vent, io, NavBarView, MenuView, HomeView, PartyView
   , BagView, PokeMartView, StorageView, WorldView, RegionView
   , EncounterView, PokedexView, DayCareView, IntroView, MsgListView
-  , AdminView, SettingView){
+  , AdminView, SettingView, LogListView){
 
   // Avoid circular dependencies
   var App = null;
@@ -144,7 +145,8 @@ define([
     }
 
     ,record: function(){
-      vent.trigger('roadmap', 'record', true);
+      App.mainRegion.show(new LogListView({collection: App.logs}));
+      App.logs.getPage(1);
     }
 
     ,help: function(){

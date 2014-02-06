@@ -146,6 +146,8 @@ exports.takeItem = function(req, res){
   if (!req.pokemon.holdItem)
     return res.json(403, { error: 'NO_HOLD_ITEM' });
 
+  var itemId = req.pokemon.holdItemId;
+
   async.series([
     req.trainer.addItem.bind(req.trainer, req.pokemon.holdItem, 1)
     ,req.pokemon.setHoldItem.bind(req.pokemon, null)
@@ -180,7 +182,7 @@ exports.useItem = function(req, res){
   if (!req.trainer.hasItem(itemId))
     return res.json(403, {error: 'NO_ENOUGH_ITEM_IN_BAG'});
 
-  var before = req.pokemon.toObject();
+  var before = req.pokemon.toObject({depopulate: true});
 
   Item(itemId, function(err, item){
     if (err) return res.json(500, {error: err.message});

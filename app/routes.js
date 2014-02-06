@@ -10,6 +10,7 @@ var encounter = require('./controllers/encounter');
 var species = require('./controllers/species');
 var daycare = require('./controllers/daycare');
 var msg = require('./controllers/msg');
+var log = require('./controllers/log');
 
 // Middlewares
 var auth = require('./middlewares/authentication');
@@ -89,10 +90,14 @@ module.exports = function(app){
   app.post('/api/msg/:msgId/accept', defaults, msg.accept);
   app.post('/api/msg/:msgId/decline', defaults, msg.decline);
 
-  // Admin
+  // Admin actions
   app.get('/api/admin/info', isAdmin, admin.info);
   app.post('/api/admin/event-pokemon', isAdmin, admin.eventPokemon);
   app.post('/api/admin/event-item', isAdmin, admin.eventItem);
   app.post('/api/admin/send-msg', isAdmin, admin.sendMsg);
   app.get('/api/admin/all-trainer', isAdmin, admin.allTrainer);
+
+  // Log actions
+  app.get('/api/log', defaults, log.list);
+  app.get('/api/log/:logId', log.get);
 };
