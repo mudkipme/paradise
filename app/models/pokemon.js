@@ -312,21 +312,23 @@ PokemonSchema.methods.gainHP = function(hp, callback){
 PokemonSchema.methods.gainEffort = function(effort, callback){
   if (!_.isObject(effort)) return callback(new Error('ERR_INVALID_PARAM'));
 
-  var me = this,
-    currentEffort = _.reduce(me.effort, function(memo, num){
-      return memo + num;
-    }),
-    prevEffort = currentEffort;
+  var me = this, currentEffort = 0, prevEffort = 0;
+  var sn = ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'];
+  _.each(sn, function(key){
+    currentEffort += me.effort[key];
+  });
+  (currentEffort > 510) && (currentEffort = 510);
+  prevEffort = currentEffort;
 
-  _.each(me.effort, function(value, key){
+  _.each(sn, function(key){
     effort[key] = effort[key] || 0;
 
-    if (value + effort[key] > 255) {
-      effort[key] = 255 - value;
+    if (me.effort[key] + effort[key] > 255) {
+      effort[key] = 255 - me.effort[key];
     }
 
-    if (value + effort[key] < 0) {
-      effort[key] = -value;
+    if (me.effort[key] + effort[key] < 0) {
+      effort[key] = -me.effort[key];
     }
 
     if (currentEffort + effort[key] > 510) {
