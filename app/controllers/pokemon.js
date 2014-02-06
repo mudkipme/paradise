@@ -183,6 +183,9 @@ exports.useItem = function(req, res){
     return res.json(403, {error: 'NO_ENOUGH_ITEM_IN_BAG'});
 
   var before = req.pokemon.toObject({depopulate: true});
+  if (!before._id) {
+    before = req.pokemon.toObject();
+  }
 
   Item(itemId, function(err, item){
     if (err) return res.json(500, {error: err.message});

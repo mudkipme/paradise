@@ -523,6 +523,9 @@ PokemonSchema.methods.evolve = function(trigger, options, callback){
 
   // Evolve this Pokémon
   var before = me.toObject({depopulate: true});
+  if (!before._id) {
+    before = me.toObject();
+  }
   me.speciesNumber = resultNumber;
   Species(me.speciesNumber, me.formIdentifier, function(err, species){
     if (err) return callback(err);

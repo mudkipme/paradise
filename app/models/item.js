@@ -90,7 +90,7 @@ var parseCondition = function(pokemon, condition, options){
     if (con == 'full-hp' && (!options.defender || options.defender.maxHp != options.defender.hp))
       return false;
 
-    if (con == 'non-final' && pokemon.species.evolution.length)
+    if (con == 'non-final' && pokemon.species.evolutions.length)
       return false;
     
     if (con == 'physical' && options.special)
