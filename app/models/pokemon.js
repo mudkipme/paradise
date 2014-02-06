@@ -424,15 +424,7 @@ PokemonSchema.methods.initData = function(trainer, callback){
   async.series(inits, function(err, results){
     if (err) return callback(err);
     me._inited = true;
-
-    // Hatch the Pokémon Egg!
-    if (me.hatchRate == 'hatched') {
-      me.isEgg = false;
-      me.save(callback);
-      me.trainer.log('hatch', {pokemon: me});
-    } else {
-      callback(null, me);
-    }
+    callback(null, me);
   });
 };
 

@@ -285,8 +285,20 @@ TrainerSchema.methods.catchPokemon = function(pokemon, pokeBall, location, callb
  * Init Pokémon data in party
  */
 TrainerSchema.methods.initParty = function(callback){
-  async.eachSeries(this.party, function(pokemon, next){
-    pokemon.initData && pokemon.initData(next);
+  var me = this;
+  async.eachSeries(me.party, function(pokemon, next){
+    pokemon.initData(function(err){
+      if (err) return next(err);
+
+      // Hatch the Pokémon Egg!
+      if (pokemon.hatchRate == 'hatched') {
+        pokemon.isEgg = false;
+        pokemon.save(next);
+        me.log('hatch', {pokemon: pokemon});
+      } else {
+        next(null);
+      }
+    });
   }, callback);
 };
 

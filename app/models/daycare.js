@@ -262,7 +262,7 @@ DayCareSchema.methods.breed = function(callback){
     masudaMethod = true;
   }
   if (_.isNumber(fatherLoc.latitude) && _.isNumber(motherLoc.longitude)
-    && geolib.getDistance(fatherLoc, motherLoc) > 2000000) {
+    && geolib.getDistance(fatherLoc, motherLoc) > 3000000) {
     masudaMethod = true;
   }
   if (masudaMethod) {
