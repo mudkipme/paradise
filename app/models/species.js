@@ -190,8 +190,6 @@ Species.pokemonId = function(pokemonId, callback){
 
 // Get the baby species of a Pokémon, without Insense or not
 Species.getBabySpecies = function(pokemon, callback){
-  if (!pokemon._inited) return callback(new Error('ERR_NOT_INITED'));
-
   // Special couples
   var couplePokemon = [[29, 32], [313, 314]];
   for (var i = 0; i < couplePokemon.length; i++) {
@@ -199,7 +197,7 @@ Species.getBabySpecies = function(pokemon, callback){
       return callback(null, _.sample(couplePokemon[i]));
   }
 
-  db.get('SELECT pokemon_species.id AS id, baby_trigger_item_id FROM pokemon_species JOIN evolution_chains ON evolution_chains.id = evolution_chain_id WHERE evolution_chain_id = (SELECT evolution_chain_id FROM pokemon_species WHERE id = ?) AND evolves_from_species_id = 0', [pokemon.species.number], function(err, row){
+  db.get('SELECT pokemon_species.id AS id, baby_trigger_item_id FROM pokemon_species JOIN evolution_chains ON evolution_chains.id = evolution_chain_id WHERE evolution_chain_id = (SELECT evolution_chain_id FROM pokemon_species WHERE id = ?) AND evolves_from_species_id = 0', [pokemon.speciesNumber], function(err, row){
     if (err) return callback(err);
     if (!row) return new Error('MissingNo.');
 

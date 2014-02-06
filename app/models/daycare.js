@@ -266,7 +266,7 @@ DayCareSchema.methods.breed = function(callback){
     masudaMethod = true;
   }
   if (masudaMethod) {
-    isShiny = _.random(0, 8191) < 6;
+    isShiny = _.random(0, 8191) < 16;
   }
 
   me.eggTrainer = _.random(0, 1) ? me.trainerA : me.trainerB;

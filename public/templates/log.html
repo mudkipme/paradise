@@ -31,6 +31,8 @@
     <%= t('log.take-item', {item: t('item:' + params.item.name), pokemon: pokemonName(params.pokemon)}) %>
   <% } else if (type == 'set-location') { %>
     <%= t('log.set-location', {longitude: params.longitude.toFixed(7), latitude: params.latitude.toFixed(7)}) %>
+  <% } else if (type == 'hatch') { %>
+    <%= t('log.hatch', {pokemon: pokemonName(params.pokemon)}) %>
   <% } %>
 
   <% if (params.item) { %>

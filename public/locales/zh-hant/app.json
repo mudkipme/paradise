@@ -182,6 +182,7 @@
     ,"take-item": "從 __pokemon__ 取下了 __item__"
     ,"use-item": "__pokemon__ 使用了 __item__"
     ,"set-location": "修改了地點信息，經度為 __longitude__，緯度為 __latitude__"
+    ,"hatch": "神奇寶貝蛋孵化出了 __pokemon__"
   }
   ,"admin": {
     "paradise-info": "神奇寶貝樂園信息"

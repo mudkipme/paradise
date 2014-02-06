@@ -182,6 +182,7 @@
     ,"take-item": "Took __item__ from __pokemon__"
     ,"use-item": "__pokemon__ used __item__"
     ,"set-location": "Changed location information. Longitude: __longitude__, Latitude: __latitude__"
+    ,"hatch": "__pokemon__ hatched from Pokémon Egg"
   }
   ,"admin": {
     "paradise-info": "52Poké Paradise Information"
