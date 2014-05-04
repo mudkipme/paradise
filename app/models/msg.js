@@ -1,6 +1,6 @@
 var async = require('async');
 var _ = require('underscore');
-var mongoose = require('mongoose');
+var mongoose = require('../paradise-db');
 var Item = require('./item');
 var io = require('../io');
 var config = require('../../config.json');

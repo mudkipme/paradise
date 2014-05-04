@@ -1,5 +1,5 @@
 var crypto = require('crypto');
-var mongoose = require('mongoose');
+var mongoose = require('../paradise-db');
 var async = require('async');
 var _ = require('underscore');
 var Schema = mongoose.Schema;

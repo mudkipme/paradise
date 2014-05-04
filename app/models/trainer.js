@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var mongoose = require('../paradise-db');
 var async = require('async');
 var BitArray = require('bit-array');
 var _ = require('underscore');

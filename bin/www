@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+var debug = require('debug')('paradise');
+var app = require('../app');
+var config = require('../config.json');
+var jobs = require('../app/jobs');
+var io = require('../app/io');
+
+app.set('port', process.env.PORT || config.app.port);
+
+var server = app.listen(app.get('port'), function() {
+  debug('Paradise server listening on port ' + server.address().port);
+});
+
+io.connect(server);
+jobs.start(app.get('env'));

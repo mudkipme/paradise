@@ -1,6 +1,6 @@
 var async = require('async');
 var _ = require('underscore');
-var db = require('../common').baseData;
+var db = require('../base-db');
 
 // Cached type data
 var typeCache = {};

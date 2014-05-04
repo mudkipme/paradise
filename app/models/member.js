@@ -1,6 +1,6 @@
 var crypto = require('crypto');
 var time = require('time');
-var db = require('../common').mysqlConnection;
+var db = require('../forum-db');
 
 var Member = function(){
   var me = this;
@@ -28,7 +28,7 @@ Member.getMember = function(user, byId, callback){
   var key = (byId === true) ? 'userid' : 'username';
   if (!callback) callback = byId;
   db.query(
-    db._('SELECT * FROM {prefix}userlist WHERE ' + key + ' = ?')
+    'SELECT * FROM {prefix}userlist WHERE ' + key + ' = ?'
     ,[user]
     ,function(err, result){
       if (err) return callback(err);
@@ -48,7 +48,7 @@ Member.getLogin = function(req, callback){
     return callback(new Error('ERR_NOT_LOGINED'));
 
   db.query(
-    db._('SELECT * FROM {prefix}userlist WHERE userid = ? AND pwd = ?')
+    'SELECT * FROM {prefix}userlist WHERE userid = ? AND pwd = ?'
     ,[req.session.userid, req.session.pwd]
     ,function(err, result){
       if (err) return callback(err);
@@ -66,7 +66,7 @@ Member.prototype.getCheckIn = function(callback){
   today.setTimezone('Asia/Shanghai');
   today.setHours(0, 0, 0, 0);
   db.query(
-    db._('SELECT * FROM {prefix}sign_history WHERE userid = ? AND sign_time >= ?')
+    'SELECT * FROM {prefix}sign_history WHERE userid = ? AND sign_time >= ?'
     ,[me.userid, Math.floor(today.getTime() / 1000)]
     ,function(err, result){
       if (err) return callback(err);
@@ -82,13 +82,13 @@ Member.prototype.addMoney = function(amount, callback){
   var me = this;
 
   db.query(
-    db._('UPDATE {prefix}userlist SET money = money + ? WHERE userid = ?')
+    'UPDATE {prefix}userlist SET money = money + ? WHERE userid = ?'
     ,[amount, me.userid]
     ,function(err) {
       if (err) return callback(err);
 
       db.query(
-        db._('SELECT money FROM {prefix}userlist WHERE userid = ?')
+        'SELECT money FROM {prefix}userlist WHERE userid = ?'
         ,[me.userid]
         ,function(err, result) {
           if (err) return callback(err);
@@ -104,13 +104,13 @@ Member.prototype.addPoint = function(amount, callback){
   var me = this;
 
   db.query(
-    db._('UPDATE {prefix}userlist SET point = point + ? WHERE userid = ?')
+    'UPDATE {prefix}userlist SET point = point + ? WHERE userid = ?'
     ,[amount, me.userid]
     ,function(err){
       if (err) return callback(err);
 
       db.query(
-        db._('SELECT point FROM {prefix}userlist WHERE userid = ?')
+        'SELECT point FROM {prefix}userlist WHERE userid = ?'
         ,[me.userid]
         ,function(err, result){
           if (err) return callback(err);

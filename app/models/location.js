@@ -4,7 +4,7 @@
  */
 var async = require('async');
 var _ = require('underscore');
-var db = require('../common').baseData;
+var db = require('../base-db');
 var Pokemon = require('./pokemon');
 var Species = require('./species');
 var config = require('../../config.json');

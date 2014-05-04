@@ -1,8 +1,7 @@
 var async = require('async');
-var express = require('express');
 var i18n = require('i18next');
 var _ = require('underscore');
-var sessionStore = require('../common').sessionStore;
+var sessionHandler = require('../session-handler');
 var Member = require('../models/member.js');
 var config = require('../../config.json');
 var Trainer = require('../models/trainer.js');
@@ -83,19 +82,8 @@ exports.isAdmin = function(req, res, next){
 
 // Socket.io authorization
 exports.sio = function(data, next){
-  if (!data.headers.cookie) return next(null, false);
-
-  express.cookieParser(config.app.cookieSecret)(data, {}, function(err){
+  sessionHandler.io(data, function(err, session){
     if (err) return next(err, false);
-    data.cookie = data.signedCookies;
-  });
-
-  data.sessionID = data.cookie['connect.sid'];
-
-  sessionStore.get(data.sessionID, function(err, session){
-    if (err) return next(err, false);
-    if (!session) return next(null, false);
-    data.session = session;
 
     Member.getLogin(data, function(err, member){
       if (err) return next(err, false);

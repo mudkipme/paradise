@@ -1,7 +1,7 @@
 var async = require('async');
 var schedule = require('node-schedule');
 var _ = require('underscore');
-var DayCare = require('./models/daycare.js');
+var DayCare = require('./models/daycare');
 var config = require('../config.json');
 
 var jobs = [];

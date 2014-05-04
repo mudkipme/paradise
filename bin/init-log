@@ -1,4 +1,5 @@
-var common = require('../app/common');
+#!/usr/bin/env node}
+
 var async = require('async');
 var _ = require('underscore');
 var Trainer = require('../app/models/trainer');
@@ -34,11 +35,9 @@ var initLog = function(trainer, callback){
   });
 };
 
-common.mongoConnection.once('open', function(){
-  Trainer.find({}, function(err, trainers){
-    async.eachSeries(trainers, initLog, function(err){
-      if (err) return console.log(err);
-      console.log('Init log finished.');
-    });
+Trainer.find({}, function(err, trainers){
+  async.eachSeries(trainers, initLog, function(err){
+    if (err) return console.log(err);
+    console.log('Init log finished.');
   });
 });

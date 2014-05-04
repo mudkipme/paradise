@@ -7,7 +7,7 @@
 var async = require('async');
 var _ = require('underscore');
 var Type = require('./type');
-var db = require('../common').baseData;
+var db = require('../base-db');
 var config = require('../../config.json');
 
 var itemCache = {};

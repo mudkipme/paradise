@@ -1,12 +1,19 @@
 {
   "name": "paradise",
-  "version": "0.2.1",
+  "version": "0.5.0",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "express": "*",
+    "compression": "*",
+    "serve-favicon": "*",
+    "morgan": "*",
+    "cookie-parser": "*",
+    "body-parser": "*",
+    "debug": "*",
+    "express-session": "*",
     "socket.io": "*",
     "sqlite3": "*",
     "mongoose": "*",

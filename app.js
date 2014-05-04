@@ -6,21 +6,22 @@
  * @license http://creativecommons.org/licenses/by-nc-sa/3.0/
  */
 
-// dependencies
 var express = require('express');
-var http = require('http');
 var path = require('path');
 var i18n = require('i18next');
 var _ = require('underscore');
-var config = require('./config.json');
-var common = require('./app/common');
-var jobs = require('./app/jobs');
+var compress = require('compression');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 
+var config = require('./config.json');
+var sessionHandler = require('./app/session-handler');
 var app = express();
-var server = http.createServer(app);
 
 i18n.init({
-  resGetPath: __dirname + '/public/locales/__lng__/__ns__.json'
+  resGetPath: path.join(__dirname, 'public', 'locales', '__lng__', '__ns__.json')
   ,preload: ['zh-hans', 'zh-hant', 'en']
   ,supportedLngs: ['zh-hans', 'zh-hant', 'en']
   ,fallbackLng: config.app.defaultLanguage
@@ -36,31 +37,50 @@ i18n.init({
 });
 
 // configurations
-app.set('port', process.env.PORT || config.app.port);
-app.set('views', __dirname + '/app/views');
+app.set('views', path.join(__dirname, 'app', 'views'));
 app.set('view engine', 'ejs');
-app.locals({ _: _, config: config });
-app.use(express.compress());
-app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(express.cookieParser(config.app.cookieSecret));
-app.use(express.session({ key: 'connect.sid', store: common.sessionStore }));
+app.locals._ = _;
+app.locals.config = config;
+
+// middlewares
+app.use(compress());
+app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
+app.use(cookieParser(config.app.cookieSecret));
+app.use(sessionHandler.session());
 i18n.registerAppHelper(app);
-app.use(app.router);
+
 if ('development' == app.get('env')) {
-  app.use(require('less-middleware')({ src: __dirname + '/public' }));
+  app.use(require('less-middleware')(path.join(__dirname, 'public')));
 }
 app.use(express.static(path.join(__dirname, 'public')));
 
 require('./app/routes')(app);
-require('./app/io').connect(server);
 
-common.mongoConnection.once('open', function(){
-  server.listen(app.get('port'), function(){
-    console.log('Paradise server listening on port ' + app.get('port'));
-    jobs.start(app.get('env'));
-  });
+/// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
 });
+
+module.exports = app;

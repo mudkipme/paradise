@@ -1,4 +1,4 @@
-var db = require('../common').baseData;
+var db = require('../base-db');
 
 var natureCache = {};
 
