@@ -61,25 +61,6 @@ exports.locale = function(req, res, next){
   });
 };
 
-/**
- * Limit request 
- */
-exports.isSelf = function(req, res, next){
-  if (req.trainer && req.params.name == req.trainer.name) {
-    next();
-  } else {
-    res.json(403, { error: 'PERMISSION_DENIED' });
-  }
-};
-
-exports.isAdmin = function(req, res, next){
-  if (req.member.isAdmin) {
-    next();
-  } else {
-    res.json(403, { error: 'PERMISSION_DENIED' });
-  }
-}
-
 // Socket.io authorization
 exports.sio = function(data, next){
   sessionHandler.io(data, function(err, session){

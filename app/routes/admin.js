@@ -1,3 +1,4 @@
+var router = require('express').Router();
 var _ = require('underscore');
 var async = require('async');
 var Species = require('../models/species');
@@ -8,10 +9,19 @@ var Location = require('../models/location');
 var Nature = require('../models/nature');
 var Msg = require('../models/msg');
 var config = require('../../config.json');
+var auth = require('../middlewares/authentication');
 var io = require('../io');
 
+// Middlewares
+router.use(auth.login);
+router.use(auth.trainer);
+router.use(function(req, res, next){
+  if (!req.member.isAdmin) return res.json(403, { error: 'PERMISSION_DENIED' });
+  next();
+});
+
 // List basic information of 52Poké Paradise
-exports.info = function(req, res){
+router.get('/info', function(req, res){
   async.series({
     forms: Species.allForms.bind(Species)
     ,trainerCount: Trainer.count.bind(Trainer)
@@ -34,10 +44,10 @@ exports.info = function(req, res){
     results.onlineCount && (results.onlineCount -= 1);
     res.json(results);
   });
-};
+});
 
 // Send event Pokémon to trainers
-exports.eventPokemon = function(req, res){
+router.post('/event-pokemon', function(req, res){
   var opts = {
     speciesNumber: parseInt(req.body.speciesNumber)
     ,formIdentifier: req.body.formIdentifier
@@ -96,10 +106,10 @@ exports.eventPokemon = function(req, res){
     if (err) return res.json(500, { error: err.message });
     res.json(results);
   });
-};
+});
 
 // Send event items to trainers
-exports.eventItem = function(req, res){
+router.post('/event-item', function(req, res){
   if (!_.isArray(req.body.trainer))
     return res.json(400, {error: 'ERR_INVALID_PARAM'});
 
@@ -133,11 +143,10 @@ exports.eventItem = function(req, res){
     if (err) return res.json(500, { error: err.message });
     res.json(results);
   });
-};
+});
 
 // Send messages to trainers
-exports.sendMsg = function(req, res){
-
+router.post('/api/admin/send-msg', function(req, res){
   var condition = {name: {'$in': req.body.trainer}};
   req.body.allTrainer && (condition = {});
   if (req.body.onlineTrainer) {
@@ -162,9 +171,9 @@ exports.sendMsg = function(req, res){
       res.json(results);
     });
   });
-};
+});
 
-exports.allTrainer = function(req, res){
+router.get('/all-trainer', function(req, res){
   var fields = (req.query.pick || 'name,id').split(',');
 
   Trainer.find({}, fields.join(' '), function(err, trainers){
@@ -173,4 +182,6 @@ exports.allTrainer = function(req, res){
       return _.pick(trainer, fields);
     }));
   });
-};
+});
+
+module.exports = router;

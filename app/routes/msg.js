@@ -1,10 +1,16 @@
+var router = require('express').Router();
 var async = require('async');
 var _ = require('underscore');
 var Msg = require('../models/msg');
 var io = require('../io');
+var auth = require('../middlewares/authentication');
+
+// middlewares
+router.use(auth.login);
+router.use(auth.trainer);
 
 var msgAction = function(req, res, type){
-  Msg.findOne({ _id: req.params.msgId }, function(err, msg){
+  Msg.findOne({ _id: req.params.id }, function(err, msg){
     if (err) return res.json(500, {error: err.message});
     if (!msg) return res.json(404, {error: 'MSG_NOT_FOUND'});
 
@@ -20,7 +26,7 @@ var msgAction = function(req, res, type){
 };
 
 // List one's messages
-exports.list = function(req, res){
+router.get('/', function(req, res){
   var skip = req.query.skip || 0;
   var limit = req.query.limit || 25;
   limit > 100 && (limit = 100);
@@ -46,26 +52,28 @@ exports.list = function(req, res){
       });
     });
   });
-};
+});
 
-exports.get = function(req, res){
+router.get('/:id', function(req, res){
   msgAction(req, res, 'initData');
-};
+});
 
 // Read a message
-exports.read = function(req, res){
+router.post('/:id/read', function(req, res){
   msgAction(req, res, 'setRead');
   io.emit(req, 'msg:update');
-};
+});
 
 // Accept a message
-exports.accept = function(req, res){
+router.post('/:id/accept', function(req, res){
   msgAction(req, res, 'accept');
   io.emit(req, 'msg:update');
-};
+});
 
 // Decline a message
-exports.decline = function(req, res){
+router.post('/:id/decline', function(req, res){
   msgAction(req, res, 'decline');
   io.emit(req, 'msg:update');
-};
+});
+
+module.exports = router;

@@ -12,7 +12,9 @@ var pool = mysql.createPool({
 exports.pool = pool;
 
 exports.query = function(sql, values, cb){
-  sql = (sql + '').split('{prefix}').join(config.bbs.dbPrefix || '');
+  if (_.isString(sql)) {
+    sql = sql.split('{prefix}').join(config.bbs.dbPrefix || '');
+  }
 
   if (_.isFunction(values)) {
     cb = values;

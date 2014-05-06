@@ -1,8 +1,26 @@
+var router = require('express').Router();
 var async = require('async');
 var _ = require('underscore');
 var Log = require('../models/log');
+var auth = require('../middlewares/authentication');
 
-exports.list = function(req, res){
+router.get('/:id', function(req, res){
+  Log.findOne({ _id: req.params.logId }, function(err, log){
+    if (err) return res.json(500, {error: err.message});
+    if (!log) return res.json(404, {error: 'LOG_NOT_FOUND'});
+
+    log.initData(function(err){
+      if (err) res.json(500, {error: err.message});
+      res.json(log);
+    });
+  });
+});
+
+// middlewares
+router.use(auth.login);
+router.use(auth.trainer);
+
+router.get('/', function(req, res){
   var skip = req.query.skip || 0;
   var limit = req.query.limit || 25;
   limit > 100 && (limit = 100);
@@ -25,16 +43,6 @@ exports.list = function(req, res){
       });
     });
   });
-};
+});
 
-exports.get = function(req, res){
-  Log.findOne({ _id: req.params.logId }, function(err, log){
-    if (err) return res.json(500, {error: err.message});
-    if (!log) return res.json(404, {error: 'LOG_NOT_FOUND'});
-
-    log.initData(function(err){
-      if (err) res.json(500, {error: err.message});
-      res.json(log);
-    });
-  });
-};
+module.exports = router;

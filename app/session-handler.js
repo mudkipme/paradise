@@ -12,7 +12,7 @@ function findCookie(handshakeInput) {
 }
 
 exports.session = function(){
-  return session({key: 'connect.sid', store: sessionStore});
+  return session({key: key, store: sessionStore});
 };
 
 exports.io = function(handshakeData, callback){

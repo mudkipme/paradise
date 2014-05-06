@@ -4,18 +4,41 @@
  */
 
 // dependencies
+var router = require('express').Router();
 var async = require('async');
 var _ = require('underscore');
 var io = require('../io');
 var Item = require('../models/item');
+var auth = require('../middlewares/authentication');
+
+router.param('id', function(req, res, next, id){
+  Pokemon.findById(id, function(err, pokemon){
+    if (err) return res.json(500, { error: err.message });
+    if (!pokemon) return res.json(404, { error: 'POKEMON_NOT_FOUND' });
+
+    req.pokemon = pokemon;
+    next();
+  });
+});
 
 // Get Pokémon information
-exports.get = function(req, res){
+router.get('/:id', function(req, res){
   res.json(req.pokemon);
+});
+
+// middlewares
+router.use(auth.login);
+router.use(auth.trainer);
+
+// Must be my Pokémon
+var mine = function(req, res, next){
+  if (!req.pokemon.trainer || !req.pokemon.trainer._id.equals(req.trainer._id))
+    return res.json(403, { error: 'PERMISSION_DENIED' });
+  next();
 };
 
 // Release a Pokémon
-exports.release = function(req, res){
+router.post('/:id/release', mine, function(req, res){
   if (req.pokemon.isEgg)
     return res.json(403, { error: 'CANNOT_RELEASE_EGG' });
   if (req.pokemon.pokemonCenter)
@@ -40,10 +63,10 @@ exports.release = function(req, res){
       res.send(204);
     });
   });
-};
+});
 
 // Deposit a Pokémon
-exports.deposit = function(req, res){
+router.post(':id/deposit', mine, function(req, res){
   if (req.pokemon.pokemonCenter)
     return res.json(403, { error: 'CANNOT_DEPOSIT_PC' });
 
@@ -67,10 +90,10 @@ exports.deposit = function(req, res){
     // Send party remove events to all other clients
     io.emit(req, 'party:remove', req.pokemon.id);
   });
-};
+});
 
 // Withdraw a Pokémon
-exports.withdraw = function(req, res){
+router.post(':id/withdraw', mine, function(req, res){
   if (req.trainer.party.length == 6)
     return res.json(403, { error: 'ERR_NO_PARTY_SLOT' });
 
@@ -90,10 +113,10 @@ exports.withdraw = function(req, res){
     // Send party remove events to all other clients
     io.emit(req, 'storage:remove', pos);
   });
-};
+});
 
 // Set nickname or tradable status
-exports.put = function(req, res){
+var setInformation = function(req, res){
   if (_.isString(req.body.nickname) && req.pokemon.originalTrainer
     && req.trainer.equals(req.pokemon.originalTrainer)) {
     req.pokemon.nickname = req.body.nickname.substr(0, 12);
@@ -107,9 +130,11 @@ exports.put = function(req, res){
     io.emit(req, 'pokemon:change', req.pokemon);
   });
 };
+router.patch(':id', setInformation);
+router.put(':id', setInformation);
 
 // Hold an item
-exports.holdItem = function(req, res){
+router.post(':id/hold-item', mine, function(req, res){
   var itemId = parseInt(req.body.itemId);
 
   if (!req.trainer.hasItem(itemId))
@@ -139,10 +164,10 @@ exports.holdItem = function(req, res){
       req.trainer.log('hold-item', {pokemon: req.pokemon, itemId: itemId});
     });
   });
-};
+});
 
 // Take a hold item
-exports.takeItem = function(req, res){
+router.post(':id/take-item', mine, function(req, res){
   if (!req.pokemon.holdItem)
     return res.json(403, { error: 'NO_HOLD_ITEM' });
 
@@ -157,10 +182,10 @@ exports.takeItem = function(req, res){
     io.emit(req, 'pokemon:change', req.pokemon);
     req.trainer.log('take-item', {pokemon: req.pokemon, itemId: itemId});
   });
-};
+});
 
 // Send pokemon to Pokémon Center
-exports.sendPokemonCenter = function(req, res){
+router.post(':id/send-pokemon-center', mine, function(req, res){
   var stats = req.pokemon.stats;
   if (stats.maxHp == stats.hp) return res.json(403, { error: 'HP_FULL' });
   if (req.pokemon.pokemonCenter) return res.json(403, { error: 'ALREADY_IN_PC' });
@@ -173,10 +198,10 @@ exports.sendPokemonCenter = function(req, res){
     res.json(req.pokemon);
     io.emit(req, 'pokemon:change', req.pokemon);
   });
-};
+});
 
 // Use items
-exports.useItem = function(req, res){
+router.post(':id/use-item', mine, function(req, res){
   var itemId = parseInt(req.body.itemId);
 
   if (!req.trainer.hasItem(itemId))
@@ -205,4 +230,6 @@ exports.useItem = function(req, res){
       req.trainer.log('use-item', {before: before, pokemon: req.pokemon, itemId: itemId});
     });
   });
-};
+});
+
+module.exports = router;

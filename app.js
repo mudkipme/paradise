@@ -20,6 +20,7 @@ var config = require('./config.json');
 var sessionHandler = require('./app/session-handler');
 var app = express();
 
+// i18n configuration
 i18n.init({
   resGetPath: path.join(__dirname, 'public', 'locales', '__lng__', '__ns__.json')
   ,preload: ['zh-hans', 'zh-hant', 'en']

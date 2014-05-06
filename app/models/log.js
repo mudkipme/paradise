@@ -91,7 +91,6 @@ LogSchema.methods.toJSON = function(options){
   return res;
 };
 
-
 LogSchema.index({ trainer: 1, relatedTrainer: 1 });
 
 var Log = mongoose.model('Log', LogSchema);

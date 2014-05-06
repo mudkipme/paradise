@@ -4,6 +4,7 @@
  */
 
 // dependencies
+var router = require('express').Router();
 var async = require('async');
 var _ = require('underscore');
 var io = require('../io');
@@ -12,22 +13,20 @@ var Pokemon = require('../models/pokemon');
 var Item = require('../models/item');
 var Location = require('../models/location');
 var config = require('../../config.json');
+var auth = require('../middlewares/authentication');
 
 // Get trainer's information
-exports.get = function(req, res){
-  if (req.trainer && (!req.params.name || req.params.name == req.trainer.name))
-    return res.json(req.trainer);
-
+router.get('/:name', function(req, res){
   Trainer.findByName(req.params.name, function(err, trainer){
     if (err) return res.json(500, { error: err.message });
     if (!trainer) return res.json(404, { error: 'TRAINER_NOT_FOUND' });
 
     res.json(trainer);
   });
-};
+});
 
 // Get trainer's Pokédex
-exports.pokedex = function(req, res){
+router.get('/:name/pokedex', function(req, res){
   Trainer.findOne({ name: req.params.name })
   .exec(function(err, trainer) {
     if (err) return res.json(500, { error: err.message });
@@ -40,13 +39,51 @@ exports.pokedex = function(req, res){
       res.json(404, { error: 'TRAINER_NOT_FOUND' });
     }
   });
-};
+});
+
+// Get one's Pokémon list
+router.get('/:name/pokemon', function(req, res){
+  var skip = req.query.skip || 0;
+  var limit = req.query.limit || 6;
+  limit > 30 && (limit = 30);
+
+  Trainer.findOne({ name: req.params.name })
+  .exec(function(err, trainer){
+    if (err) return res.json(500, { error: err.message });
+    if (!trainer) return res.json(404, { error: 'TRAINER_NOT_FOUND' });
+
+    var condition = { trainer: trainer };
+    if (req.query.tradable == 'yes') {
+      condition.tradable = true;
+    }
+
+    Pokemon.find(condition)
+    .skip(skip).limit(limit)
+    .exec(function(err, pokemon){
+      if (err) return res.json(500, { error: err.message });
+      async.eachSeries(pokemon, function(pm, next){
+        pm.initData(next);
+      }, function(err){
+        if (err) return res.json(500, { error: err.message });
+        res.json(pokemon);
+      });
+    })
+  });
+});
+
+// middlewares
+router.use(auth.login);
+router.use(auth.trainer);
+
+// Get trainer's information
+router.get('/', function(req, res){
+  res.json(req.trainer);
+});
 
 // Start one's own Pokémon journey
-exports.post = function(req, res){
-  if (!req.member) return res.json(403, { error: 'ERR_NOT_LOGINED' });
+router.post('/', auth.locale, function(req, res){
   if (req.trainer) return res.json(403, { error: 'ERR_ALREADY_CREATED' });
-  
+
   var trainer = new Trainer({ name: req.member.username, language: req.lng });
   var speciesNumber = parseInt(req.body.speciesNumber);
   var location = null;
@@ -78,40 +115,17 @@ exports.post = function(req, res){
       trainer.log('begin', {pokemon: ret.pokemon});
     });
   });
-};
+});
 
-// Get one's Pokémon list
-exports.pokemon = function(req, res){
-  var skip = req.query.skip || 0;
-  var limit = req.query.limit || 6;
-  limit > 30 && (limit = 30);
-
-  Trainer.findOne({ name: req.params.name })
-  .exec(function(err, trainer){
-    if (err) return res.json(500, { error: err.message });
-    if (!trainer) return res.json(404, { error: 'TRAINER_NOT_FOUND' });
-
-    var condition = { trainer: trainer };
-    if (req.query.tradable == 'yes') {
-      condition.tradable = true;
-    }
-
-    Pokemon.find(condition)
-    .skip(skip).limit(limit)
-    .exec(function(err, pokemon){
-      if (err) return res.json(500, { error: err.message });
-      async.eachSeries(pokemon, function(pm, next){
-        pm.initData(next);
-      }, function(err){
-        if (err) return res.json(500, { error: err.message });
-        res.json(pokemon);
-      });
-    })
-  });
+// must be self
+var myself = function(req, res, next){
+  if (!req.trainer || req.params.name != req.trainer.name)
+    return res.json(403, { error: 'PERMISSION_DENIED' });
+  next();
 };
 
 // Get my bag
-exports.bag = function(req, res){
+router.get('/:name/bag', myself, function(req, res){
   async.mapSeries(_.pluck(req.trainer.bag, 'itemId'), Item, function(err, result){
     if (err) return res.json(500, { error: err.message });
 
@@ -131,10 +145,10 @@ exports.bag = function(req, res){
 
     res.json(resp);
   });
-};
+});
 
 // Set trainer information
-exports.put = function(req, res){
+var setInformation = function(req, res){
   if (!_.isUndefined(req.body.acceptBattle)) {
     req.trainer.acceptBattle = Boolean(req.body.acceptBattle);
   }
@@ -161,9 +175,11 @@ exports.put = function(req, res){
     res.json(req.trainer);
   });
 };
+router.patch('/:name', myself, setInformation);
+router.put('/:name', myself, setInformation);
 
 // Move Pokémon in party
-exports.move = function(req, res){
+router.post('/:name/move', myself, function(req, res){
   var origin = _.map(req.trainer.party, function(pokemon){
     return pokemon._id.toString();
   });
@@ -176,4 +192,6 @@ exports.move = function(req, res){
     res.send(204);
     io.emit(req, 'party:move', req.body.order);
   });
-};
+});
+
+module.exports = router;

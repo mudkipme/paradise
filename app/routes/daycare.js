@@ -1,14 +1,19 @@
+var router = require('express').Router();
 var async = require('async');
 var _ = require('underscore');
 var DayCare = require('../models/daycare');
 var Trainer = require('../models/trainer');
 var Item = require('../models/item');
 var Msg = require('../models/msg');
-var pm = require('../middlewares/pokemon-middleware');
 var config = require('../../config.json');
+var auth = require('../middlewares/authentication');
+
+// middlewares
+router.use(auth.login);
+router.use(auth.trainer);
 
 // Get one trainer's day care information
-exports.list = function(req, res){
+router.get('/', function(req, res){
   var getter = function(trainerId){
     DayCare.find({ $or: [{trainerA: trainerId}, {trainerB: trainerId}, {eggTrainer: trainerId}] })
     .sort('createTime')
@@ -33,11 +38,11 @@ exports.list = function(req, res){
     if (!trainer) return res.json(404, {error: 'TRAINER_NOT_FOUND'});
     getter(trainer._id);
   });
-};
+});
 
 // Get one day care information
-exports.get = function(req, res){
-  DayCare.findOne({ _id: req.params.dayCareId }, function(err, dayCare){
+router.get('/:id', function(req, res){
+  DayCare.findOne({ _id: req.params.id }, function(err, dayCare){
     if (err) return res.json(500, {error: err.message});
     if (!dayCare) return res.json(404, {error: 'DAY_CARE_NOT_FOUND'});
 
@@ -46,10 +51,10 @@ exports.get = function(req, res){
       res.json(dayCare);
     });
   });
-};
+});
 
 // Create a new day care
-exports.post = function(req, res){
+router.post('/', function(req, res){
   var pokemon = _.find(req.trainer.party, function(pokemon){
     return pokemon._id.equals(req.body.pokemonA || req.body.pokemonId);
   });
@@ -78,16 +83,16 @@ exports.post = function(req, res){
     if (err) return res.json(403, {error: err.message});
     res.json(dayCare);
   });
-};
+});
 
 // Deposit one Pokémon into an existing day care
-exports.deposit = function(req, res){
+router.post('/:id/deposit', function(req, res){
   var pokemon = _.find(req.trainer.party, function(pokemon){
     return pokemon._id.equals(req.body.pokemonId);
   });
   if (!pokemon) return res.json(404, {error: 'POKEMON_NOT_IN_PARTY'});
 
-  DayCare.findOne({ _id: req.params.dayCareId }, function(err, dayCare){
+  DayCare.findOne({ _id: req.params.id }, function(err, dayCare){
     if (err) return res.json(500, {error: err.message});
     if (dayCare.trainerA && !dayCare.trainerA.equals(req.trainer._id))
       return res.json(403, {error: 'PERMISSION_DENIED'});
@@ -97,10 +102,10 @@ exports.deposit = function(req, res){
       res.json(dayCare);
     });
   });
-};
+});
 
 // Request to join a day care
-exports.request = function(req, res){
+router.post('/:id/request', function(req, res){
   var pokemon = _.find(req.trainer.party, function(pokemon){
     return pokemon._id.equals(req.body.pokemonId);
   });
@@ -108,7 +113,7 @@ exports.request = function(req, res){
   if (pokemon.isEgg) return res.json(403, {error: 'ERR_POKEMON_IS_EGG'});
   if (pokemon.pokemonCenterTime) res.json(403, {error: 'POKEMON_IN_PC'});
 
-  DayCare.findOne({ _id: req.params.dayCareId }, function(err, dayCare){
+  DayCare.findOne({ _id: req.params.id }, function(err, dayCare){
     if (err) return res.json(500, {error: err.message});
     if (dayCare.pokemonB) res.json(403, {error: 'DAY_CARE_FULL'});
     if (dayCare.egg) res.json(403, {error: 'TAKE_EGG_FIRST'});
@@ -126,32 +131,35 @@ exports.request = function(req, res){
       res.json(msg);
     });
   });
-};
+});
 
 // Withdraw a Pokémon from an existing day care
-exports.withdraw = function(req, res){
+router.post('/:id/withdraw', function(req, res){
   if (req.trainer.party.length == 6)
     return res.json(403, { error: 'ERR_NO_PARTY_SLOT' });
 
-  pm.pokemon(req, res, function(){
-    if (!req.pokemon.isEgg && (!req.pokemon.trainer || !req.pokemon.trainer._id.equals(req.trainer._id)))
+  Pokemon.findById(req.body.pokemonId, function(err, pokemon){
+    if (err) return res.json(500, { error: err.message });
+    if (!pokemon) return res.json(404, { error: 'POKEMON_NOT_FOUND' });
+
+    if (!pokemon.isEgg && (!pokemon.trainer || !pokemon.trainer._id.equals(req.trainer._id)))
       return res.json(403, { error: 'PERMISSION_DENIED' });
 
-    if (req.pokemon.isEgg && !req.pokemon.originalTrainer.equals(req.trainer))
+    if (pokemon.isEgg && !pokemon.originalTrainer.equals(req.trainer))
       return res.json(403, { error: 'PERMISSION_DENIED' });
 
-    DayCare.findOne({ _id: req.params.dayCareId }, function(err, dayCare){
+    DayCare.findOne({ _id: req.params.id }, function(err, dayCare){
       async.series([
         dayCare.initData.bind(dayCare)
-        ,dayCare.withdraw.bind(dayCare, req.pokemon)
+        ,dayCare.withdraw.bind(dayCare, pokemon)
         ,function(next){
-          if (req.pokemon.isEgg) {
+          if (pokemon.isEgg) {
             Item('poke-ball', function(err, pokeBall){
               if (err) return next(err);
-              req.trainer.catchPokemon(req.pokemon, pokeBall, 'day-care', next);
+              req.trainer.catchPokemon(pokemon, pokeBall, 'day-care', next);
             });
           } else {
-            req.trainer.party.push(req.pokemon);
+            req.trainer.party.push(pokemon);
             req.trainer.save(next);
           }
         }
@@ -161,6 +169,7 @@ exports.withdraw = function(req, res){
         res.json(dayCare);
       });
     });
+  });
+});
 
-  }, req.body.pokemonId);
-};
+module.exports = router;

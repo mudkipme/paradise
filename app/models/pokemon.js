@@ -639,6 +639,21 @@ PokemonSchema.statics.initPokemon = function(pokemon, callback){
   async.series(inits, callback);
 };
 
+// Find Pokémon By Id
+PokemonSchema.statics.findById = function(id, callback){
+  Pokemon.findOne({ _id: id })
+  .populate('trainer')
+  .exec(function(err, pokemon){
+    if (err) return callback(err);
+    if (!pokemon) return callback(null, null);
+
+    pokemon.initData(function(err){
+      if (err) return callback(err);
+      callback(null, pokemon);
+    });
+  });
+};
+
 PokemonSchema.index({ trainer: 1 });
 
 var Pokemon = mongoose.model('Pokemon', PokemonSchema);

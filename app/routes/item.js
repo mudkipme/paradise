@@ -4,15 +4,21 @@
  */
 
 // dependencies
+var router = require('express').Router();
 var async = require('async');
 var _ = require('underscore');
 var Item = require('../models/item');
 var Trainer = require('../models/trainer');
 var Msg = require('../models/msg');
 var config = require('../../config.json');
+var auth = require('../middlewares/authentication');
+
+// middlewares
+router.use(auth.login);
+router.use(auth.trainer);
 
 // List all items in Poké Mart
-exports.list = function(req, res){
+router.get('/', function(req, res){
   async.mapSeries(_.keys(config.pokemart), Item, function(err, result){
     if (err) return res.json(500, { error: err.message });
 
@@ -25,11 +31,11 @@ exports.list = function(req, res){
       };
     }));
   });
-};
+});
 
 // Get item info
-exports.get = function(req, res){
-  var itemId = parseInt(req.params.itemId);
+router.get('/:id', function(req, res){
+  var itemId = parseInt(req.params.id);
 
   Item(itemId, function(err, item){
     if (err) return res.json(500, {error: err.message});
@@ -40,11 +46,11 @@ exports.get = function(req, res){
       ,number: req.trainer.hasItem(itemId)
     });
   });
-};
+});
 
 // Gift items to other Trainer
-exports.gift = function(req, res){
-  var itemId = parseInt(req.params.itemId);
+router.post('/:id/gift', function(req, res){
+  var itemId = parseInt(req.params.id);
   var number = parseInt(req.body.number);
   var trainerName = req.body.trainer;
 
@@ -83,11 +89,11 @@ exports.gift = function(req, res){
       req.trainer.log('gift-item', {relatedTrainer: trainer, itemId: itemId, number: number});
     });
   });
-};
+});
 
 // Buy items
-exports.buy = function(req, res){
-  var itemId = parseInt(req.params.itemId);
+router.post('/:id/buy', function(req, res){
+  var itemId = parseInt(req.params.id);
   var number = parseInt(req.body.number);
 
   if (number <= 0)
@@ -149,4 +155,6 @@ exports.buy = function(req, res){
       doBuy();
     }
   });
-};
+});
+
+module.exports = router;

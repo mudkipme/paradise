@@ -4,13 +4,19 @@
  */
 
 // dependencies
+var router = require('express').Router();
 var async = require('async');
 var _ = require('underscore');
 var io = require('../io');
 var Pokemon = require('../models/pokemon');
+var auth = require('../middlewares/authentication');
+
+// middlewares
+router.use(auth.login);
+router.use(auth.trainer);
 
 // Get the Pokémon collection in a storage box
-exports.get = function(req, res){
+router.get('/:boxId', function(req, res){
   var boxId = parseInt(req.params.boxId);
   var storage = req.trainer.storage[boxId] || { name: '', wallpaper: '' };
   var storagePokemon = _.where(req.trainer.storagePokemon, { boxId: boxId });
@@ -30,10 +36,10 @@ exports.get = function(req, res){
         ,storage.toJSON ? storage.toJSON() : storage));
     });
   });
-};
+});
 
 // Set the name or wallpaper of a storage box
-exports.put = function(req, res){
+var setInformation = function(req, res){
   var boxId = parseInt(req.params.boxId);
   var storage = req.trainer.storage[boxId] || {name: '', wallpaper: ''};
   if (_.isString(req.body.wallpaper)) {
@@ -49,9 +55,11 @@ exports.put = function(req, res){
     io.emit(req, 'storage:change', boxId, storage);
   });
 };
+router.patch('/:boxId', setInformation);
+router.put('/:boxId', setInformation);
 
 // Move one Pokémon to another place
-exports.move = function(req, res){
+router.post('/move', function(req, res){
   var pokemonId = req.body.pokemon;
   var boxId = parseInt(req.body.boxId);
   var position = parseInt(req.body.position);
@@ -95,10 +103,10 @@ exports.move = function(req, res){
       });
     });
   });
-};
+});
 
 // Sort all Pokémon in storage
-exports.sort = function(req, res){
+router.post('/sort', function(req, res){
   var sortBy = req.body.sortBy;
 
   var sortable = {
@@ -132,4 +140,6 @@ exports.sort = function(req, res){
       io.emit(req, 'storage:reset');
     });
   });
-};
+});
+
+module.exports = router;

@@ -1,9 +1,15 @@
+var router = require('express').Router();
 var async = require('async');
 var _ = require('underscore');
 var Item = require('../models/item');
 var Location = require('../models/location');
 var Battle = require('../models/battle');
 var config = require('../../config.json');
+var auth = require('../middlewares/authentication');
+
+// middlewares
+router.use(auth.login);
+router.use(auth.trainer);
 
 var clearEncounter = function(trainer){
   trainer.encounter.location = null;
@@ -16,7 +22,7 @@ var clearEncounter = function(trainer){
 };
 
 // Encounter a wild Pokémon
-exports.post = function(req, res){
+router.post('/', function(req, res){
   async.waterfall([
     async.apply(Location, req.body.location)
 
@@ -27,10 +33,10 @@ exports.post = function(req, res){
     if (err) return res.json(403, {error: err.message});
     res.json(encounter);
   });
-};
+});
 
 // Battle with the wild Pokémon
-exports.battle = function(req, res){
+router.post('/battle', function(req, res){
   if (req.trainer.encounter.battleResult)
     return res.json(403, {error: 'ALREADY_BATTLED'});
 
@@ -68,10 +74,10 @@ exports.battle = function(req, res){
       finish();
     }
   });
-};
+});
 
 // Catch the wild Pokémon
-exports.catch = function(req, res){
+router.post('/catch', function(req, res){
   var pokemon = req.trainer.encounter.pokemon;
   var location = req.trainer.encounter.location;
   if (!pokemon)
@@ -118,10 +124,10 @@ exports.catch = function(req, res){
       }
     });
   });
-};
+});
 
 // Escape from the current wild Pokémon
-exports.escape = function(req, res){
+router.post('/escape', function(req, res){
   var pokemon = req.trainer.encounter.pokemon;
 
   var actions = [
@@ -139,4 +145,6 @@ exports.escape = function(req, res){
     if (err) res.json(500, {error: err.message});
     res.send(204);
   });
-};
+});
+
+module.exports = router;
