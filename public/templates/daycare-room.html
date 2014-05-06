@@ -13,6 +13,8 @@
         <img src="<%= spriteUrl(pokemon) %>" alt="<%- pokemonName(pokemon) %>" />
       </div>
       <div class="name"><%- pokemonName(pokemon) %></div>
+    <% } else { %>
+      <div class="sprite empty btn-party-popover" data-pos="<%= i ? 'pokemonB' : 'pokemonA' %>"></div>
     <% } %>
   </div>
 <% }) %>

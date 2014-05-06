@@ -5,10 +5,10 @@
 
   <div class="actions btn-group">
     <% if (item.usable) { %>
-      <button class="btn btn-use"><%= t('action.use') %></button>
+      <button class="btn btn-use btn-party-popover"><%= t('action.use') %></button>
     <% } %>
     <% if (!_.contains(['machines', 'key'], item.pocket)) { %>
-      <button class="btn btn-hold"><%= t('action.hold') %></button>
+      <button class="btn btn-hold btn-party-popover"><%= t('action.hold') %></button>
     <% } %>
     <% if (!_.contains(['machines', 'key'], item.pocket) && !item.ungiftable) { %>
       <button class="btn btn-gift"><%= t('action.gift') %></button>

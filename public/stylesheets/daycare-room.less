@@ -22,6 +22,16 @@
       height: 96px;
     }
 
+    .sprite.empty {
+      .transition(background-color 0.2s ease-out);
+      top: 25px;
+      border-radius: 48px;
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(255,255,255,0.5);
+      }
+    }
+
     .name {
       position: absolute;
       top: 115px;
@@ -47,7 +57,7 @@
     bottom: -25px;
   }
 
-  [data-pos] {
+  [data-pos]:not(.empty) {
     cursor: pointer;
     .transition-transform(0.2s ease-out);
     &:hover {

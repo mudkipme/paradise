@@ -5,7 +5,8 @@
       <h4 class="modal-title"><%- options.title || t('modal.title') %></h4>
     </div>
     <div class="modal-body">
-      <p><%= options.content || t('modal.content') %></p>
+      <%= options.content || '' %>
+      <div class="modal-subview"></div>
     </div>
     <div class="modal-footer">
       <% if (!options.type || options.type == 'alert') {%>

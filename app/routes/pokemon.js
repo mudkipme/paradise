@@ -9,6 +9,7 @@ var async = require('async');
 var _ = require('underscore');
 var io = require('../io');
 var Item = require('../models/item');
+var Pokemon = require('../models/pokemon');
 var auth = require('../middlewares/authentication');
 
 router.param('id', function(req, res, next, id){
@@ -66,7 +67,7 @@ router.post('/:id/release', mine, function(req, res){
 });
 
 // Deposit a Pokémon
-router.post(':id/deposit', mine, function(req, res){
+router.post('/:id/deposit', mine, function(req, res){
   if (req.pokemon.pokemonCenter)
     return res.json(403, { error: 'CANNOT_DEPOSIT_PC' });
 
@@ -93,7 +94,7 @@ router.post(':id/deposit', mine, function(req, res){
 });
 
 // Withdraw a Pokémon
-router.post(':id/withdraw', mine, function(req, res){
+router.post('/:id/withdraw', mine, function(req, res){
   if (req.trainer.party.length == 6)
     return res.json(403, { error: 'ERR_NO_PARTY_SLOT' });
 
@@ -130,11 +131,11 @@ var setInformation = function(req, res){
     io.emit(req, 'pokemon:change', req.pokemon);
   });
 };
-router.patch(':id', setInformation);
-router.put(':id', setInformation);
+router.patch('/:id', setInformation);
+router.put('/:id', setInformation);
 
 // Hold an item
-router.post(':id/hold-item', mine, function(req, res){
+router.post('/:id/hold-item', mine, function(req, res){
   var itemId = parseInt(req.body.itemId);
 
   if (!req.trainer.hasItem(itemId))
@@ -167,7 +168,7 @@ router.post(':id/hold-item', mine, function(req, res){
 });
 
 // Take a hold item
-router.post(':id/take-item', mine, function(req, res){
+router.post('/:id/take-item', mine, function(req, res){
   if (!req.pokemon.holdItem)
     return res.json(403, { error: 'NO_HOLD_ITEM' });
 
@@ -185,7 +186,7 @@ router.post(':id/take-item', mine, function(req, res){
 });
 
 // Send pokemon to Pokémon Center
-router.post(':id/send-pokemon-center', mine, function(req, res){
+router.post('/:id/send-pokemon-center', mine, function(req, res){
   var stats = req.pokemon.stats;
   if (stats.maxHp == stats.hp) return res.json(403, { error: 'HP_FULL' });
   if (req.pokemon.pokemonCenter) return res.json(403, { error: 'ALREADY_IN_PC' });
@@ -201,7 +202,7 @@ router.post(':id/send-pokemon-center', mine, function(req, res){
 });
 
 // Use items
-router.post(':id/use-item', mine, function(req, res){
+router.post('/:id/use-item', mine, function(req, res){
   var itemId = parseInt(req.body.itemId);
 
   if (!req.trainer.hasItem(itemId))

@@ -10,8 +10,7 @@ define([
 ], function($, _, Marionette, i18n, DayCares, DayCareRoomView, dayCareListTemplate){
 
   var DayCareListView = Marionette.CompositeView.extend({
-    id: 'day-care-carousel'
-    ,className: 'carousel slide'
+    className: 'day-care-carousel carousel slide'
     ,collection: DayCares
 
     ,itemView: DayCareRoomView
@@ -29,7 +28,9 @@ define([
     }
 
     ,onRender: function(){
-      this.$el.carousel({ interval: false });
+      var id = 'day-care-carousel-' + $.guid++;
+      this.$('.carousel-control').attr('href', '#' + id);
+      this.$el.attr('id', id).carousel({ interval: false });
     }
 
     // Create a wrapper to contains several rooms

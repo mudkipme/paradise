@@ -7,7 +7,7 @@ define([
   ,'util'
 ], function($, _, Marionette, i18n, modalTemplate){
 
-  var ModalView = Marionette.ItemView.extend({
+  var ModalView = Marionette.Layout.extend({
     className: 'modal fade'
 
     ,events: {
@@ -21,6 +21,16 @@ define([
     ,serializeData: function(){
       return {
         options: this.options
+      }
+    }
+
+    ,regions: {
+      subView: '.modal-subview'
+    }
+
+    ,onShow: function(){
+     if (this.options.view) {
+        this.subView.show(this.options.view);
       }
     }
 

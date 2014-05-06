@@ -7,8 +7,9 @@ define([
   ,'views/party-select'
   ,'views/daycare-list'
   ,'models/daycare'
+  ,'collections/daycares'
   ,'text!templates/daycare.html'
-], function($, _, Marionette, i18n, vent, PartySelectView, DayCareListView, DayCare, dayCareTemplate){
+], function($, _, Marionette, i18n, vent, PartySelectView, DayCareListView, DayCare, DayCares, dayCareTemplate){
 
   var helpers = PartySelectView.prototype.templateHelpers;
 
@@ -48,20 +49,12 @@ define([
 
     ,deposit: function(pokemon){
       var me = this;
-      var space = me.collection.some(function(dayCare){
-        if (!dayCare.get('pokemonB') && !dayCare.get('egg')) {
-          dayCare.deposit(pokemon);
-          return true;
-        }
+      var dayCare = new DayCare({ pokemonA: pokemon.get('id') });
+      dayCare.once('sync', function(){
+        me.collection.add(dayCare);
+        pokemon.trigger('deposit', pokemon);
       });
-      if (!space) {
-        var dayCare = new DayCare({ pokemonA: pokemon.get('id') });
-        dayCare.once('sync', function(){
-          me.collection.add(dayCare);
-          pokemon.trigger('deposit', pokemon);
-        });
-        dayCare.save();
-      }
+      dayCare.save();
     }
 
     ,deposited: function(pokemon){
@@ -76,7 +69,16 @@ define([
 
     ,searchDayCare: function(e){
       e.preventDefault();
-      vent.trigger('roadmap', 'daycare');
+      var dayCares = new DayCares([], {trainer: this.$('.search-input').val()});
+      dayCares.once('sync', function(){
+        if (dayCares.size() == 0) {
+          return;
+        }
+        vent.trigger('modal', {
+          view: new DayCareListView({collection: dayCares})
+        });
+      });
+      dayCares.fetch();
     }
   });
 

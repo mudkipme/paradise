@@ -23,12 +23,12 @@ define([
       subView: '.alert-subview'
     }
 
-    ,onRender: function(){
+    ,onShow: function(){
       this.$el.addClass('alert-' + (this.options.type || 'warning'));
       this.$el.alert();
 
       if (this.options.view) {
-          this.subView.show(this.options.view);
+        this.subView.show(this.options.view);
       }
     }
   });

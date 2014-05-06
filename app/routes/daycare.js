@@ -5,6 +5,7 @@ var DayCare = require('../models/daycare');
 var Trainer = require('../models/trainer');
 var Item = require('../models/item');
 var Msg = require('../models/msg');
+var Pokemon = require('../models/pokemon');
 var config = require('../../config.json');
 var auth = require('../middlewares/authentication');
 
@@ -14,8 +15,9 @@ router.use(auth.trainer);
 
 // Get one trainer's day care information
 router.get('/', function(req, res){
-  var getter = function(trainerId){
-    DayCare.find({ $or: [{trainerA: trainerId}, {trainerB: trainerId}, {eggTrainer: trainerId}] })
+  var getter = function(trainerId, options){
+    options = _.extend({ $or: [{trainerA: trainerId}, {trainerB: trainerId}, {eggTrainer: trainerId}] }, options);
+    DayCare.find(options)
     .sort('createTime')
     .exec(function(err, dayCares){
       if (err) return res.json(500, {error: err.message});
@@ -28,15 +30,17 @@ router.get('/', function(req, res){
     });
   };
 
-  if (req.trainer && (!req.query.trainer
-    || req.query.trainer == req.trainer.name))
+  if (req.trainer && (!req.query.trainer || req.query.trainer == req.trainer.name))
       return getter(req.trainer._id);
 
   Trainer.findOne({ name: req.query.trainer })
   .exec(function(err, trainer){
     if (err) return res.json(500, {error: err.message});
     if (!trainer) return res.json(404, {error: 'TRAINER_NOT_FOUND'});
-    getter(trainer._id);
+    getter(trainer._id, {$and: [
+      {$or: [{pokemonB: null}, {pokemonB: {$exists: false}}]}
+      ,{$or: [{egg: null}, {egg: {$exists: false}}]}
+    ]}, {pokemonB: null});
   });
 });
 

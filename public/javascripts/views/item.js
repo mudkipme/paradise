@@ -5,12 +5,12 @@ define([
   ,'i18next'
   ,'vent'
   ,'models/item'
-  ,'views/party-popover'
+  ,'behaviors/party-popover'
   ,'views/pokemon-events'
   ,'text!templates/item.html'
   ,'text!templates/item-gift.html'
   ,'util'
-], function($, _, Marionette, i18n, vent, Item, PartyPopoverView, PokemonEventsView, itemTemplate, itemGiftTemplate){
+], function($, _, Marionette, i18n, vent, Item, PartyPopover, PokemonEventsView, itemTemplate, itemGiftTemplate){
 
   var ItemView = Marionette.ItemView.extend({
     className: 'item-view'
@@ -24,12 +24,16 @@ define([
       ,'number': '.number span'
     }
 
+    ,behaviors: {
+      PartyPopover: {
+        behaviorClass: PartyPopover
+      }
+    }
+
     ,events: {
       'submit .gift-form': 'giftSubmit'
       ,'selectPokemon .btn-hold': 'holdItem'
       ,'selectPokemon .btn-use': 'useItem'
-      ,'shown.bs.popover .actions .btn-hold': 'showPartyPopover'
-      ,'shown.bs.popover .actions .btn-use': 'showPartyPopover'
     }
 
     ,modelEvents: {
@@ -44,50 +48,25 @@ define([
 
     ,initialize: function(){
       this.listenTo(vent, 'windowResize', this.ellipsisDesc);
-      this.listenTo(vent, 'popover', this.hidePopover);
     }
 
     ,onRender: function(){
       var me = this;
 
-      me.partyPopover = new PartyPopoverView({
-        collection: require('app').trainer.party
-      });
-      me.partyPopover.render();
-
-      var popoverOpts = {
+      me.listenTo(vent, 'popover', me.hidePopover);
+      me.ui.gift.popover({
         html: true
-        ,content: me.partyPopover.el
-        ,container: me.el
-        ,placement: 'bottom'
-      };
-
-      me.ui.gift.popover(_.defaults({
-        content: function(){
+        ,content: function(){
           var itemData = me.mixinTemplateHelpers(me.serializeData());
           return _.template(itemGiftTemplate, itemData);
         }
-      }, popoverOpts));
-
-
-      me.ui.hold.popover(popoverOpts);
-      me.ui.use.popover(popoverOpts);
+        ,container: me.el
+        ,placement: 'bottom'
+      });
     }
 
     ,onShow: function(){
       this.ellipsisDesc();
-    }
-
-    ,showPartyPopover: function(e){
-      this.partyPopover.delegateEvents();
-      this.partyPopover.options.button = $(e.currentTarget);
-      require('app').trainer.fetch();
-    }
-
-    ,onClose: function(){
-      if (this.partyPopover) {
-        this.partyPopover.close();
-      }
     }
 
     // Truncate long descriptions
@@ -109,18 +88,15 @@ define([
     }
 
     ,hidePopover: function(e){
-      this.$('.actions button').each(function(i, button){
-        if (!e || button !== e.target) {
-          var popover = $(button).data('bs.popover');
-          popover && popover.leave(popover);
-        }
-      });
+      if (!e || e.target != this.ui.gift.get(0)) {
+        var popover = this.ui.gift.data('bs.popover');
+        popover && popover.leave(popover);
+      }
     }
 
     ,giftSubmit: function(e){
       this.model.gift(this.$('.gift-trainer').val(), this.$('.gift-number').val());
-      var popover = this.ui.gift.data('bs.popover');
-      popover && popover.leave(popover);
+      this.hidePopover();
       e.preventDefault();
     }
 
@@ -135,12 +111,10 @@ define([
 
     ,holdItem: function(e, pokemon){
       pokemon.holdItem(this.model);
-      this.hidePopover();
     }
 
     ,useItem: function(e, pokemon){
       pokemon.useItem(this.model);
-      this.hidePopover();
     }
 
     ,holdDone: function(pokemon){

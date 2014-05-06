@@ -53,8 +53,8 @@ DayCareSchema.methods.deposit = function(trainer, pokemon, callback){
     return _.isEqual(pokemon._id, pm._id || pm);
   });
 
-  if (!found) return next(new Error('POKEMON_NOT_IN_PARTY'));
-  if (!trainer.available(pokemon)) return next(new Error('ONE_POKEMON_LEFT'));
+  if (!found) return callback(new Error('POKEMON_NOT_IN_PARTY'));
+  if (!trainer.available(pokemon)) return callback(new Error('ONE_POKEMON_LEFT'));
 
   if (!me.pokemonA) {
     me.pokemonA = pokemon;

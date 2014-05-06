@@ -6,8 +6,9 @@ define([
   ,'vent'
   ,'models/daycare'
   ,'views/pokemon'
+  ,'behaviors/party-popover'
   ,'text!templates/daycare-room.html'
-], function($, _, Marionette, i18n, vent, DayCare, PokemonView, dayCareRoomTemplate){
+], function($, _, Marionette, i18n, vent, DayCare, PokemonView, PartyPopover, dayCareRoomTemplate){
 
   var helpers = PokemonView.prototype.templateHelpers;
 
@@ -27,13 +28,27 @@ define([
       }
     }
 
+    ,behaviors: {
+      PartyPopover: {
+        behaviorClass: PartyPopover
+        ,container: 'body'
+      }
+    }
+
     ,events: {
-      'click [data-pos]': 'withdraw'
+      'click .sprite:not(.empty)': 'withdraw'
+      ,'selectPokemon .sprite.empty': 'deposit'
     }
 
     ,modelEvents: {
       change: 'render'
       ,withdraw: 'refreshParty'
+    }
+
+    ,onClose: function(){
+      if (this.partyPopover) {
+        this.partyPopover.close();
+      }
     }
 
     ,withdraw: function(e){
@@ -51,6 +66,10 @@ define([
           me.model.withdraw(pokemon);
         }
       });
+    }
+
+    ,deposit: function(e, pokemon){
+      this.model.deposit(pokemon);
     }
 
     ,refreshParty: function(e){
