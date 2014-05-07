@@ -19,7 +19,7 @@
   </div>
 <% }) %>
 <% if (egg) { %>
-  <div class="egg <% if (canWithdraw(egg)) { %>can-withdraw<% } %>">
+  <div class="egg <% if (canWithdraw(egg)) { %>can-withdraw<% } %>" data-pos="egg">
     <img src="<%= spriteUrl(egg) %>" alt="<%- pokemonName(egg) %>" />
   </div>
 <% } %>

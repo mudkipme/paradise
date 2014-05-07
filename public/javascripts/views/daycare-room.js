@@ -27,7 +27,8 @@ define([
         return helpers.pokemonName.apply({pokemon: pokemon});
       }
       ,canWithdraw: function(pokemon){
-        return pokemon.trainer == require('app').trainer.id;
+        return pokemon.trainer == require('app').trainer.id ||
+          (pokemon.originalTrainer && pokemon.originalTrainer.id == require('app').trainer.id);
       }
     }
 
@@ -39,7 +40,7 @@ define([
     }
 
     ,events: {
-      'click .sprite:not(.empty)': 'withdraw'
+      'click [data-pos]:not(.empty)': 'withdraw'
       ,'selectPokemon .sprite.empty': 'deposit'
     }
 
@@ -57,7 +58,9 @@ define([
     ,withdraw: function(e){
       var me = this;
       var pokemon = me.model[$(e.currentTarget).data('pos')];
-      if (!pokemon || pokemon.get('trainer') != require('app').trainer.id) return;
+      var ot = pokemon.get('originalTrainer') && pokemon.get('originalTrainer').id;
+      if (!pokemon || (pokemon.get('trainer') != require('app').trainer.id && ot != require('app').trainer.id))
+        return;
 
       var pokemonName = helpers.pokemonName.apply({pokemon: pokemon.toJSON()});
       vent.trigger('modal', {
