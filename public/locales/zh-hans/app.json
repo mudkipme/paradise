@@ -159,6 +159,9 @@
     ,"search": "搜索有空位的饲育屋"
     ,"withdraw-confirm": "确定要取出 __pokemon__ 吗？"
     ,"deposited": "__pokemon__ 已经存放到了饲育屋。"
+    ,"invalid-trainer": "请输入正确的训练家名字。"
+    ,"no-available": "没有找到有空位的饲育屋。"
+    ,"requested": "已经向 __trainer__ 发出请求，期间请将 __pokemon__ 保留在队伍中。"
   }
   ,"msg": {
     "received": "我收到的消息"
@@ -166,6 +169,14 @@
     ,"gift-item": "__sender__ 向你赠送了 __number__ 个 __item__"
     ,"event-pokemon": "神奇宝贝乐园 向你赠送了 __pokemon__"
     ,"message": "__sender__ 向你发送了消息"
+    ,"expired": "来自 __sender__ 的过期请求"
+    ,"day-care": "__sender__ 请求将 __senderPokemon__ 加入 __pokemon__ 所在的饲育屋"
+    ,"accept-day-care": "__sender__ 接受了你的加入饲育屋请求"
+    ,"decline-day-care": "__sender__ 拒绝了你的加入饲育屋请求"
+    ,"accept": "接受请求"
+    ,"decline": "拒绝请求"
+    ,"accepted": "你已经接受了 __sender__ 的请求"
+    ,"declined": "你已经拒绝了 __sender__ 的请求"
   }
   ,"log": {
     "event-pokemon": "收到了神奇宝贝乐园赠送的 __pokemon__"

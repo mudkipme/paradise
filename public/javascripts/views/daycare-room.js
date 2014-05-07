@@ -26,6 +26,9 @@ define([
       ,pokemonName: function(pokemon){
         return helpers.pokemonName.apply({pokemon: pokemon});
       }
+      ,canWithdraw: function(pokemon){
+        return pokemon.trainer == require('app').trainer.id;
+      }
     }
 
     ,behaviors: {
@@ -54,12 +57,12 @@ define([
     ,withdraw: function(e){
       var me = this;
       var pokemon = me.model[$(e.currentTarget).data('pos')];
-      if (!pokemon) return;
+      if (!pokemon || pokemon.get('trainer') != require('app').trainer.id) return;
 
       var pokemonName = helpers.pokemonName.apply({pokemon: pokemon.toJSON()});
       vent.trigger('modal', {
         title: i18n.t('day-care.withdraw')
-        ,content: i18n.t('day-care.withdraw-confirm', {pokemon: pokemonName})
+        ,content: i18n.t('day-care.withdraw-confirm', {pokemon: _.escape(pokemonName)})
         ,type: 'confirm'
         ,btnType: 'warning'
         ,accept: function(){

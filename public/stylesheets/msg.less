@@ -29,14 +29,24 @@
 
   &.unread {
     background-color: @gray-lighter;
+    cursor: pointer;
     .msg-title {
       font-weight: bold;
     }
     &:hover {
       background-color: #ddd;
     }
-    &:not(.need-accept) {
-      cursor: pointer;
-    }
+  }
+
+  .btn-accept, .btn-decline {
+    .btn-sm;
+  }
+
+  .btn-accept {
+    .btn-success;
+  }
+
+  .btn-decline {
+    .btn-warning;
   }
 }

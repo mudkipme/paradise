@@ -448,7 +448,7 @@ TrainerSchema.methods.todaySpecies = function(callback){
 TrainerSchema.methods.available = function(pokemon){
   var party = _.filter(this.party, function(pm){
     return !pm.isEgg && !pm.pokemonCenter
-      && !pm._id.equals(pokemon._id);
+      && !(pm._id ? pm._id.equals(pokemon._id) : pm.equals(pokemon._id));
   });
   return party.length;
 };

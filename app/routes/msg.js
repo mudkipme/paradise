@@ -19,7 +19,7 @@ var msgAction = function(req, res, type){
       return res.json(403, {error: 'PERMISSION_DENIED'});
 
     msg[type](function(err){
-      if (err) res.json(403, {error: err.message});
+      if (err) return res.json(403, {error: err.message});
       res.json(msg);
     });
   });

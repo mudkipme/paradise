@@ -159,6 +159,9 @@
     ,"search": "Search Day Care Room"
     ,"withdraw-confirm": "Do you want to withdraw __pokemon__?"
     ,"deposited": "__pokemon__ is now in Pokémon Day Care."
+    ,"invalid-trainer": "Please enter a valid Trainer name"
+    ,"no-available": "No available Pokémon Day Care"
+    ,"requested": "Sent request to __trainer__, please keep __pokemon__ in your Party."
   }
   ,"msg": {
     "received": "Received Messages"
@@ -166,6 +169,14 @@
     ,"gift-item": "__sender__ sent you __number__ __item__(s)"
     ,"event-pokemon": "52Poké Paradise sent you __pokemon__"
     ,"message": "__sender__ sent you a message"
+    ,"expired": "Expired request from __sender__"
+    ,"day-care": "__sender__'s __senderPokemon__ wants join the Day Care of __pokemon__"
+    ,"accept-day-care": "__sender__ accepted your Day Care request"
+    ,"decline-day-care": "__sender__ declined your Day Care request"
+    ,"accept": "Accept"
+    ,"decline": "Decline"
+    ,"accepted": "You accepted the request from __sender__"
+    ,"declined": "You declined the request from __sender__"
   }
   ,"log": {
     "event-pokemon": "Received __pokemon__ from 52Poké Paradise"

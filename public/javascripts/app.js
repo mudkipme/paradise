@@ -101,9 +101,13 @@ define([
       App.alertRegion.show(new AlertView(options));
     });
 
-    // Display an alert
+    // Display an modal
     vent.on('modal', function(options){
       App.modalRegion.show(new ModalView(options));
+    });
+
+    vent.on('modal:close', function(){
+      App.modalRegion.close();
     });
 
     vent.on('notification', function(msg){

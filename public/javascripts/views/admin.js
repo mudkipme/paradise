@@ -104,7 +104,7 @@ define([
       var msgs = [];
       _.each(giftList, function(gift){
         var pokemonName = helpers.pokemonName.apply({pokemon: gift.pokemon});
-        msgs.push(i18n.t('admin.gift-pokemon-alert', {trainer: gift.trainer.name, pokemon: pokemonName}));
+        msgs.push(i18n.t('admin.gift-pokemon-alert', {trainer: _.escape(gift.trainer.name), pokemon: _.escape(pokemonName)}));
       });
 
       vent.trigger('alert', {

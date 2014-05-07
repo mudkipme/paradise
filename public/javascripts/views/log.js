@@ -34,7 +34,6 @@ define([
       var trainer = require('app').trainer;
       var relatedTrainer = this.model.get('relatedTrainer');
       data.related = relatedTrainer && trainer && relatedTrainer.id == trainer.id;
-      console.log(data.related);
       return data;
     }
 

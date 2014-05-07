@@ -12,6 +12,9 @@ define([
     'gift-item': "<%= t('msg.gift-item', {sender: sender.name || t('app.pokemon-paradise'), number: relatedNumber, item: t('item:'+relatedItem.name)}) %>"
     ,'event-pokemon': "<%= t('msg.event-pokemon', {pokemon: pokemonName(receiverPokemon)}) %>"
     ,'message': "<%= t('msg.message', {sender: sender.name || t('app.pokemon-paradise')}) %>"
+    ,'day-care': "<%= t('msg.day-care', {sender: sender.name, senderPokemon: pokemonName(senderPokemon), pokemon: pokemonName(relatedDayCare.pokemonA) }) %>"
+    ,'accept-day-care': "<%= t('msg.accept-day-care', {sender: sender.name }) %>"
+    ,'decline-day-care': "<%= t('msg.decline-day-care', {sender: sender.name }) %>"
   };
 
   var Msg = Backbone.Model.extend({

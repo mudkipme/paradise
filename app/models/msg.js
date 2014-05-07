@@ -6,6 +6,7 @@ var io = require('../io');
 var config = require('../../config.json');
 var Schema = mongoose.Schema;
 
+var needAccept = ['day-care', 'trade', 'battle'];
 var Status = { normal: 0, waiting: 1, accepted: 2, declined: 3, expired: 4 };
 
 var MsgSchema = new Schema({
@@ -25,14 +26,27 @@ var MsgSchema = new Schema({
   toJSON: { virtuals: true, minimize: false }
 });
 
-MsgSchema.virtual('needAccept').get(function(){
-  var needAccept = ['day-care', 'trade', 'battle'];
-  return _.contains(needAccept, this.type);
-});
-
 MsgSchema.virtual('relatedItem').get(function(){
   return this._relatedItem;
 });
+
+var acceptMethods = {}, initJobs = {};
+
+// Accept Day Care joining message
+acceptMethods['day-care'] = function(cb){
+  var me = this;
+  if (!me.relatedDayCare || !me.relatedDayCare.trainerA)
+    return cb(new Error('MSG_EXPIRED'));
+  me.relatedDayCare.deposit(me.sender, me.senderPokemon, cb);
+};
+
+// Must be a valid day care request
+initJobs['day-care'] = function(cb){
+  var me = this;
+  if (me.status == Status.waiting && me.relatedDayCare.depositError(me.sender, me.senderPokemon))
+    return me.setExpire(cb);
+  cb(null);
+};
 
 MsgSchema.methods.initData = function(callback){
   var me = this;
@@ -52,6 +66,8 @@ MsgSchema.methods.initData = function(callback){
     me.receiverPokemon &&
       actions.push(me.receiverPokemon.initData.bind(me.receiverPokemon));
 
+    initJobs[me.type] && actions.push(initJobs[me.type].bind(me));
+
     async.series(actions, function(err, results){
       if (err) callback(err);
       me.relatedItemId && (me._relatedItem = results[0]);
@@ -64,19 +80,10 @@ MsgSchema.methods.initData = function(callback){
 // Accept a message
 MsgSchema.methods.accept = function(callback){
   var me = this;
-
-  var acceptMethods = {
-    // Accept Day Care joining message
-    'day-care': function(){
-      if (!me.relatedDayCare || !me.relatedDayCare.trainerA)
-        return cb(new Error('MSG_EXPIRED'));
-      me.relatedDayCare.deposit(me.sender, me.senderPokemon, cb);
-    }
-  };
-  
-  if (!acceptMethods[me.type])
+  if (this.status != Status.waiting || !acceptMethods[me.type])
     return callback(new Error('MSG_NOT_ACCEPTABLE'));
 
+  me.read = true;
   me.status = Status.accepted;
 
   async.series([
@@ -92,9 +99,10 @@ MsgSchema.methods.accept = function(callback){
       ,relatedDayCare: me.relatedDayCare
     })
   ], function(err){
-    if (err && err.message == 'MSG_EXPIRED') {
-      me.status = Status.expired;
-      return me.save(callback);
+    if (err) {
+      return me.setExpire(function(saveErr){
+        callback(saveErr || err);
+      });
     }
     callback(err);
   });
@@ -102,8 +110,6 @@ MsgSchema.methods.accept = function(callback){
 
 // Read a message
 MsgSchema.methods.setRead = function(callback){
-  if (this.needAccept)
-    return callback(new Error('MSG_TAKE_ACTION'));
   this.read = true;
   async.series([
     this.initData.bind(this)
@@ -111,13 +117,19 @@ MsgSchema.methods.setRead = function(callback){
   ], callback);
 };
 
+MsgSchema.methods.setExpire = function(callback){
+  this.read = true;
+  this.status = Status.expired;
+  this.save(callback);
+};
+
 // Decline a message
 MsgSchema.methods.decline = function(callback){
-  if (!this.needAccept)
+  if (this.status != Status.waiting)
     return callback(new Error('MSG_NO_ACTION'));
 
   this.read = true;
-  this.status = this.status && Status.declined;
+  this.status = Status.declined;
 
   async.series([
     this.initData.bind(this)
@@ -137,8 +149,8 @@ MsgSchema.statics.sendMsg = function(options, callback){
   if (!options.sender || !options.receiver)
     return callback(new Error('ERR_INVALID_PARAM'));
   var msg = new Msg(options);
-  if (msg.needAccept) {
-    msg.status = options.status || Status.waiting;
+  if (needAccept.indexOf(msg.type) > -1) {
+    msg.status = Status.waiting;
   }
   async.series([
     msg.save.bind(msg)

@@ -1,7 +1,15 @@
 <h4 class="msg-title">
   <span class="pull-right create-time" title="<%= moment(createTime).format('lll') %>"><%= moment(createTime).fromNow() %></span>
+  <% if (status == Status.expired) { %>
+    <%= t('msg.expired', {sender: sender.name}) %>
 
-  <% if (type == 'gift-item') { %>
+  <% } else if (status == Status.accepted) { %>
+    <%= t('msg.accepted', {sender: sender.name}) %>
+
+  <% } else if (status == Status.declined) { %>
+    <%= t('msg.declined', {sender: sender.name}) %>
+
+  <% } else if (type == 'gift-item') { %>
     <%= t('msg.gift-item', {sender: sender.name || t('app.pokemon-paradise'), number: relatedNumber, item: t('item:'+relatedItem.name)}) %>
     <img class="item-img" src="<%= PARADISE.imgBase %>/items/<%= (relatedItem.name) %>.png" alt="<%= t('item:' + relatedItem.name) %>" />
 
@@ -10,6 +18,16 @@
 
   <% } else if (type == 'message') { %>
     <%= t('msg.message', {sender: sender.name || t('app.pokemon-paradise')}) %>
+
+  <% } else if (type == 'day-care') { %>
+    <%= t('msg.day-care', {sender: sender.name, senderPokemon: pokemonName(senderPokemon), pokemon: pokemonName(relatedDayCare.pokemonA) }) %>  
+  
+  <% } else if (type == 'accept-day-care') { %>
+    <%= t('msg.accept-day-care', {sender: sender.name }) %>
+
+  <% } else if (type == 'decline-day-care') { %>
+    <%= t('msg.decline-day-care', {sender: sender.name }) %>
+
   <% } %>
 </h4>
 <p>
@@ -18,9 +36,20 @@
       <img src="<%= spriteUrl(receiverPokemon) %>" alt="<%- pokemonName(receiverPokemon) %>" />
     </div>
   <% } %>
+  <% if (type == 'day-care' && status == Status.waiting) { %>
+    <div class="sprite">
+      <img src="<%= spriteUrl(senderPokemon) %>" alt="<%- pokemonName(senderPokemon) %>" />
+    </div>
+  <% } %>
   <% if (type == 'gift-item') { %>
     <%- content || t('item:description.' + relatedItem.name) %>
   <% } else { %>
     <%- content %>
   <% } %>
 </p>
+<% if (status == Status.waiting) { %>
+  <p>
+    <button class="btn btn-accept"><%= t('msg.accept') %></button>
+    <button class="btn btn-decline"><%= t('msg.decline') %></button>
+  </p>
+<% } %>

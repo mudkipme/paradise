@@ -6,10 +6,11 @@ define([
   ,'vent'
   ,'views/party-select'
   ,'views/daycare-list'
+  ,'views/daycare-room-other'
   ,'models/daycare'
   ,'collections/daycares'
   ,'text!templates/daycare.html'
-], function($, _, Marionette, i18n, vent, PartySelectView, DayCareListView, DayCare, DayCares, dayCareTemplate){
+], function($, _, Marionette, i18n, vent, PartySelectView, DayCareListView, OtherDayCareRoomView, DayCare, DayCares, dayCareTemplate){
 
   var helpers = PartySelectView.prototype.templateHelpers;
 
@@ -62,20 +63,35 @@ define([
       vent.trigger('alert', {
         type: 'success'
         ,title: i18n.t('day-care.deposit')
-        ,content: i18n.t('day-care.deposited', {pokemon: pokemon})
+        ,content: i18n.t('day-care.deposited', {pokemon: _.escape(pokemon)})
       });
       this.$('section.withdraw').addClass('open');
     }
 
     ,searchDayCare: function(e){
       e.preventDefault();
+      var trainerName = $.trim(this.$('.search-input').val());
+      if (!trainerName || trainerName == this.collection.trainer.get('name')) {
+        vent.trigger('alert', {
+          type: 'warning'
+          ,title: i18n.t('day-care.deposit')
+          ,content: i18n.t('day-care.invalid-trainer')
+        });
+        return;
+      }
+
       var dayCares = new DayCares([], {trainer: this.$('.search-input').val()});
       dayCares.once('sync', function(){
         if (dayCares.size() == 0) {
+          vent.trigger('alert', {
+            type: 'warning'
+            ,title: i18n.t('day-care.deposit')
+            ,content: i18n.t('day-care.no-available')
+          });
           return;
         }
         vent.trigger('modal', {
-          view: new DayCareListView({collection: dayCares})
+          view: new DayCareListView({collection: dayCares, itemView: OtherDayCareRoomView})
         });
       });
       dayCares.fetch();

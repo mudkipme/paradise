@@ -56,6 +56,19 @@ define([
         }
       });
     }
+
+    ,request: function(pokemon){
+      var me = this;
+      me.sync(null, me, {
+        url: me.url() + '/request'
+        ,type: 'POST'
+        ,data: {pokemonId: pokemon.get('id')}
+        ,processData: true
+        ,success: function(data){
+          me.trigger('requested', pokemon);
+        }
+      });
+    }
   });
 
   return DayCare;

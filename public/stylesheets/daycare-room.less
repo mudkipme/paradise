@@ -57,7 +57,7 @@
     bottom: -25px;
   }
 
-  [data-pos]:not(.empty) {
+  .can-withdraw {
     cursor: pointer;
     .transition-transform(0.2s ease-out);
     &:hover {
@@ -69,5 +69,17 @@
 @media (min-width: 768px) and (max-width: 991px) {
   .day-care-room {
     background-size: 100%;
+  }
+}
+
+.day-care-room-other {
+  @media (min-width: 768px) {
+    background-size: 100%;
+  }
+  .sprite:not(.empty) {
+    cursor: default;
+    &:hover {
+      .translate(0, 0);
+    }
   }
 }

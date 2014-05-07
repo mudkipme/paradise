@@ -39,22 +39,29 @@ DayCareSchema.methods.initData = function(callback){
   });
 };
 
-DayCareSchema.methods.deposit = function(trainer, pokemon, callback){
-  var me = this;
-  if (me.pokemonB) return callback(new Error('DAY_CARE_FULL'));
-  if (me.egg) return callback(new Error('TAKE_EGG_FIRST'));
-  if (pokemon.isEgg) return callback(new Error('ERR_POKEMON_IS_EGG'));
-  if (pokemon.pokemonCenter) return callback(new Error('POKEMON_IN_PC'));
+DayCareSchema.methods.depositError = function(trainer, pokemon){
+  if (this.pokemonB) return new Error('DAY_CARE_FULL');
+  if (this.egg) return new Error('TAKE_EGG_FIRST');
+  if (pokemon.isEgg) return new Error('ERR_POKEMON_IS_EGG');
+  if (pokemon.pokemonCenter) return new Error('POKEMON_IN_PC');
 
-  if (me.pokemonA && _.isEqual((me.pokemonA._id || me.pokemonA), pokemon._id))
-    return callback(new Error('ALREADY_JOINED'));
+  if (this.pokemonA && _.isEqual((this.pokemonA._id || this.pokemonA), pokemon._id))
+    return new Error('ALREADY_JOINED');
 
   var found = _.find(trainer.party, function(pm){
     return _.isEqual(pokemon._id, pm._id || pm);
   });
 
-  if (!found) return callback(new Error('POKEMON_NOT_IN_PARTY'));
-  if (!trainer.available(pokemon)) return callback(new Error('ONE_POKEMON_LEFT'));
+  if (!found) return new Error('POKEMON_NOT_IN_PARTY');
+  if (!trainer.available(pokemon)) return new Error('ONE_POKEMON_LEFT');
+  return null;
+};
+
+DayCareSchema.methods.deposit = function(trainer, pokemon, callback){
+  var me = this;
+  var err = me.depositError(trainer, pokemon);
+
+  if (err) return callback(err);
 
   if (!me.pokemonA) {
     me.pokemonA = pokemon;
@@ -66,6 +73,8 @@ DayCareSchema.methods.deposit = function(trainer, pokemon, callback){
     me.fillTime = new Date();
   }
 
+  me._inited = false;
+
   async.series([
     me.initData.bind(me)
     ,function(next){
@@ -73,7 +82,7 @@ DayCareSchema.methods.deposit = function(trainer, pokemon, callback){
       me.save(next);
     }
     ,function(next){
-      trainer.party.pull(found);
+      trainer.party.pull({_id: pokemon._id});
       trainer.save(next);
     }
   ], callback);

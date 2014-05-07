@@ -16,7 +16,7 @@ router.use(auth.trainer);
 // Get one trainer's day care information
 router.get('/', function(req, res){
   var getter = function(trainerId, options){
-    options = _.extend({ $or: [{trainerA: trainerId}, {trainerB: trainerId}, {eggTrainer: trainerId}] }, options);
+    options = options || { $or: [{trainerA: trainerId}, {trainerB: trainerId}, {eggTrainer: trainerId}] };
     DayCare.find(options)
     .sort('createTime')
     .exec(function(err, dayCares){
@@ -40,7 +40,8 @@ router.get('/', function(req, res){
     getter(trainer._id, {$and: [
       {$or: [{pokemonB: null}, {pokemonB: {$exists: false}}]}
       ,{$or: [{egg: null}, {egg: {$exists: false}}]}
-    ]}, {pokemonB: null});
+      ,{trainerA: trainer._id}
+    ]});
   });
 });
 
@@ -123,7 +124,7 @@ router.post('/:id/request', function(req, res){
     if (dayCare.egg) res.json(403, {error: 'TAKE_EGG_FIRST'});
     if (!dayCare.trainerA) res.json(403, {error: 'DAY_CARE_EMPTY'});
 
-    msg.sendMsg({
+    Msg.sendMsg({
       type: 'day-care'
       ,sender: req.trainer
       ,receiver: dayCare.trainerA
