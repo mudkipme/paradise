@@ -1,0 +1,22 @@
+{
+  "name": "rakuen",
+  "version": "0.1.0",
+  "description": "A Web application for Pokémon fan communities to capture, collect and trade Pokémon.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mudkipme/rakuen.git"
+  },
+  "keywords": [
+    "pokemon"
+  ],
+  "author": "Mudkip",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/mudkipme/rakuen/issues"
+  },
+  "homepage": "https://github.com/mudkipme/rakuen#readme"
+}
