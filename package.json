@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-server": "webpack --config webpack.server.js"
+    "build-server": "webpack --config webpack.server.js",
+    "build-client": "NODE_ENV=production webpack",
+    "build-dev": "NODE_ENV=development webpack",
+    "build": "npm run build-client && npm run build-server",
+    "lint": "tslint --project .",
+    "start": "NODE_ENV=production ./build/app.js"
   },
   "repository": {
     "type": "git",
@@ -33,6 +38,10 @@
     "@types/lodash": "^4.14.102",
     "@types/mkdirp": "^0.5.2",
     "@types/nconf": "0.0.37",
+    "@types/react-dom": "^16.0.4",
+    "@types/react-redux": "^5.0.15",
+    "@types/react-router-dom": "^4.2.4",
+    "@types/redux-promise-middleware": "0.0.9",
     "@types/winston": "^2.3.8",
     "bull": "^3.3.9",
     "jss": "^9.8.0",
@@ -43,6 +52,7 @@
     "koa-favicon": "^2.0.0",
     "koa-json-error": "^3.1.2",
     "koa-redis": "^3.1.2",
+    "koa-router": "^7.4.0",
     "koa-session": "^5.8.1",
     "koa-static": "^4.0.2",
     "lodash": "^4.17.5",
@@ -58,6 +68,7 @@
     "react-router-dom": "^4.2.2",
     "recompose": "^0.26.0",
     "redux": "^3.7.2",
+    "redux-promise-middleware": "^5.0.0",
     "winston": "^2.4.0"
   },
   "devDependencies": {
@@ -65,6 +76,7 @@
     "ts-loader": "^3.5.0",
     "tslint": "^5.9.1",
     "typescript": "^2.7.1",
+    "uglifyjs-webpack-plugin": "^1.1.8",
     "webpack": "^3.11.0",
     "webpack-merge": "^4.1.1",
     "webpack-node-externals": "^1.6.0"

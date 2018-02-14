@@ -3,4 +3,7 @@ node_modules
 /config.json
 npm-debug.log
 /build
+/public/build
 /data/logs
+.vscode
+*.generated.json
