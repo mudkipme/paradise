@@ -8,6 +8,7 @@ import session from "koa-session";
 import serve from "koa-static";
 import path from "path";
 import nconf from "./lib/config";
+import { sequelize } from "./lib/database";
 import logger from "./lib/logger";
 import renderPage from "./routes/page";
 
@@ -21,8 +22,16 @@ app.use(serve(path.join(__dirname, "../public")));
 app.use(error());
 app.use(renderPage);
 
-const server = app.listen(nconf.get("app:port") || 3000, () => {
-    logger.info("Paradise server listening on port " + server.address().port);
-});
-
 export default app;
+
+async function start() {
+    await sequelize.sync();
+
+    const server = app.listen(nconf.get("app:port") || 3000, () => {
+        logger.info("Paradise server listening on port " + server.address().port);
+    });
+}
+
+start().catch((err: Error) => {
+    logger.error(err.message);
+});

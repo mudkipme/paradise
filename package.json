@@ -42,6 +42,7 @@
     "@types/react-redux": "^5.0.15",
     "@types/react-router-dom": "^4.2.4",
     "@types/redux-promise-middleware": "0.0.9",
+    "@types/sequelize": "^4.27.6",
     "@types/winston": "^2.3.8",
     "bull": "^3.3.9",
     "jss": "^9.8.0",
@@ -60,6 +61,7 @@
     "material-ui-icons": "^1.0.0-beta.17",
     "mkdirp": "^0.5.1",
     "nconf": "^0.10.0",
+    "pg": "^7.4.1",
     "pokedex-promise-v2": "^3.1.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -69,6 +71,7 @@
     "recompose": "^0.26.0",
     "redux": "^3.7.2",
     "redux-promise-middleware": "^5.0.0",
+    "sequelize": "^4.33.4",
     "winston": "^2.4.0"
   },
   "devDependencies": {
