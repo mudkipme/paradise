@@ -7,10 +7,14 @@ import redisStore from "koa-redis";
 import session from "koa-session";
 import serve from "koa-static";
 import path from "path";
+import { URL } from "url";
 import nconf from "./lib/config";
 import { sequelize } from "./lib/database";
 import logger from "./lib/logger";
-import renderPage from "./routes/page";
+import passport from "./lib/passport";
+import { middleware as renderMiddleware } from "./middlewares/render";
+import authRouter from "./routes/auth";
+import defaultRoute from "./routes/default";
 
 const app = new Koa();
 app.keys = [nconf.get("app:cookieSecret")];
@@ -20,14 +24,19 @@ app.use(favicon(path.join(__dirname, "../public/images/favicon.ico")));
 app.use(bodyParser());
 app.use(serve(path.join(__dirname, "../public")));
 app.use(error());
-app.use(renderPage);
+app.use(renderMiddleware());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(authRouter.routes());
+app.use(defaultRoute());
 
 export default app;
 
 async function start() {
     await sequelize.sync();
+    const url = new URL(nconf.get("app:url"));
 
-    const server = app.listen(nconf.get("app:port") || 3000, () => {
+    const server = app.listen(url.port || 3000, () => {
         logger.info("Paradise server listening on port " + server.address().port);
     });
 }

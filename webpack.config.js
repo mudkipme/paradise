@@ -33,6 +33,9 @@ module.exports = {
         new CleanWebpackPlugin([path.join(__dirname, "public", "build")]),
         function () {
             this.plugin("done", function (stats) {
+                if (!fs.existsSync(path.join(__dirname, "data"))) {
+                    fs.mkdirSync(path.join(__dirname, "data"));
+                }
                 fs.writeFileSync(path.join(__dirname, "data/stats.generated.json"), JSON.stringify(stats.toJson().assetsByChunkName));
             });
         }

@@ -1,4 +1,3 @@
-import { values } from "lodash";
 import Sequelize from "sequelize";
 import PokemonSchema, { setupRelation as setupPokemonRelation } from "../models/Pokemon";
 import TrainerSchema, { setupRelation as setupTrainerRelation } from "../models/Trainer";
@@ -11,6 +10,7 @@ export const sequelize = new Sequelize(
     {
         dialect: "postgres",
         host: nconf.get("database:postgres:host"),
+        logging: process.env.NODE_ENV !== "production",
         operatorsAliases: false,
     },
 );

@@ -16,6 +16,13 @@ if (nconf.get("config")) {
 nconf.defaults({
     app: {
         cookieSecret: "my little secret",
+        url: "http://localhost:3000",
+    },
+    login: {
+        strategies: ["github"],
+    },
+    pokeapi: {
+        cacheLimit: 3600000,
     },
 });
 

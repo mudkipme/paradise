@@ -58,6 +58,12 @@ export interface ITrainerAttributes {
     lastLogin: Date;
     todayLuck: number | null | undefined;
     battlePoint: number;
+    profile: {
+        provider: string;
+        id: number;
+        displayName: string;
+        cost: number;
+    };
 }
 
 export interface ITrainerInstance extends Instance<ITrainerAttributes> {
@@ -78,10 +84,28 @@ export default function trainer(sequelize: Sequelize, dataTypes: DataTypes) {
         pokedexCaughtNum: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         pokedexHex: { type: dataTypes.JSONB, allowNull: false },
         pokedexSeenNum: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        profile: { type: dataTypes.JSONB, allowNull: false },
         realworld: { type: dataTypes.JSONB, allowNull: false },
         statistics: { type: dataTypes.JSONB, allowNull: false },
         storage: { type: dataTypes.JSONB, allowNull: false },
         todayLuck: { type: dataTypes.INTEGER },
+    }, {
+        indexes: [
+            {
+                fields: ["name"],
+                unique: true,
+            },
+            {
+                fields: ["profile"],
+                operator: "jsonb_path_ops",
+                using: "gin",
+            },
+            {
+                fields: ["statistics"],
+                operator: "jsonb_path_ops",
+                using: "gin",
+            },
+        ],
     });
 
     return Trainer;
