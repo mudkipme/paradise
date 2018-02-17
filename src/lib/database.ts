@@ -10,7 +10,7 @@ export const sequelize = new Sequelize(
     {
         dialect: "postgres",
         host: nconf.get("database:postgres:host"),
-        logging: process.env.NODE_ENV !== "production",
+        logging: process.env.NODE_ENV === "production" ? false : console.log,
         operatorsAliases: false,
     },
 );

@@ -10,7 +10,8 @@ const router = new Router({
 if (strategies.has("github")) {
     router.get("/github", passport.authenticate("github"));
     router.get("/github/callback", passport.authenticate("github", {
-        failureRedirect: "/login",
+        failureRedirect: "/auth/failure",
+        successRedirect: "/",
     }));
 }
 

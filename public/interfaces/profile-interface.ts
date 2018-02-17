@@ -1,5 +1,5 @@
 export interface IProfile {
     provider: string;
-    id: number;
+    id: string;
     displayName: string;
 }

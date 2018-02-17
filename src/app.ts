@@ -12,21 +12,25 @@ import nconf from "./lib/config";
 import { sequelize } from "./lib/database";
 import logger from "./lib/logger";
 import passport from "./lib/passport";
+import { middleware as configMiddleware } from "./middlewares/config";
+import { middleware as profileMiddleware } from "./middlewares/profile";
 import { middleware as renderMiddleware } from "./middlewares/render";
 import authRouter from "./routes/auth";
 import defaultRoute from "./routes/default";
 
 const app = new Koa();
 app.keys = [nconf.get("app:cookieSecret")];
-app.use(session({ store: redisStore({}) }, app));
+app.use(session({ store: redisStore(nconf.get("app:database:redis")) }, app));
 app.use(compress());
 app.use(favicon(path.join(__dirname, "../public/images/favicon.ico")));
 app.use(bodyParser());
 app.use(serve(path.join(__dirname, "../public")));
 app.use(error());
 app.use(renderMiddleware());
+app.use(configMiddleware());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(profileMiddleware());
 app.use(authRouter.routes());
 app.use(defaultRoute());
 

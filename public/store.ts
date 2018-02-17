@@ -10,4 +10,10 @@ export const create = (preloadState: Partial<IAppState> = {}) => createStore(
     ),
 );
 
-export default create();
+let preloadedState: IAppState | undefined;
+if (typeof window === "object") {
+    preloadedState = (window as any).__PRELOADED_STATE__;
+    delete (window as any).__PRELOADED_STATE__;
+}
+
+export default create(preloadedState);

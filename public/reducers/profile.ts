@@ -9,7 +9,7 @@ export interface IProfileState extends IProfile {
 const initialState: IProfileState = {
     displayName: "",
     hasLogin: false,
-    id: 0,
+    id: "",
     provider: "",
 };
 
