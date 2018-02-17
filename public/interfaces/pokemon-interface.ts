@@ -4,4 +4,9 @@ export enum Gender {
     Genderless,
 }
 
-export type HatchRate = "hatched" | "soon" | "close" | "wait";
+export enum HatchRate {
+    Hatched = "hatched",
+    Soon = "soon",
+    Close = "close",
+    Wait = "wait",
+}

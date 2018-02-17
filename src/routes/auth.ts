@@ -1,3 +1,4 @@
+import { Context } from "koa";
 import Router from "koa-router";
 import nconf from "../lib/config";
 import passport, { strategies } from "../lib/passport";
@@ -12,5 +13,10 @@ if (strategies.has("github")) {
         failureRedirect: "/login",
     }));
 }
+
+router.get("/logout", (ctx: Context) => {
+    ctx.logout();
+    ctx.redirect("/");
+});
 
 export default router;

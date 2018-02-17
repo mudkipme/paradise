@@ -1,5 +1,6 @@
 import { DataTypes, Instance, Model, Sequelize } from "sequelize";
 import { BattleResult } from "../../public/interfaces/battle-interface";
+import { IProfile } from "../../public/interfaces/profile-interface";
 import { Models } from "../lib/database";
 import { IPokemonInstance } from "./pokemon";
 
@@ -54,16 +55,12 @@ export interface ITrainerAttributes {
         catchTime: number;
         hatchTime: number;
         evolveTime: number;
+        cost: number;
     };
     lastLogin: Date;
     todayLuck: number | null | undefined;
     battlePoint: number;
-    profile: {
-        provider: string;
-        id: number;
-        displayName: string;
-        cost: number;
-    };
+    profile: IProfile;
 }
 
 export interface ITrainerInstance extends Instance<ITrainerAttributes> {

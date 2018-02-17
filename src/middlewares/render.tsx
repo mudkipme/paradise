@@ -18,13 +18,13 @@ import renderFullPage from "../views/page";
 const stats = JSON.parse(fs.readFileSync(path.join(__dirname, "../../data/stats.generated.json"), "utf8"));
 
 function createRenderer() {
-    return async function(this: Context, data?: { [key: string]: any }) {
+    return async function(this: Context) {
         const sheetsRegistry = new SheetsRegistry();
         const theme = createMuiTheme();
         const jss = create(preset());
         const generateClassName = createGenerateClassName();
         const context: IRouterContext = {};
-        const store = createStore();
+        const store = createStore(this.preloadedState);
 
         const html = renderToString(
             <JssProvider registry={sheetsRegistry} jss={jss} generateClassName={generateClassName}>
@@ -38,12 +38,14 @@ function createRenderer() {
             </JssProvider>,
         );
 
+        const finalState = store.getState();
+
         if (context.notFound) {
             this.response.status = 404;
         }
 
         const css = sheetsRegistry.toString();
-        this.response.body = renderFullPage({ html, css, stats });
+        this.response.body = renderFullPage({ html, css, stats, finalState });
     };
 }
 
@@ -52,6 +54,7 @@ export function middleware() {
 
     return async (ctx: Context, next: () => Promise<void>) => {
         ctx.render = renderer;
+        ctx.preloadedState = {};
         await next();
     };
 }

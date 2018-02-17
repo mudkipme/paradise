@@ -1,4 +1,10 @@
 import { combineReducers } from "redux";
+import profile, { IProfileState } from "./profile";
 
-export default combineReducers({
+export interface IAppState {
+    profile: IProfileState;
+}
+
+export default combineReducers<IAppState>({
+    profile,
 });

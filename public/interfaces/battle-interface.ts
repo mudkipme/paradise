@@ -1,1 +1,5 @@
-export type BattleResult = "win" | "lose" | "draw";
+export enum BattleResult {
+    Win,
+    Lose,
+    Draw,
+}

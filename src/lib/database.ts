@@ -1,6 +1,6 @@
 import Sequelize from "sequelize";
-import PokemonSchema, { setupRelation as setupPokemonRelation } from "../models/Pokemon";
-import TrainerSchema, { setupRelation as setupTrainerRelation } from "../models/Trainer";
+import PokemonSchema, { setupRelation as setupPokemonRelation } from "../models/pokemon";
+import TrainerSchema, { setupRelation as setupTrainerRelation } from "../models/trainer";
 import nconf from "./config";
 
 export const sequelize = new Sequelize(

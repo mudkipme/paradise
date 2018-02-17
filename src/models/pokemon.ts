@@ -1,7 +1,7 @@
 import { Item, Nature } from "pokedex-promise-v2";
 import { DataTypes, Instance, Model, Sequelize } from "sequelize";
 import { Gender, HatchRate } from "../../public/interfaces/pokemon-interface";
-import { IImmutableStat, IOptionalStat, IPokemonStat, IStat, statNames } from "../../public/interfaces/stat-interface";
+import { IImmutableStat, IOptionalStat, IPokemonStat, IStat, StatName } from "../../public/interfaces/stat-interface";
 import nconf from "../lib/config";
 import { Getters, InstanceMethods, Models } from "../lib/database";
 import pokedex from "../lib/pokedex";
