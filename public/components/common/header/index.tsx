@@ -37,7 +37,7 @@ const styles = {
     },
 };
 
-class Header extends React.Component<IStateProps & WithStyles<keyof typeof styles>> {
+class Header extends React.PureComponent<IStateProps & WithStyles<keyof typeof styles>> {
     public state = {
         open: false,
     };
@@ -126,7 +126,7 @@ class Header extends React.Component<IStateProps & WithStyles<keyof typeof style
     }
 }
 
-const mapStateToProps: (state: IAppState) => IStateProps = (state: IAppState) => ({
+const mapStateToProps: (state: IAppState) => IStateProps = (state) => ({
     displayName: state.profile.displayName,
     hasLogin: state.profile.hasLogin,
     loginStrategies: state.config.loginStrategies,

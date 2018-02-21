@@ -2,12 +2,13 @@ import { Context } from "koa";
 
 export function middleware() {
     return async (ctx: Context, next: () => Promise<void>) => {
-        if (ctx.isAuthenticated()) {
+        ctx.trainer = ctx.state.user;
+        if (ctx.isAuthenticated() && ctx.trainer) {
             ctx.preloadedState.profile = {
-                displayName: ctx.state.user.displayName,
+                displayName: ctx.trainer.profile.displayName,
                 hasLogin: true,
-                id: ctx.state.user.id,
-                provider: ctx.state.user.provider,
+                id: ctx.trainer.profile.id,
+                provider: ctx.trainer.profile.provider,
             };
         }
         await next();

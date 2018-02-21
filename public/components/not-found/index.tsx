@@ -12,7 +12,7 @@ const styles: StyleRules<"root"> = {
     },
 };
 
-class NotFound extends React.Component<RouteComponentProps<{}> & WithStyles<keyof typeof styles>> {
+class NotFound extends React.PureComponent<RouteComponentProps<{}> & WithStyles<keyof typeof styles>> {
     public componentWillMount() {
         const { staticContext } = this.props;
         if (staticContext) {

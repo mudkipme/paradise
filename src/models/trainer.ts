@@ -23,28 +23,28 @@ export interface ITrainerAttributes {
         wallpaper: string;
     }>;
     currentBox: number;
-    storagePokemon: {
+    storagePokemon: Array<{
         boxId: number;
         position: number;
         pokemon: IPokemonInstance
-    } | null | undefined;
+    }>;
     bag: Array<{
         itemId: number;
         number: number;
     }>;
     encounter: {
-        location: string | null | undefined;
-        area: string | null | undefined;
-        method: string | null | undefined;
-        battleResult: BattleResult | null | undefined;
-    };
-    encounterPokemon: IPokemonInstance | null | undefined;
-    battlePokemon: IPokemonInstance | null | undefined;
+        location: string;
+        area: string;
+        method: string;
+        battleResult: BattleResult;
+    } | null;
+    encounterPokemon: IPokemonInstance | null;
+    battlePokemon: IPokemonInstance | null;
     realworld: {
-        longitude: number | null | undefined;
-        latitude: number | null | undefined;
-        countryCode: string | null | undefined;
-        timezoneId: string | null | undefined;
+        longitude: number;
+        latitude: number;
+        countryCode: string;
+        timezoneId: string;
     };
     language: string;
     acceptBattle: boolean;
@@ -58,33 +58,65 @@ export interface ITrainerAttributes {
         cost: number;
     };
     lastLogin: Date;
-    todayLuck: number | null | undefined;
+    todayLuck: number | null;
     battlePoint: number;
     profile: IProfile;
 }
 
-export interface ITrainerInstance extends Instance<ITrainerAttributes> {
+export interface ITrainerInstance extends Instance<ITrainerAttributes>, ITrainerAttributes {
 
 }
 
 export default function trainer(sequelize: Sequelize, dataTypes: DataTypes) {
     const Trainer = sequelize.define<ITrainerInstance, ITrainerAttributes>("trainer", {
         acceptBattle: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-        bag: { type: dataTypes.JSONB, allowNull: false },
-        battlePoint: { type: dataTypes.INTEGER },
+        bag: { type: dataTypes.JSONB, allowNull: false, defaultValue: [] },
+        battlePoint: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         currentBox: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        encounter: { type: dataTypes.JSONB, allowNull: false },
+        encounter: { type: dataTypes.JSONB },
         id: { type: dataTypes.UUID, primaryKey: true, allowNull: false, defaultValue: dataTypes.UUIDV4 },
         language: { type: dataTypes.STRING },
         lastLogin: { type: dataTypes.DATE, allowNull: false },
         name: { type: dataTypes.STRING, allowNull: false },
         pokedexCaughtNum: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        pokedexHex: { type: dataTypes.JSONB, allowNull: false },
+        pokedexHex: {
+            allowNull: false,
+            defaultValue: {
+                caught: "",
+                formF: "",
+                formFS: "",
+                formM: "",
+                formMS: "",
+                seen: "",
+            },
+            type: dataTypes.JSONB,
+        },
         pokedexSeenNum: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         profile: { type: dataTypes.JSONB, allowNull: false },
-        realworld: { type: dataTypes.JSONB, allowNull: false },
-        statistics: { type: dataTypes.JSONB, allowNull: false },
-        storage: { type: dataTypes.JSONB, allowNull: false },
+        realworld: {
+            allowNull: false,
+            defaultValue: {
+                countryCode: "",
+                latitude: 0,
+                longitude: 0,
+                timezoneId: "",
+            },
+            type: dataTypes.JSONB,
+        },
+        statistics: {
+            allowNull: false,
+            defaultValue: {
+                battleTime: 0,
+                battleWin: 0,
+                catchTime: 0,
+                cost: 0,
+                evolveTime: 0,
+                hatchTime: 0,
+                tradeTime: 0,
+            },
+            type: dataTypes.JSONB,
+        },
+        storage: { type: dataTypes.JSONB, allowNull: false, defaultValue: [] },
         todayLuck: { type: dataTypes.INTEGER },
     }, {
         indexes: [
