@@ -1,24 +1,21 @@
 import passport from "koa-passport";
 import { Strategy as GithubStrategy } from "passport-github";
 import { URL } from "url";
-import { IProfile } from "../../public/interfaces/profile-interface";
+import { IProfile } from "../../public/interfaces/trainer-interface";
 import { Trainer } from "../models";
-import { ITrainerAttributes, ITrainerInstance } from "../models/trainer";
 import nconf from "./config";
 
 export const strategies = new Set(nconf.get("login:strategies"));
 
-// TODO: User should be a trainer document and ID should be number type
-passport.serializeUser<ITrainerInstance, string>(async (user, done) => {
+passport.serializeUser<Trainer, string>(async (user, done) => {
     try {
-        done(null, user.get().id);
+        done(null, user.id);
     } catch (error) {
         done(error);
     }
 });
 
-// TODO: User should be a trainer document and ID should be number type
-passport.deserializeUser<ITrainerInstance, string>(async (id, done) => {
+passport.deserializeUser<Trainer, string>(async (id, done) => {
     try {
         const trainer = await Trainer.findById(id);
         if (!trainer) {
@@ -50,13 +47,17 @@ if (strategies.has("github")) {
 }
 
 async function findOrCreateUser(profile: IProfile) {
-    const defaults: Partial<ITrainerAttributes> = {
+    const defaults = {
         lastLogin: new Date(),
         name: profile.displayName,
-        profile,
+        profile: {
+            displayName: profile.displayName,
+            id: profile.id,
+            provider: profile.provider,
+        },
     };
     const [ trainer, created ] = await Trainer.findOrCreate({
-        defaults: defaults as ITrainerAttributes,
+        defaults,
         where: {
             profile: {
                 id: profile.id,

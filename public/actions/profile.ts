@@ -1,4 +1,4 @@
-import { IProfile } from "../interfaces/profile-interface";
+import { ITrainerPrivate } from "../interfaces/trainer-interface";
 
 export enum ProfileActionType {
     LOGGED_IN = "PROFILE_LOGGED_IN",
@@ -7,7 +7,7 @@ export enum ProfileActionType {
 
 export interface IProfileLoggedInAction {
     type: ProfileActionType.LOGGED_IN;
-    payload: IProfile;
+    payload: ITrainerPrivate;
 }
 
 export interface IProfileLoggedOutAction {
@@ -16,8 +16,8 @@ export interface IProfileLoggedOutAction {
 
 export type ProfileAction = IProfileLoggedInAction | IProfileLoggedOutAction;
 
-export const profileLoggedIn: (profile: IProfile) => IProfileLoggedInAction = (profile: IProfile) => ({
-    payload: profile,
+export const profileLoggedIn: (me: ITrainerPrivate) => IProfileLoggedInAction = (me) => ({
+    payload: me,
     type: ProfileActionType.LOGGED_IN,
 });
 

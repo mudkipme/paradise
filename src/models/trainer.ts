@@ -1,13 +1,13 @@
-import { DataTypes, Instance, Model, Sequelize } from "sequelize";
+import { DataTypes, Model, ModelIndexesOptions, Sequelize } from "sequelize";
 import { BattleResult } from "../../public/interfaces/battle-interface";
-import { IProfile } from "../../public/interfaces/profile-interface";
-import { Models } from "../lib/database";
-import { IPokemonInstance } from "./pokemon";
+import { IProfile, ITrainerPrivate, ITrainerPublic } from "../../public/interfaces/trainer-interface";
+import { sequelize } from "../lib/database";
+import Pokemon from "./pokemon";
 
-export interface ITrainerAttributes {
-    id: string;
-    name: string;
-    pokedexHex: {
+export default class Trainer extends Model {
+    public id: string;
+    public name: string;
+    public pokedexHex: {
         caught: string;
         seen: string;
         formM: string;
@@ -15,40 +15,40 @@ export interface ITrainerAttributes {
         formMS: string;
         formFS: string;
     };
-    pokedexCaughtNum: number;
-    pokedexSeenNum: number;
-    party: IPokemonInstance[];
-    storage: Array<{
+    public pokedexCaughtNum: number;
+    public pokedexSeenNum: number;
+    public party: Pokemon[];
+    public storage: Array<{
         name: string;
         wallpaper: string;
     }>;
-    currentBox: number;
-    storagePokemon: Array<{
+    public currentBox: number;
+    public storagePokemon: Array<{
         boxId: number;
         position: number;
-        pokemon: IPokemonInstance
+        pokemon: Pokemon
     }>;
-    bag: Array<{
+    public bag: Array<{
         itemId: number;
         number: number;
     }>;
-    encounter: {
+    public encounter: {
         location: string;
         area: string;
         method: string;
         battleResult: BattleResult;
     } | null;
-    encounterPokemon: IPokemonInstance | null;
-    battlePokemon: IPokemonInstance | null;
-    realworld: {
+    public encounterPokemon: Pokemon | null;
+    public battlePokemon: Pokemon | null;
+    public realworld: {
         longitude: number;
         latitude: number;
         countryCode: string;
         timezoneId: string;
     };
-    language: string;
-    acceptBattle: boolean;
-    statistics: {
+    public language: string;
+    public acceptBattle: boolean;
+    public statistics: {
         battleTime: number;
         battleWin: number;
         tradeTime: number;
@@ -57,101 +57,104 @@ export interface ITrainerAttributes {
         evolveTime: number;
         cost: number;
     };
-    lastLogin: Date;
-    todayLuck: number | null;
-    battlePoint: number;
-    profile: IProfile;
+    public lastLogin: Date;
+    public todayLuck: number | null;
+    public battlePoint: number;
+    public profile: IProfile;
+
+    public serializePrivate() {
+        return {
+            ...this.serializePublic(),
+            battlePokemon: this.battlePokemon && this.battlePokemon.id,
+            encounter: this.encounter,
+            encounterPokemon: this.encounterPokemon && this.encounterPokemon.id,
+            language: this.language,
+            profile: this.profile,
+            realworld: this.realworld,
+        };
+    }
+
+    public serializePublic() {
+        return {
+            acceptBattle: this.acceptBattle,
+            battlePoint: this.battlePoint,
+            id: this.id,
+            lastLogin: this.lastLogin,
+            name: this.name,
+            pokedexCaughtNum: this.pokedexCaughtNum,
+            pokedexSeenNum: this.pokedexSeenNum,
+            statistics: this.statistics,
+            todayLuck: this.todayLuck,
+        };
+    }
 }
 
-export interface ITrainerInstance extends Instance<ITrainerAttributes>, ITrainerAttributes {
-
-}
-
-export default function trainer(sequelize: Sequelize, dataTypes: DataTypes) {
-    const Trainer = sequelize.define<ITrainerInstance, ITrainerAttributes>("trainer", {
-        acceptBattle: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-        bag: { type: dataTypes.JSONB, allowNull: false, defaultValue: [] },
-        battlePoint: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        currentBox: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        encounter: { type: dataTypes.JSONB },
-        id: { type: dataTypes.UUID, primaryKey: true, allowNull: false, defaultValue: dataTypes.UUIDV4 },
-        language: { type: dataTypes.STRING },
-        lastLogin: { type: dataTypes.DATE, allowNull: false },
-        name: { type: dataTypes.STRING, allowNull: false },
-        pokedexCaughtNum: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        pokedexHex: {
-            allowNull: false,
-            defaultValue: {
-                caught: "",
-                formF: "",
-                formFS: "",
-                formM: "",
-                formMS: "",
-                seen: "",
-            },
-            type: dataTypes.JSONB,
+Trainer.init({
+    acceptBattle: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    bag: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
+    battlePoint: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    currentBox: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    encounter: { type: DataTypes.JSONB },
+    id: { type: DataTypes.UUID, primaryKey: true, allowNull: false, defaultValue: DataTypes.UUIDV4 },
+    language: { type: DataTypes.STRING },
+    lastLogin: { type: DataTypes.DATE, allowNull: false },
+    name: { type: DataTypes.STRING, allowNull: false },
+    pokedexCaughtNum: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    pokedexHex: {
+        allowNull: false,
+        defaultValue: {
+            caught: "",
+            formF: "",
+            formFS: "",
+            formM: "",
+            formMS: "",
+            seen: "",
         },
-        pokedexSeenNum: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        profile: { type: dataTypes.JSONB, allowNull: false },
-        realworld: {
-            allowNull: false,
-            defaultValue: {
-                countryCode: "",
-                latitude: 0,
-                longitude: 0,
-                timezoneId: "",
-            },
-            type: dataTypes.JSONB,
+        type: DataTypes.JSONB,
+    },
+    pokedexSeenNum: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    profile: { type: DataTypes.JSONB, allowNull: false },
+    realworld: {
+        allowNull: false,
+        defaultValue: {
+            countryCode: "",
+            latitude: 0,
+            longitude: 0,
+            timezoneId: "",
         },
-        statistics: {
-            allowNull: false,
-            defaultValue: {
-                battleTime: 0,
-                battleWin: 0,
-                catchTime: 0,
-                cost: 0,
-                evolveTime: 0,
-                hatchTime: 0,
-                tradeTime: 0,
-            },
-            type: dataTypes.JSONB,
+        type: DataTypes.JSONB,
+    },
+    statistics: {
+        allowNull: false,
+        defaultValue: {
+            battleTime: 0,
+            battleWin: 0,
+            catchTime: 0,
+            cost: 0,
+            evolveTime: 0,
+            hatchTime: 0,
+            tradeTime: 0,
         },
-        storage: { type: dataTypes.JSONB, allowNull: false, defaultValue: [] },
-        todayLuck: { type: dataTypes.INTEGER },
-    }, {
-        indexes: [
-            {
-                fields: ["name"],
-                unique: true,
-            },
-            {
-                fields: ["profile"],
-                operator: "jsonb_path_ops",
-                using: "gin",
-            },
-            {
-                fields: ["statistics"],
-                operator: "jsonb_path_ops",
-                using: "gin",
-            },
-        ],
-    });
-
-    return Trainer;
-}
-
-export function setupRelation({ Pokemon, Trainer }: Models, sequelize: Sequelize, dataTypes: DataTypes) {
-    const TrainerParty = sequelize.define("trainerParty", {
-        position: dataTypes.INTEGER,
-    });
-    Trainer.belongsToMany(Pokemon, { as: "party", through: TrainerParty });
-
-    const TrainerStorage = sequelize.define("trainerStorage", {
-        boxId: dataTypes.INTEGER,
-        position: dataTypes.INTEGER,
-    });
-    Trainer.belongsToMany(Pokemon, { as: "storagePokemon", through: TrainerStorage });
-
-    Trainer.belongsTo(Pokemon, { as: "encounterPokemon", constraints: false });
-    Trainer.belongsTo(Pokemon, { as: "battlePokemon", constraints: false });
-}
+        type: DataTypes.JSONB,
+    },
+    storage: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
+    todayLuck: { type: DataTypes.INTEGER },
+}, {
+    indexes: [
+        {
+            fields: ["name"],
+            unique: true,
+        },
+        {
+            fields: ["profile"],
+            operator: "jsonb_path_ops",
+            using: "gin",
+        },
+        {
+            fields: ["statistics"],
+            operator: "jsonb_path_ops",
+            using: "gin",
+        },
+    ] as ModelIndexesOptions[],
+    sequelize,
+});

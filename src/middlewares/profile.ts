@@ -5,10 +5,8 @@ export function middleware() {
         ctx.trainer = ctx.state.user;
         if (ctx.isAuthenticated() && ctx.trainer) {
             ctx.preloadedState.profile = {
-                displayName: ctx.trainer.profile.displayName,
                 hasLogin: true,
-                id: ctx.trainer.profile.id,
-                provider: ctx.trainer.profile.provider,
+                me: ctx.trainer.serializePrivate(),
             };
         }
         await next();

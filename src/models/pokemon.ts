@@ -1,169 +1,137 @@
 import { Item, Nature } from "pokedex-promise-v2";
-import { DataTypes, Instance, Model, Sequelize } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 import { Gender, HatchRate } from "../../public/interfaces/pokemon-interface";
 import { IImmutableStat, IOptionalStat, IPokemonStat, IStat, StatName } from "../../public/interfaces/stat-interface";
 import nconf from "../lib/config";
-import { Getters, InstanceMethods, Models } from "../lib/database";
+import { sequelize } from "../lib/database";
 import pokedex from "../lib/pokedex";
-import { ITrainerInstance } from "./trainer";
+import Trainer from "./trainer";
 
-export interface IPokemonAttributes {
-    readonly id: string;
-    speciesNumber: number;
-    formIdentifier: string | null | undefined;
-    gender: Gender;
-    lostHp: number;
-    readonly natureId: number;
-    experience: number;
-    level: number;
-    readonly individual: IImmutableStat;
-    effort: IStat;
-    isEgg: boolean;
-    readonly isShiny: boolean;
-    holdItemId: number | null | undefined;
-    pokeBallId: number | null | undefined;
-    trainer: ITrainerInstance | null | undefined;
-    happiness: number;
-    nickname: string | null | undefined;
-    originalTrainer: ITrainerInstance | null | undefined;
-    displayOT: string | null | undefined;
-    meetLevel: number | null | undefined;
-    meetPlaceIndex: string | null | undefined;
-    meetDate: Date | null | undefined;
-    birthDate: Date | null | undefined;
-    mother: IPokemonInstance | null | undefined;
-    father: IPokemonInstance | null | undefined;
-    tradable: boolean;
-    pokemonCenter: Date | null | undefined;
+export default class Pokemon extends Model {
+    public readonly id: string;
+    public speciesNumber: number;
+    public formIdentifier: string | null;
+    public gender: Gender;
+    public lostHp: number;
+    public readonly natureId: number;
+    public experience: number;
+    public level: number;
+    public readonly individual: IImmutableStat;
+    public effort: IStat;
+    public isEgg: boolean;
+    public readonly isShiny: boolean;
+    public holdItemId: number | null;
+    public pokeBallId: number | null;
+    public trainer: Trainer | null;
+    public happiness: number;
+    public nickname: string | null;
+    public originalTrainer: Trainer | null;
+    public displayOT: string | null;
+    public meetLevel: number | null;
+    public meetPlaceIndex: string | null;
+    public meetDate: Date | null;
+    public birthDate: Date | null;
+    public mother: Pokemon | null;
+    public father: Pokemon | null;
+    public tradable: boolean;
+    public pokemonCenter: Date | null | undefined;
+    public displayId: string;
+
+    // Caculate the rest time in Pokémon Center
+    public async pokemonCenterTime() {
+        return 0;
+    }
+
+    // Get the Nature of this Pokémon, return a Promise object
+    public nature() {
+        return pokedex.getNatureByName(this.natureId);
+    }
+
+    // Get the Poké Ball of this Pokémon, return a Promise object
+    public pokeBall() {
+        if (!this.pokeBallId) {
+            return Promise.resolve(null);
+        }
+        return pokedex.getItemByName(this.pokeBallId);
+    }
+
+    // Get the hold item of this Pokémon, return a Promise object
+    public holdItem() {
+        if (!this.holdItemId) {
+            return Promise.resolve(null);
+        }
+        return pokedex.getItemByName(this.holdItemId);
+    }
+
+    // Pokémon Stats, return a Promise object
+    public async stats() {
+        return null;
+    }
+
+    // Experience of the current level of this Pokémon
+    public async expCurrentLevel() {
+        return 0;
+    }
+
+    // Experience of the next level of this Pokémon
+    public async expNextLevel() {
+        return 0;
+    }
+
+    // When the Pokémon egg will hatch
+    public async hatchRate() {
+        return null;
+    }
+
+    // Gain friendship
+    public async gainHappiness() {
+        return this;
+    }
+
+    // Gain experience
+    public async gainExperience() {
+        return this;
+    }
+
+    // Level up
+    public async levelUp() {
+        return this;
+    }
 }
 
-export interface IPokemonVirtuals {
-    displayId: string;
-}
-
-export interface IPokemonInstanceMethods {
-    pokemonCenterTime(): Promise<number>;
-    nature(): Promise<Nature>;
-    pokeBall(): Promise<Item | null>;
-    holdItem(): Promise<Item | null>;
-    stats(): Promise<IPokemonStat | null>;
-    expCurrentLevel(): Promise<number>;
-    expNextLevel(): Promise<number>;
-    hatchRate(): Promise<HatchRate | null>;
-    gainHappiness(happiness: number): Promise<this>;
-    gainExperience(exp: number): Promise<this>;
-    levelUp(): Promise<this>;
-}
-
-export interface IPokemonInstance extends Instance<IPokemonAttributes>,
-    IPokemonAttributes, IPokemonVirtuals, InstanceMethods<IPokemonInstanceMethods, IPokemonInstance> { }
-
-export default function pokemon(sequelize: Sequelize, dataTypes: DataTypes) {
-    const getterMethods: Getters<IPokemonVirtuals, IPokemonInstance> = {
-        // Shorter ID String
-        displayId() {
-            return this.id.substr(-6);
+Pokemon.init({
+    displayId: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        get(this: Pokemon) {
+            return this.getDataValue("id").substr(-6);
         },
-    };
+    },
+    displayOT: { type: DataTypes.STRING },
+    effort: { type: DataTypes.JSONB, allowNull: false },
+    experience: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    formIdentifier: { type: DataTypes.STRING },
+    gender: { type: DataTypes.BOOLEAN, allowNull: false },
+    happiness: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    holdItemId: { type: DataTypes.INTEGER },
+    id: { type: DataTypes.UUID, primaryKey: true, allowNull: false, defaultValue: DataTypes.UUIDV4 },
+    individual: { type: DataTypes.JSONB, allowNull: false },
+    isEgg: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    isShiny: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    level: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
+    lostHp: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    meetDate: { type: DataTypes.DATE },
+    meetLevel: { type: DataTypes.INTEGER },
+    meetPlaceIndex: { type: DataTypes.STRING },
+    natureId: { type: DataTypes.INTEGER, allowNull: false },
+    nickname: { type: DataTypes.STRING },
+    pokeBallId: { type: DataTypes.INTEGER },
+    pokemonCenter: { type: DataTypes.DATE },
+    speciesNumber: { type: DataTypes.INTEGER, allowNull: false },
+    tradable: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+}, {
+    sequelize,
+});
 
-    const instanceMethods: InstanceMethods<IPokemonInstanceMethods, IPokemonInstance> = {
-        // Caculate the rest time in Pokémon Center
-        async pokemonCenterTime() {
-            return 0;
-        },
-
-        // Get the Nature of this Pokémon, return a Promise object
-        nature() {
-            return pokedex.getNatureByName(this.natureId);
-        },
-
-        // Get the Poké Ball of this Pokémon, return a Promise object
-        pokeBall() {
-            if (!this.pokeBallId) {
-                return Promise.resolve(null);
-            }
-            return pokedex.getItemByName(this.pokeBallId);
-        },
-
-        // Get the hold item of this Pokémon, return a Promise object
-        holdItem() {
-            if (!this.holdItemId) {
-                return Promise.resolve(null);
-            }
-            return pokedex.getItemByName(this.holdItemId);
-        },
-
-        // Pokémon Stats, return a Promise object
-        async stats() {
-            return null;
-        },
-
-        // Experience of the current level of this Pokémon
-        async expCurrentLevel() {
-            return 0;
-        },
-
-        // Experience of the next level of this Pokémon
-        async expNextLevel() {
-            return 0;
-        },
-
-        // When the Pokémon egg will hatch
-        async hatchRate() {
-            return null;
-        },
-
-        // Gain friendship
-        async gainHappiness() {
-            return this;
-        },
-
-        // Gain experience
-        async gainExperience() {
-            return this;
-        },
-
-        // Level up
-        async levelUp() {
-            return this;
-        },
-    };
-
-    const Pokemon = sequelize.define<IPokemonInstance, IPokemonAttributes>("pokemon", {
-        displayOT: { type: dataTypes.STRING },
-        effort: { type: dataTypes.JSONB, allowNull: false },
-        experience: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        formIdentifier: { type: dataTypes.STRING },
-        gender: { type: dataTypes.BOOLEAN, allowNull: false },
-        happiness: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        holdItemId: { type: dataTypes.INTEGER },
-        id: { type: dataTypes.UUID, primaryKey: true, allowNull: false, defaultValue: dataTypes.UUIDV4 },
-        individual: { type: dataTypes.JSONB, allowNull: false },
-        isEgg: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-        isShiny: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-        level: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 1 },
-        lostHp: { type: dataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        meetDate: { type: dataTypes.DATE },
-        meetLevel: { type: dataTypes.INTEGER },
-        meetPlaceIndex: { type: dataTypes.STRING },
-        natureId: { type: dataTypes.INTEGER, allowNull: false },
-        nickname: { type: dataTypes.STRING },
-        pokeBallId: { type: dataTypes.INTEGER },
-        pokemonCenter: { type: dataTypes.DATE },
-        speciesNumber: { type: dataTypes.INTEGER, allowNull: false },
-        tradable: { type: dataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    }, {
-        getterMethods,
-        instanceMethods,
-    });
-
-    Pokemon.belongsTo(Pokemon, { as: "mother" });
-    Pokemon.belongsTo(Pokemon, { as: "father" });
-
-    return Pokemon;
-}
-
-export function setupRelation({ Pokemon, Trainer }: Models, sequelize: Sequelize, dataTypes: DataTypes) {
-    Pokemon.belongsTo(Trainer, { as: "trainer" });
-    Pokemon.belongsTo(Trainer, { as: "originalTrainer" });
-}
+Pokemon.belongsTo(Pokemon, { as: "mother" });
+Pokemon.belongsTo(Pokemon, { as: "father" });

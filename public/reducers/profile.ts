@@ -1,16 +1,15 @@
 import { AppAction } from "../actions";
 import { ProfileActionType } from "../actions/profile";
-import { IProfile } from "../interfaces/profile-interface";
+import { ITrainerPrivate } from "../interfaces/trainer-interface";
 
-export interface IProfileState extends IProfile {
+export interface IProfileState {
     hasLogin: boolean;
+    me: ITrainerPrivate | null;
 }
 
 const initialState: IProfileState = {
-    displayName: "",
     hasLogin: false,
-    id: "",
-    provider: "",
+    me: null,
 };
 
 export default function profile(state: IProfileState = initialState, action: AppAction) {
@@ -18,10 +17,7 @@ export default function profile(state: IProfileState = initialState, action: App
         case ProfileActionType.LOGGED_IN:
             return {
                 ...state,
-                displayName: action.payload.displayName,
-                hasLogin: true,
-                id: action.payload.id,
-                provider: action.payload.provider,
+                me: action.payload,
             };
         case ProfileActionType.LOGGED_OUT:
             return {

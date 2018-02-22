@@ -18,7 +18,7 @@ import { IAppState } from "../../../reducers";
 
 interface IStateProps {
     hasLogin: boolean;
-    displayName: string;
+    name: string | null;
     loginStrategies: string[];
 }
 
@@ -43,7 +43,7 @@ class Header extends React.PureComponent<IStateProps & WithStyles<keyof typeof s
     };
 
     public render() {
-        const { classes, hasLogin, displayName } = this.props;
+        const { classes, hasLogin, name } = this.props;
         const { open } = this.state;
         return (
             <Grid container>
@@ -74,7 +74,7 @@ class Header extends React.PureComponent<IStateProps & WithStyles<keyof typeof s
                                     button
                                     component={(props) => <Link {...props} to="/profile" />}
                                     onClick={this.handleDrawerClose}>
-                                    <ListItemText primary={displayName} />
+                                    <ListItemText primary={name} />
                                 </ListItem>
                                 <ListItem button component="a" href="/auth/logout">
                                     <ListItemIcon>
@@ -127,9 +127,9 @@ class Header extends React.PureComponent<IStateProps & WithStyles<keyof typeof s
 }
 
 const mapStateToProps: (state: IAppState) => IStateProps = (state) => ({
-    displayName: state.profile.displayName,
     hasLogin: state.profile.hasLogin,
     loginStrategies: state.config.loginStrategies,
+    name: state.profile.me && state.profile.me.name,
 });
 
 export default compose<IStateProps & WithStyles<keyof typeof styles>, {}>(
