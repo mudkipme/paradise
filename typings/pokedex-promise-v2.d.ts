@@ -60,6 +60,27 @@ declare module "pokedex-promise-v2" {
         high_hp_preference: number;
     }
 
+    interface PokemonSpeciesDexEntry {
+        entry_number: number;
+        pokedex: NamedAPIResource;
+    }
+
+    interface PalParkEncounterArea {
+        base_score: number;
+        rate: number;
+        area: NamedAPIResource;
+    }
+
+    interface FlavorText {
+        flavor_text: string;
+        language: NamedAPIResource;
+    }
+
+    interface Genus {
+        genus: string;
+        language: NamedAPIResource;
+    }
+
     namespace Pokedex {
         interface Nature {
             names: Name[];
@@ -90,6 +111,38 @@ declare module "pokedex-promise-v2" {
             machines: MachineVersionDetail[];
             effect_entries: VerboseEffect[];
         }
+
+        interface Description {
+            description: string;
+            language: NamedAPIResource;
+        }
+
+        interface PokemonSpecies {
+            id: number;
+            name: string;
+            order: number;
+            gender_rate: number;
+            capture_rate: number;
+            base_happiness: number;
+            is_baby: boolean;
+            hatch_counter: number;
+            has_gender_differences: boolean;
+            forms_switchable: boolean;
+            growth_rate: NamedAPIResource;
+            pokedex_numbers: PokemonSpeciesDexEntry[];
+            egg_groups: NamedAPIResource[];
+            color: NamedAPIResource;
+            shape: NamedAPIResource;
+            evolves_from_species: NamedAPIResource | null;
+            evolution_chain: NamedAPIResource | null;
+            habitat: NamedAPIResource;
+            generation: NamedAPIResource;
+            names: Name[];
+            pal_park_encounters: PalParkEncounterArea[];
+            flavor_text_entries: FlavorText[];
+            form_descriptions: Description[];
+            genera: Genus[];
+        }
     }
 
     interface PokedexOptions {
@@ -102,10 +155,12 @@ declare module "pokedex-promise-v2" {
 
     class Pokedex {
         constructor(options?: PokedexOptions);
-        resource(path: string): Promise<any>;
-        resource(path: string[]): Promise<any[]>;
+        resource<T>(path: string): Promise<T>;
+        resource<T>(path: string[]): Promise<T[]>;
         getItemByName(nameOrId: string | number): Promise<Pokedex.Item>;
         getNatureByName(nameOrId: string | number): Promise<Pokedex.Nature>;
+        getPokemonSpeciesByName(nameOrId: string | number): Promise<Pokedex.PokemonSpecies>;
+        getPokemonSpeciesList(): Promise<Pokedex.PokemonSpecies[]>;
         getItemsList(): Promise<Pokedex.Item[]>;
         getNaturesList(): Promise<Pokedex.Nature[]>;
     }

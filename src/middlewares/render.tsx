@@ -18,7 +18,7 @@ import renderFullPage from "../views/page";
 const stats = JSON.parse(fs.readFileSync(path.join(__dirname, "../../data/stats.generated.json"), "utf8"));
 
 function createRenderer() {
-    return async function(this: Context) {
+    return function(this: Context) {
         const sheetsRegistry = new SheetsRegistry();
         const theme = createMuiTheme();
         const jss = create(preset());

@@ -4,7 +4,7 @@ import { Trainer } from "../src/models";
 
 declare module "koa" {
     interface Context {
-        render(): Promise<void>;
+        render(): void;
         preloadedState: Partial<IAppState>;
         trainer: Trainer | null | undefined;
     }

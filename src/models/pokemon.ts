@@ -5,6 +5,7 @@ import { IImmutableStat, IOptionalStat, IPokemonStat, IStat, StatName } from "..
 import nconf from "../lib/config";
 import { sequelize } from "../lib/database";
 import pokedex from "../lib/pokedex";
+import Species from "./species";
 import Trainer from "./trainer";
 
 export default class Pokemon extends Model {
@@ -36,6 +37,11 @@ export default class Pokemon extends Model {
     public tradable: boolean;
     public pokemonCenter: Date | null | undefined;
     public displayId: string;
+
+    // Get the Species of this Pokémon
+    public species() {
+        return Species.find(this.speciesNumber, this.formIdentifier);
+    }
 
     // Caculate the rest time in Pokémon Center
     public async pokemonCenterTime() {
