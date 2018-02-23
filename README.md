@@ -1,5 +1,7 @@
 # Rakuen
 
+[![build status](https://img.shields.io/travis/mudkipme/rakuen.svg)](https://travis-ci.org/mudkipme/rakuen)
+
 A Web application for Pokémon fan communities to capture, collect and trade Pokémon.
 
 ## License

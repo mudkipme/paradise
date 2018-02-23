@@ -4,7 +4,7 @@
   "description": "A Web application for Pokémon fan communities to capture, collect and trade Pokémon.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build-server": "NODE_ENV=production webpack --config webpack.server.js",
     "build-client": "NODE_ENV=production webpack",
     "build-dev-server": "NODE_ENV=development webpack --config webpack.server.js",
@@ -98,6 +98,7 @@
     "webpack-node-externals": "^1.6.0"
   },
   "jest": {
+    "testEnvironment": "node",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
