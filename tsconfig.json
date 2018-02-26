@@ -9,7 +9,9 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "strictNullChecks": true,
+        "strictFunctionTypes": true,
         "esModuleInterop": true,
+        "alwaysStrict": true,
         "jsx": "react"
     }
 }
