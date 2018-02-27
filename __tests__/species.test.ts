@@ -11,4 +11,10 @@ describe("rakuen.species", () => {
         expect(species.pokemonForme.name).toEqual("mudkip");
         expect(species.pokemon.name).toEqual("mudkip");
     });
+
+    test("experience of level 100 mudkip", async () => {
+        const species = await Species.find(258);
+        const experience = await species.experience(100);
+        expect(experience).toEqual(1059860);
+    });
 });

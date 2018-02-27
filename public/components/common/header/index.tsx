@@ -10,7 +10,7 @@ import { withStyles, WithStyles } from "material-ui/styles";
 import SvgIcon from "material-ui/SvgIcon";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
-import React from "react";
+import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { compose } from "recompose";
@@ -37,7 +37,7 @@ const styles = {
     },
 };
 
-class Header extends React.PureComponent<IStateProps & WithStyles<keyof typeof styles>> {
+class Header extends PureComponent<IStateProps & WithStyles<keyof typeof styles>> {
     public state = {
         open: false,
     };

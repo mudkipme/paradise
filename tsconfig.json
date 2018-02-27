@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es2017",
-        "module": "commonjs",
+        "module": "esnext",
         "moduleResolution": "node",
         "noImplicitAny": true,
         "noImplicitThis": true,
@@ -11,6 +11,7 @@
         "strictNullChecks": true,
         "strictFunctionTypes": true,
         "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
         "alwaysStrict": true,
         "jsx": "react"
     }

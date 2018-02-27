@@ -1,3 +1,4 @@
+import { keyBy } from "lodash";
 import { Item, Nature } from "pokedex-promise-v2";
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { Gender, HatchRate } from "../../public/interfaces/pokemon-interface";
@@ -36,16 +37,13 @@ export default class Pokemon extends Model {
     public father: Pokemon | null;
     public tradable: boolean;
     public pokemonCenter: Date | null | undefined;
-    public displayId: string;
+    // Virtual attributes
+    public readonly displayId: string;
+    public readonly pokemonCenterTime: number;
 
     // Get the Species of this Pokémon
     public species() {
         return Species.find(this.speciesNumber, this.formIdentifier);
-    }
-
-    // Caculate the rest time in Pokémon Center
-    public async pokemonCenterTime() {
-        return 0;
     }
 
     // Get the Nature of this Pokémon, return a Promise object
@@ -71,22 +69,78 @@ export default class Pokemon extends Model {
 
     // Pokémon Stats, return a Promise object
     public async stats() {
-        return null;
+        if (this.isEgg) {
+            return null;
+        }
+        const [species, nature] = await Promise.all([this.species(), this.nature()]);
+        const stats = keyBy(species.pokemon.stats, "stat.name");
+        const result: Partial<IPokemonStat> = {};
+        let lostHp = this.lostHp;
+
+        result.maxHp = Math.round((this.individual.hp + 2 * stats.hp.base_stat + this.effort.hp
+            / 4 + 100) * this.level / 100 + 10);
+
+        if (this.pokemonCenter) {
+            lostHp -= Math.floor((Date.now() - this.pokemonCenter.getTime()) / 36e5 * nconf.get("app:pokemonCenterHP"));
+        }
+
+        lostHp = Math.max(Math.min(lostHp, result.maxHp), 0);
+        result.hp = result.maxHp - lostHp;
+
+        Object.values(StatName).forEach((type: StatName) => {
+            let multiplier = 1;
+            if (nature.decreased_stat.name === type) {
+                multiplier = 0.9;
+            }
+            if (nature.increased_stat.name === type) {
+                multiplier = 1.1;
+            }
+            result[type] = Math.round(((this.individual[type] + 2 * stats[type].base_stat + this.effort[type] / 4)
+                * this.level / 100 + 5) * multiplier);
+        });
+        return result as Readonly<IPokemonStat>;
     }
 
     // Experience of the current level of this Pokémon
     public async expCurrentLevel() {
-        return 0;
+        if (this.isEgg) {
+            return 0;
+        }
+        const species = await this.species();
+        const growthRate = await species.growthRate();
+        const growthRateExperienceLevel = growthRate.levels.find((item) => item.level === this.level);
+        return growthRateExperienceLevel ? growthRateExperienceLevel.experience : 0;
     }
 
     // Experience of the next level of this Pokémon
     public async expNextLevel() {
-        return 0;
+        if (this.isEgg) {
+            return 0;
+        }
+        if (this.level === 100) {
+            return this.experience;
+        }
+        const species = await this.species();
+        return species.experience(this.level + 1);
     }
 
     // When the Pokémon egg will hatch
     public async hatchRate() {
-        return null;
+        if (!this.isEgg || !this.meetDate) {
+            return null;
+        }
+        const species = await this.species();
+        const cycle = Math.ceil((Date.now() - this.meetDate.getTime()) / (3600000 * nconf.get("app:hatchCycleHour")));
+        const cycleLeft = species.pokemonSpecies.hatch_counter - cycle;
+        if (cycleLeft <= 0) {
+            return HatchRate.Hatched;
+        } else if (cycleLeft <= 5) {
+            return HatchRate.Soon;
+        } else if (cycleLeft <= 10) {
+            return HatchRate.Close;
+        } else {
+            return HatchRate.Wait;
+        }
     }
 
     // Gain friendship
@@ -106,6 +160,7 @@ export default class Pokemon extends Model {
 }
 
 Pokemon.init({
+    // Shorter ID String
     displayId: {
         allowNull: false,
         type: DataTypes.STRING,
@@ -133,6 +188,21 @@ Pokemon.init({
     nickname: { type: DataTypes.STRING },
     pokeBallId: { type: DataTypes.INTEGER },
     pokemonCenter: { type: DataTypes.DATE },
+    // Caculate the rest time in Pokémon Center
+    pokemonCenterTime: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        get(this: Pokemon) {
+            if (!this.pokemonCenter) {
+                return 0;
+            }
+
+            const time = this.lostHp / nconf.get("app:pokemonCenterHP") * 36e5
+                + this.pokemonCenter.getTime() - Date.now();
+
+            return Math.ceil(Math.max(time, 0));
+        },
+    },
     speciesNumber: { type: DataTypes.INTEGER, allowNull: false },
     tradable: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 }, {

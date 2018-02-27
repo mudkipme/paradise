@@ -11,6 +11,6 @@ export type IStat = Record<StatName, number>;
 export type IOptionalStat = Partial<IStat>;
 export type IImmutableStat = Readonly<IStat>;
 
-export interface IPokemonStat extends IImmutableStat {
-    readonly maxHp: number;
+export interface IPokemonStat extends IStat {
+    maxHp: number;
 }

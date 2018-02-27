@@ -1,6 +1,6 @@
 import { StyleRules, withStyles, WithStyles } from "material-ui/styles";
 import Typography from "material-ui/Typography";
-import React from "react";
+import React, { PureComponent } from "react";
 import { RouteComponentProps } from "react-router-dom";
 
 const styles: StyleRules<"root"> = {
@@ -12,7 +12,7 @@ const styles: StyleRules<"root"> = {
     },
 };
 
-class NotFound extends React.PureComponent<RouteComponentProps<{}> & WithStyles<keyof typeof styles>> {
+class NotFound extends PureComponent<RouteComponentProps<{}> & WithStyles<keyof typeof styles>> {
     public componentWillMount() {
         const { staticContext } = this.props;
         if (staticContext) {

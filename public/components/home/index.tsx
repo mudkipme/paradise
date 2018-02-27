@@ -1,6 +1,6 @@
 import { StyleRules, withStyles, WithStyles } from "material-ui/styles";
 import Typography from "material-ui/Typography";
-import React from "react";
+import React, { Component } from "react";
 
 const styles: StyleRules<"root"> = {
     root: {
@@ -11,7 +11,7 @@ const styles: StyleRules<"root"> = {
     },
 };
 
-class Home extends React.Component<WithStyles<keyof typeof styles>> {
+class Home extends Component<WithStyles<keyof typeof styles>> {
     public render() {
         const { classes } = this.props;
         return (
