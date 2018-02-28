@@ -1,10 +1,11 @@
-import { keyBy } from "lodash";
+import { keyBy, pickBy, range, sum } from "lodash";
 import { Item, Nature } from "pokedex-promise-v2";
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { Gender, HatchRate } from "../../public/interfaces/pokemon-interface";
-import { IImmutableStat, IOptionalStat, IPokemonStat, IStat, StatName } from "../../public/interfaces/stat-interface";
+import { IPokemonStat, IStat, StatName } from "../../public/interfaces/stat-interface";
 import nconf from "../lib/config";
 import { sequelize } from "../lib/database";
+import createError, { ErrorMessage } from "../lib/error";
 import pokedex from "../lib/pokedex";
 import Species from "./species";
 import Trainer from "./trainer";
@@ -15,19 +16,16 @@ export default class Pokemon extends Model {
     public formIdentifier: string | null;
     public gender: Gender;
     public lostHp: number;
-    public readonly natureId: number;
     public experience: number;
     public level: number;
-    public readonly individual: IImmutableStat;
+    public readonly individual: Readonly<IStat>;
     public effort: IStat;
     public isEgg: boolean;
     public readonly isShiny: boolean;
-    public holdItemId: number | null;
-    public pokeBallId: number | null;
-    public trainer: Trainer | null;
+    public getTrainer: () => Promise<Trainer | null>;
     public happiness: number;
     public nickname: string | null;
-    public originalTrainer: Trainer | null;
+    public getOriginalTrainer: () => Promise<Trainer | null>;
     public displayOT: string | null;
     public meetLevel: number | null;
     public meetPlaceIndex: string | null;
@@ -39,7 +37,10 @@ export default class Pokemon extends Model {
     public pokemonCenter: Date | null | undefined;
     // Virtual attributes
     public readonly displayId: string;
-    public readonly pokemonCenterTime: number;
+    // Private attributes
+    private readonly natureId: number;
+    private holdItemId: number | null;
+    private pokeBallId: number | null;
 
     // Get the Species of this Pokémon
     public species() {
@@ -101,6 +102,23 @@ export default class Pokemon extends Model {
         return result as Readonly<IPokemonStat>;
     }
 
+    // Caculate the rest time in Pokémon Center
+    public async pokemonCenterTime() {
+        if (!this.pokemonCenter) {
+            return 0;
+        }
+
+        let time = this.lostHp / nconf.get("app:pokemonCenterHP") * 36e5
+            + this.pokemonCenter.getTime() - Date.now();
+        time = Math.ceil(Math.max(time, 0));
+
+        if (this.pokemonCenter && time === 0) {
+            this.pokemonCenter = null;
+            this.lostHp = 0;
+            await this.save();
+        }
+    }
+
     // Experience of the current level of this Pokémon
     public async expCurrentLevel() {
         if (this.isEgg) {
@@ -144,18 +162,119 @@ export default class Pokemon extends Model {
     }
 
     // Gain friendship
-    public async gainHappiness() {
-        return this;
+    public async gainHappiness(happiness: number) {
+        if (this.isEgg) {
+            throw createError(ErrorMessage.PokemonIsEgg);
+        }
+        if (this.happiness >= 255) {
+            return;
+        }
+
+        const [trainer, holdItem, pokeBall] = await Promise.all([this.getTrainer(), this.holdItem(), this.pokeBall()]);
+        if (happiness > 0 && holdItem && holdItem.name === "soothe-bell") {
+            happiness = Math.round(happiness * 1.5);
+        }
+        if (happiness > 0 && pokeBall && pokeBall.name === "luxury-ball") {
+            happiness *= 2;
+        }
+        if (happiness > 0 && trainer && this.speciesNumber === trainer.todayLuck) {
+            happiness *= 8;
+        }
+        if (this.happiness + happiness > 255) {
+            happiness = 255 - this.happiness;
+        }
+        if (this.happiness + happiness < 0) {
+            happiness = -this.happiness;
+        }
+        this.happiness += happiness;
+        await this.save();
     }
 
     // Gain experience
-    public async gainExperience() {
-        return this;
+    public async gainExperience(experience: number) {
+        if (this.isEgg) {
+            throw createError(ErrorMessage.PokemonIsEgg);
+        }
+        const species = await this.species();
+        const growthRateExpLevels = keyBy(await species.growthRateExpLevels(), "level");
+        const maxExperience = growthRateExpLevels[100].experience;
+        const currentLevel = this.level;
+        const currentExperience = this.experience;
+        if (currentExperience >= maxExperience) {
+            return;
+        }
+        this.experience = Math.min(this.experience + experience, maxExperience);
+        if (this.experience === currentExperience) {
+            return;
+        }
+        this.level = range(100, currentLevel - 1, -1)
+            .find((level) => this.experience >= growthRateExpLevels[level].experience)!;
+        await this.save();
+        for (const level of range(this.level + 1, currentLevel + 1)) {
+            await this.handleLevelUp(level);
+        }
+        return;
     }
 
     // Level up
     public async levelUp() {
-        return this;
+        if (this.isEgg) {
+            throw createError(ErrorMessage.PokemonIsEgg);
+        }
+        if (this.level >= 100) {
+            return;
+        }
+        const species = await this.species();
+        this.level += 1;
+        this.experience = await species.experience(this.level);
+        await this.save();
+        await this.handleLevelUp(this.level);
+    }
+
+    // Gain HP
+    public async gainHP(hp: number) {
+        if (this.isEgg) {
+            throw createError(ErrorMessage.PokemonIsEgg);
+        }
+        if (await this.pokemonCenterTime()) {
+            throw createError(ErrorMessage.PokemonInPC);
+        }
+        const stats = (await this.stats())!;
+        hp = Math.min(-stats.hp, Math.max(this.lostHp, hp));
+        if (hp === 0) {
+            return;
+        }
+        this.lostHp -= hp;
+        // Fainted, send to Pokémon Center
+        if (hp === -stats.hp) {
+            this.pokemonCenter = new Date();
+        }
+        await this.save();
+    }
+
+    // Gain effort values
+    public async gainEffort(effort: Partial<IStat>) {
+        let currentEffort = Math.max(sum(Object.values(this.effort)), 510);
+        const prevEffort = currentEffort;
+        Object.values(StatName).forEach((key: StatName) => {
+            if (!effort[key]) {
+                return;
+            }
+            effort[key] = Math.min(Math.max(255 - this.effort[key], effort[key]!), -this.effort[key]);
+
+            this.effort[key] += effort[key]!;
+            currentEffort += effort[key]!;
+        });
+        if (prevEffort === currentEffort) {
+            return;
+        }
+        effort = pickBy(effort);
+        await this.save();
+    }
+
+    private async handleLevelUp(level: number) {
+        const happiness = this.happiness < 100 ? 5 : (this.happiness < 200 ? 3 : 2);
+        await this.gainHappiness(happiness);
     }
 }
 
@@ -188,21 +307,6 @@ Pokemon.init({
     nickname: { type: DataTypes.STRING },
     pokeBallId: { type: DataTypes.INTEGER },
     pokemonCenter: { type: DataTypes.DATE },
-    // Caculate the rest time in Pokémon Center
-    pokemonCenterTime: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-        get(this: Pokemon) {
-            if (!this.pokemonCenter) {
-                return 0;
-            }
-
-            const time = this.lostHp / nconf.get("app:pokemonCenterHP") * 36e5
-                + this.pokemonCenter.getTime() - Date.now();
-
-            return Math.ceil(Math.max(time, 0));
-        },
-    },
     speciesNumber: { type: DataTypes.INTEGER, allowNull: false },
     tradable: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 }, {

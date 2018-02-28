@@ -40,9 +40,14 @@ export default class Species {
         return pokedex.resource(this.pokemonSpecies.growth_rate.url);
     }
 
-    public async experience(level: number) {
+    public async growthRateExpLevels() {
         const growthRate = await this.growthRate();
-        const growthRateExpLevel = growthRate.levels.find((item) => item.level === level);
-        return growthRateExpLevel ? growthRateExpLevel.experience : 0;
+        return growthRate.levels;
+    }
+
+    public async experience(level: number) {
+        const growthRateExpLevels = await this.growthRateExpLevels();
+        const item = growthRateExpLevels.find((entry) => entry.level === level);
+        return item ? item.experience : 0;
     }
 }
