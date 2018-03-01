@@ -1,4 +1,4 @@
-import { keyBy, pickBy, range, sum } from "lodash";
+import { extend, keyBy, pickBy, random, range, sum, times, zipObject } from "lodash";
 import { Item, Nature } from "pokedex-promise-v2";
 import { DataTypes, Model, Sequelize } from "sequelize";
 import { Gender, HatchRate } from "../../public/interfaces/pokemon-interface";
@@ -6,11 +6,90 @@ import { IPokemonStat, IStat, StatName } from "../../public/interfaces/stat-inte
 import nconf from "../lib/config";
 import { sequelize } from "../lib/database";
 import createError, { ErrorMessage } from "../lib/error";
+import { findEvolution, IEvolveOptions } from "../lib/evolution";
 import pokedex from "../lib/pokedex";
 import Species from "./species";
 import Trainer from "./trainer";
 
+interface IPokemonCreateOptions {
+    speciesNumber: number;
+    formIdentifier?: string;
+    isEgg?: boolean;
+    level?: number;
+    gender?: Gender;
+    nature?: Nature;
+    individual?: Partial<IStat>;
+    effort?: Partial<IStat>;
+    isShiny?: boolean;
+    happiness?: number;
+    originalTrainer?: Trainer;
+    displayOT?: string;
+    birthDate?: Date;
+    father?: Pokemon;
+    mother?: Pokemon;
+    holdItem?: Item;
+}
+
+const NATURE_COUNT = 25;
+
 export default class Pokemon extends Model {
+    public static async createPokemon(options: IPokemonCreateOptions) {
+        const species = await Species.find(options.speciesNumber, options.formIdentifier);
+        const level = options.isEgg ? 1 : (options.level || 5);
+        const experience = await species.experience(level);
+
+        // Gender
+        let gender: Gender;
+        if (species.pokemonSpecies.gender_rate === -1) {
+            gender = Gender.Genderless;
+        } else if (species.pokemonSpecies.gender_rate === 0) {
+            gender = Gender.Male;
+        } else if (species.pokemonSpecies.gender_rate === 8) {
+            gender = Gender.Female;
+        } else if (options.gender) {
+            gender = options.gender;
+        } else {
+            gender = random(0, 7) < species.pokemonSpecies.gender_rate ? Gender.Female : Gender.Male;
+        }
+
+        // Nature
+        const natureId = options.nature ? options.nature.id : random(1, NATURE_COUNT);
+
+        // Species stats and Base stats
+        const statNames = Object.keys(StatName);
+        const individual = zipObject(statNames, times(statNames.length, () => random(0, 31))) as IStat;
+        const effort = zipObject(statNames, times(statNames.length, () => 0)) as IStat;
+        extend(individual, options.individual);
+        extend(effort, options.effort);
+
+        // Alternate color
+        const isShiny = typeof options.isShiny === "boolean" ? options.isShiny : random(0, 4096) === 0;
+
+        const pokemon = await Pokemon.create({
+            birthDate: options.birthDate || new Date(),
+            displayOT: options.displayOT || null,
+            effort,
+            experience,
+            father: options.father,
+            formIdentifier: species.pokemonForme.form_name,
+            gender,
+            happiness: options.happiness || species.pokemonSpecies.base_happiness,
+            holdItemId: options.holdItem ? options.holdItem.id : null,
+            individual,
+            isEgg: options.isEgg,
+            isShiny,
+            level,
+            mother: options.mother,
+            natureId,
+            speciesNumber: species.pokemonSpecies.id,
+        });
+
+        if (options.originalTrainer) {
+            await pokemon.setOriginalTrainer(options.originalTrainer);
+        }
+        return pokemon;
+    }
+
     public readonly id: string;
     public speciesNumber: number;
     public formIdentifier: string | null;
@@ -23,24 +102,26 @@ export default class Pokemon extends Model {
     public isEgg: boolean;
     public readonly isShiny: boolean;
     public getTrainer: () => Promise<Trainer | null>;
+    public setTrainer: (trainer: Trainer | null) => Promise<void>;
     public happiness: number;
     public nickname: string | null;
     public getOriginalTrainer: () => Promise<Trainer | null>;
+    public setOriginalTrainer: (trainer: Trainer | null) => Promise<void>;
     public displayOT: string | null;
     public meetLevel: number | null;
     public meetPlaceIndex: string | null;
     public meetDate: Date | null;
     public birthDate: Date | null;
-    public mother: Pokemon | null;
-    public father: Pokemon | null;
+    public getMother: () => Promise<Pokemon | null>;
+    public getFather: () => Promise<Pokemon | null>;
     public tradable: boolean;
     public pokemonCenter: Date | null | undefined;
+    public pokeBallId: number | null;
     // Virtual attributes
     public readonly displayId: string;
     // Private attributes
     private readonly natureId: number;
     private holdItemId: number | null;
-    private pokeBallId: number | null;
 
     // Get the Species of this Pokémon
     public species() {
@@ -195,6 +276,9 @@ export default class Pokemon extends Model {
         if (this.isEgg) {
             throw createError(ErrorMessage.PokemonIsEgg);
         }
+        if (await this.pokemonCenterTime()) {
+            throw createError(ErrorMessage.PokemonInPC);
+        }
         const species = await this.species();
         const growthRateExpLevels = keyBy(await species.growthRateExpLevels(), "level");
         const maxExperience = growthRateExpLevels[100].experience;
@@ -213,13 +297,15 @@ export default class Pokemon extends Model {
         for (const level of range(this.level + 1, currentLevel + 1)) {
             await this.handleLevelUp(level);
         }
-        return;
     }
 
     // Level up
     public async levelUp() {
         if (this.isEgg) {
             throw createError(ErrorMessage.PokemonIsEgg);
+        }
+        if (await this.pokemonCenterTime()) {
+            throw createError(ErrorMessage.PokemonInPC);
         }
         if (this.level >= 100) {
             return;
@@ -254,6 +340,12 @@ export default class Pokemon extends Model {
 
     // Gain effort values
     public async gainEffort(effort: Partial<IStat>) {
+        if (this.isEgg) {
+            throw createError(ErrorMessage.PokemonIsEgg);
+        }
+        if (await this.pokemonCenterTime()) {
+            throw createError(ErrorMessage.PokemonInPC);
+        }
         let currentEffort = Math.max(sum(Object.values(this.effort)), 510);
         const prevEffort = currentEffort;
         Object.values(StatName).forEach((key: StatName) => {
@@ -270,6 +362,45 @@ export default class Pokemon extends Model {
         }
         effort = pickBy(effort);
         await this.save();
+    }
+
+    // Change forme
+    public async changeForme(formIdentifier: string) {
+        const species = await Species.find(this.speciesNumber, formIdentifier);
+        this.formIdentifier = species.pokemonForme.form_name;
+        await this.save();
+    }
+
+    // Set hold item
+    public async setHoldItem(item: Item) {
+        if (this.isEgg) {
+            throw createError(ErrorMessage.PokemonIsEgg);
+        }
+        if (await this.pokemonCenterTime()) {
+            throw createError(ErrorMessage.PokemonInPC);
+        }
+        const holdable = item.attributes.some((attribute) => attribute.name === "holdable");
+        if (!holdable) {
+            throw createError(ErrorMessage.ItemNotHoldable);
+        }
+        this.holdItemId = item.id;
+        await this.save();
+    }
+
+    // Evolve this Pokémon
+    public async evolve(trigger: string, options: IEvolveOptions = {}) {
+        if (this.isEgg) {
+            throw createError(ErrorMessage.PokemonIsEgg);
+        }
+        if (await this.pokemonCenterTime()) {
+            throw createError(ErrorMessage.PokemonInPC);
+        }
+        const newSpecies = await findEvolution(this, trigger, options);
+        if (newSpecies) {
+            this.speciesNumber = newSpecies.pokemonSpecies.id;
+            this.formIdentifier = newSpecies.pokemonForme.form_name;
+            await this.save();
+        }
     }
 
     private async handleLevelUp(level: number) {
@@ -291,7 +422,7 @@ Pokemon.init({
     effort: { type: DataTypes.JSONB, allowNull: false },
     experience: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     formIdentifier: { type: DataTypes.STRING },
-    gender: { type: DataTypes.BOOLEAN, allowNull: false },
+    gender: { type: DataTypes.ENUM(...Object.keys(Gender)), allowNull: false },
     happiness: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     holdItemId: { type: DataTypes.INTEGER },
     id: { type: DataTypes.UUID, primaryKey: true, allowNull: false, defaultValue: DataTypes.UUIDV4 },

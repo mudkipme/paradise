@@ -1,8 +1,13 @@
 import { DataTypes, Model, ModelIndexesOptions, Sequelize } from "sequelize";
 import { BattleResult } from "../../public/interfaces/battle-interface";
-import { IProfile, ITrainerPrivate, ITrainerPublic } from "../../public/interfaces/trainer-interface";
+import { IProfile, ITrainerPrivate, ITrainerPublic, TimeOfDay } from "../../public/interfaces/trainer-interface";
 import { sequelize } from "../lib/database";
 import Pokemon from "./pokemon";
+
+interface ITrainerParty {
+    position: number;
+    pokemon: Pokemon;
+}
 
 export default class Trainer extends Model {
     public id: string;
@@ -17,7 +22,7 @@ export default class Trainer extends Model {
     };
     public pokedexCaughtNum: number;
     public pokedexSeenNum: number;
-    public party: Pokemon[];
+    public getParty: () => Promise<ITrainerParty[]>;
     public storage: Array<{
         name: string;
         wallpaper: string;
@@ -61,6 +66,9 @@ export default class Trainer extends Model {
     public todayLuck: number | null;
     public battlePoint: number;
     public profile: IProfile;
+
+    // Virtual attributes
+    public readonly timeOfDay: TimeOfDay;
 
     public serializePrivate() {
         return {

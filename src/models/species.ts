@@ -1,4 +1,4 @@
-import { Pokemon, PokemonForm, PokemonSpecies } from "pokedex-promise-v2";
+import { ChainLink, Pokemon, PokemonForm, PokemonSpecies } from "pokedex-promise-v2";
 import pokedex from "../lib/pokedex";
 
 interface ISpeciesOptions {
@@ -49,5 +49,32 @@ export default class Species {
         const growthRateExpLevels = await this.growthRateExpLevels();
         const item = growthRateExpLevels.find((entry) => entry.level === level);
         return item ? item.experience : 0;
+    }
+
+    public async evolvesTo() {
+        const evolutionChain = await pokedex.resource(this.pokemonSpecies.evolution_chain.url);
+
+        const findCurrentChain: (chain: ChainLink) => ChainLink | undefined = (chain: ChainLink) => {
+            if (chain.species.name === this.pokemonSpecies.name) {
+                return chain;
+            }
+            for (const nextChain of chain.evolves_to) {
+                const found = findCurrentChain(nextChain);
+                if (found) {
+                    return found;
+                }
+            }
+        };
+
+        const currentChain = findCurrentChain(evolutionChain.chain)!;
+        return currentChain.evolves_to;
+    }
+
+    public learnMoveDetail(moveName: string, versionGroupName = "sun-moon") {
+        const pokemonMove = this.pokemon.moves.find((entry) => entry.move.name === moveName);
+        if (!pokemonMove) {
+            return;
+        }
+        return pokemonMove.version_group_details.find((entry) => entry.version_group.name === versionGroupName);
     }
 }

@@ -1,7 +1,7 @@
 export enum Gender {
-    Female = 1,
-    Male,
-    Genderless,
+    Female = "female",
+    Male = "male",
+    Genderless = "genderless",
 }
 
 export enum HatchRate {

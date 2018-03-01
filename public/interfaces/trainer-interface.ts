@@ -44,3 +44,5 @@ export interface ITrainerPrivate extends ITrainerPublic {
     language: string;
     profile: IProfile;
 }
+
+export type TimeOfDay = "morning" | "day" | "night";

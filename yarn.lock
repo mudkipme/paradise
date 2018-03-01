@@ -218,7 +218,7 @@
 
 "@types/pokedex-promise-v2@github:mudkipme/pokeapi-v2-typescript":
   version "3.0.0"
-  resolved "https://codeload.github.com/mudkipme/pokeapi-v2-typescript/tar.gz/d77e6f35badf5935593f4889fa0cfc76378b172e"
+  resolved "https://codeload.github.com/mudkipme/pokeapi-v2-typescript/tar.gz/6905df538f0d9e201481be3a9e832c763fc95fb7"
 
 "@types/react-dom@^16.0.4":
   version "16.0.4"
