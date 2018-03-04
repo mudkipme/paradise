@@ -195,6 +195,12 @@
   dependencies:
     "@types/node" "*"
 
+"@types/moment-timezone@^0.5.4":
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/@types/moment-timezone/-/moment-timezone-0.5.4.tgz#b600e033f871f3074c283e2bd26fe4f4ec3949d4"
+  dependencies:
+    moment ">=2.14.0"
+
 "@types/nconf@0.0.37":
   version "0.0.37"
   resolved "https://registry.yarnpkg.com/@types/nconf/-/nconf-0.0.37.tgz#a43702a1c57e46139bf084f5b20c23cd7c88a5d1"
@@ -2112,6 +2118,12 @@ generic-pool@^3.4.0:
   version "3.4.2"
   resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-3.4.2.tgz#92ff7196520d670839a67308092a12aadf2f6a59"
 
+geode@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/geode/-/geode-1.0.0.tgz#1b6ef729a1a0152a84f792171adc8a2767927150"
+  dependencies:
+    request "^2.53.0"
+
 get-caller-file@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.2.tgz#f702e63127e7e231c160a80c1554acb70d5047e5"
@@ -3803,6 +3815,10 @@ moment-timezone@^0.5.0, moment-timezone@^0.5.14:
   version "2.20.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.20.1.tgz#d6eb1a46cbcc14a2b2f9434112c1ff8907f313fd"
 
+moment@>=2.14.0, moment@^2.21.0:
+  version "2.21.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.21.0.tgz#2a114b51d2a6ec9e6d83cf803f838a878d8a023a"
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -4791,7 +4807,7 @@ request@2.81.0:
     tunnel-agent "^0.6.0"
     uuid "^3.0.0"
 
-request@^2.83.0:
+request@^2.53.0, request@^2.83.0:
   version "2.83.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.83.0.tgz#ca0b65da02ed62935887808e6f510381034e3356"
   dependencies:
@@ -5332,6 +5348,10 @@ subarg@^1.0.0:
   resolved "https://registry.yarnpkg.com/subarg/-/subarg-1.0.0.tgz#f62cf17581e996b48fc965699f54c06ae268b8d2"
   dependencies:
     minimist "^1.1.0"
+
+suncalc@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/suncalc/-/suncalc-1.8.0.tgz#1d9898109563078750f4994a959e654d876acbf5"
 
 supports-color@^2.0.0:
   version "2.0.0"

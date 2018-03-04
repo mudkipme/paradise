@@ -78,3 +78,8 @@ export default class Species {
         return pokemonMove.version_group_details.find((entry) => entry.version_group.name === versionGroupName);
     }
 }
+
+export async function totalSpecies() {
+    const pokemonSpecies = await pokedex.getPokemonSpeciesList();
+    return pokemonSpecies.count;
+}

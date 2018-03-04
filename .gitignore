@@ -2,6 +2,7 @@
 node_modules
 /config.json
 npm-debug.log
+yarn-error.log
 /build
 /public/build
 /data/logs

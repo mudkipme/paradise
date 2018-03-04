@@ -252,13 +252,14 @@ export default class Pokemon extends Model {
         }
 
         const [trainer, holdItem, pokeBall] = await Promise.all([this.getTrainer(), this.holdItem(), this.pokeBall()]);
+        const luckySpecies = trainer && await trainer.luckSpecies();
         if (happiness > 0 && holdItem && holdItem.name === "soothe-bell") {
             happiness = Math.round(happiness * 1.5);
         }
         if (happiness > 0 && pokeBall && pokeBall.name === "luxury-ball") {
             happiness *= 2;
         }
-        if (happiness > 0 && trainer && this.speciesNumber === trainer.todayLuck) {
+        if (happiness > 0 && luckySpecies && this.speciesNumber === luckySpecies.pokemonSpecies.id) {
             happiness *= 8;
         }
         if (this.happiness + happiness > 255) {

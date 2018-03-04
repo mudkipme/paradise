@@ -1,10 +1,25 @@
-import { DataTypes, Model, ModelIndexesOptions, Sequelize } from "sequelize";
+import { random } from "lodash";
+import moment from "moment";
+import "moment-timezone";
+import { Item } from "pokedex-promise-v2";
+import { DataTypes, FindOptions, Model, ModelIndexesOptions, Sequelize } from "sequelize";
+import SunCalc from "suncalc";
+import { promisify } from "util";
 import { BattleResult } from "../../public/interfaces/battle-interface";
 import { IProfile, ITrainerPrivate, ITrainerPublic, TimeOfDay } from "../../public/interfaces/trainer-interface";
 import { sequelize } from "../lib/database";
+import createError, { ErrorMessage } from "../lib/error";
+import { geode } from "../lib/geo";
 import Pokemon from "./pokemon";
+import Species, { totalSpecies } from "./species";
 
 interface ITrainerParty {
+    position: number;
+    pokemon: Pokemon;
+}
+
+interface ITrainerStoragePokemon {
+    boxId: number;
     position: number;
     pokemon: Pokemon;
 }
@@ -28,11 +43,7 @@ export default class Trainer extends Model {
         wallpaper: string;
     }>;
     public currentBox: number;
-    public storagePokemon: Array<{
-        boxId: number;
-        position: number;
-        pokemon: Pokemon
-    }>;
+    public getStoragePokemon: (options?: FindOptions) => Promise<ITrainerStoragePokemon[]>;
     public bag: Array<{
         itemId: number;
         number: number;
@@ -43,9 +54,9 @@ export default class Trainer extends Model {
         method: string;
         battleResult: BattleResult;
     } | null;
-    public encounterPokemon: Pokemon | null;
-    public battlePokemon: Pokemon | null;
-    public realworld: {
+    public getEncounterPokemon: () => Promise<Pokemon | null>;
+    public getBattlePokemon: () => Promise<Pokemon | null>;
+    public realWorld: {
         longitude: number;
         latitude: number;
         countryCode: string;
@@ -63,22 +74,95 @@ export default class Trainer extends Model {
         cost: number;
     };
     public lastLogin: Date;
-    public todayLuck: number | null;
     public battlePoint: number;
     public profile: IProfile;
-
     // Virtual attributes
     public readonly timeOfDay: TimeOfDay;
+    // Private attributes
+    private todayLuck: number | null;
+
+    // Get current time of day
+    public localTime() {
+        return moment().tz(this.realWorld.timezoneId);
+    }
+
+    // Get today's lucky Pokémon
+    public async luckSpecies() {
+        const lastLogin = moment(this.lastLogin).tz(this.realWorld.timezoneId);
+        const now = moment().tz(this.realWorld.timezoneId);
+
+        if (now.isSame(lastLogin, "day") && this.todayLuck) {
+            return Species.find(this.todayLuck);
+        }
+
+        this.lastLogin = new Date();
+        this.todayLuck = random(1, await totalSpecies());
+        await this.save();
+        return Species.find(this.todayLuck);
+    }
+
+    /**
+     * Set real world location based on latitude and longitude
+     * @param  {number}   latitude
+     * @param  {number}   longitude
+     */
+    public async setLocation(latitude: number, longitude: number) {
+        const tz = await geode.timezone({ lat: latitude, lng: longitude });
+        if (tz.status) {
+            throw new Error(tz.status.message);
+        }
+        this.realWorld.latitude = latitude;
+        this.realWorld.longitude = longitude;
+        this.realWorld.timezoneId = tz.timezoneId;
+        this.realWorld.countryCode = tz.countryCode;
+        await this.save();
+    }
+
+    /**
+     * Check whether this trainer has certain item in bag
+     */
+    public itemNumber(item: Item) {
+        const itemBag = this.bag.find((entry) => entry.itemId === item.id);
+        return itemBag ? itemBag.number : 0;
+    }
+
+    /**
+     * Add an item to bag
+     * @param  {Item}   item
+     * @param  {number}   number
+     */
+    public async addItem(item: Item, count = 1) {
+        const itemBag = this.bag.find((entry) => entry.itemId === item.id);
+        if (!itemBag) {
+            this.bag.push({ itemId: item.id, number: count });
+        } else {
+            itemBag.number += count;
+        }
+        await this.save();
+    }
+
+    /**
+     * Remove an item from bag
+     * @param  {Item}   item
+     * @param  {Number}   number
+     */
+    public async removeItem(item: Item, count = 1) {
+        const itemBag = this.bag.find((entry) => entry.itemId === item.id);
+        if (!itemBag || itemBag.number < count) {
+            throw createError(ErrorMessage.ItemNotEnough);
+        }
+        itemBag.number -= count;
+        this.bag = this.bag.filter((bag) => bag.number > 0);
+        await this.save();
+    }
 
     public serializePrivate() {
         return {
             ...this.serializePublic(),
-            battlePokemon: this.battlePokemon && this.battlePokemon.id,
             encounter: this.encounter,
-            encounterPokemon: this.encounterPokemon && this.encounterPokemon.id,
             language: this.language,
             profile: this.profile,
-            realworld: this.realworld,
+            realWorld: this.realWorld,
         };
     }
 
@@ -92,7 +176,6 @@ export default class Trainer extends Model {
             pokedexCaughtNum: this.pokedexCaughtNum,
             pokedexSeenNum: this.pokedexSeenNum,
             statistics: this.statistics,
-            todayLuck: this.todayLuck,
         };
     }
 }
@@ -122,7 +205,7 @@ Trainer.init({
     },
     pokedexSeenNum: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     profile: { type: DataTypes.JSONB, allowNull: false },
-    realworld: {
+    realWorld: {
         allowNull: false,
         defaultValue: {
             countryCode: "",

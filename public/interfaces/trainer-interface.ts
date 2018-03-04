@@ -22,7 +22,6 @@ export interface ITrainerPublic {
         cost: number;
     };
     lastLogin: Date;
-    todayLuck: number | null;
     battlePoint: number;
 }
 
@@ -33,8 +32,6 @@ export interface ITrainerPrivate extends ITrainerPublic {
         method: string;
         battleResult: BattleResult;
     } | null;
-    encounterPokemon: string | null;
-    battlePokemon: string | null;
     realworld: {
         longitude: number;
         latitude: number;

@@ -42,6 +42,7 @@
     "@types/koa-static": "^4.0.0",
     "@types/lodash": "^4.14.104",
     "@types/mkdirp": "^0.5.2",
+    "@types/moment-timezone": "^0.5.4",
     "@types/nconf": "0.0.37",
     "@types/passport-github": "^1.1.2",
     "@types/pokedex-promise-v2": "github:mudkipme/pokeapi-v2-typescript",
@@ -54,6 +55,7 @@
     "@types/serialize-javascript": "^1.3.2",
     "@types/winston": "^2.3.8",
     "bull": "^3.3.9",
+    "geode": "^1.0.0",
     "http-errors": "^1.6.2",
     "jss": "^9.8.0",
     "jss-preset-default": "^4.3.0",
@@ -71,6 +73,8 @@
     "material-ui": "^1.0.0-beta.34",
     "material-ui-icons": "^1.0.0-beta.17",
     "mkdirp": "^0.5.1",
+    "moment": "^2.21.0",
+    "moment-timezone": "^0.5.14",
     "nconf": "^0.10.0",
     "passport-github": "^1.1.0",
     "pg": "^7.4.1",
@@ -85,6 +89,7 @@
     "redux-promise-middleware": "^5.0.0",
     "sequelize": "^4.33.4",
     "serialize-javascript": "^1.4.0",
+    "suncalc": "^1.8.0",
     "winston": "^2.4.0"
   },
   "devDependencies": {
