@@ -1,3 +1,4 @@
+import BitArray from "bit-array";
 import { random } from "lodash";
 import moment from "moment";
 import "moment-timezone";
@@ -6,12 +7,13 @@ import { DataTypes, FindOptions, Model, ModelIndexesOptions, Sequelize } from "s
 import SunCalc from "suncalc";
 import { promisify } from "util";
 import { BattleResult } from "../../public/interfaces/battle-interface";
+import { Gender } from "../../public/interfaces/pokemon-interface";
 import { IProfile, ITrainerPrivate, ITrainerPublic, TimeOfDay } from "../../public/interfaces/trainer-interface";
 import { sequelize } from "../lib/database";
 import createError, { ErrorMessage } from "../lib/error";
 import { geode } from "../lib/geo";
 import Pokemon from "./pokemon";
-import Species, { totalSpecies } from "./species";
+import Species, { POKEDEX_MAX, totalSpecies } from "./species";
 
 interface ITrainerParty {
     position: number;
@@ -30,6 +32,10 @@ export default class Trainer extends Model {
     public pokedexHex: {
         caught: string;
         seen: string;
+        seenM: string;
+        seenF: string;
+        seenMS: string;
+        seenFS: string;
         formM: string;
         formF: string;
         formMS: string;
@@ -99,6 +105,61 @@ export default class Trainer extends Model {
         this.todayLuck = random(1, await totalSpecies());
         await this.save();
         return Species.find(this.todayLuck);
+    }
+
+    public async setPokemonSeen(pokemon: Pokemon) {
+        if (pokemon.isEgg) {
+            return;
+        }
+        const seen = new BitArray(POKEDEX_MAX, this.pokedexHex.seen);
+        seen.set(pokemon.speciesNumber, true);
+        this.pokedexHex.seen = seen.toHexString();
+        this.pokedexSeenNum = seen.count();
+
+        const hex = this.pokedexHex;
+        let dexKey: keyof typeof hex;
+        if (pokemon.formIdentifier && pokemon.isShiny && pokemon.gender === Gender.Female) {
+            dexKey = "formFS";
+        } else if (pokemon.formIdentifier && pokemon.isShiny) {
+            dexKey = "formMS";
+        } else if (pokemon.formIdentifier && pokemon.gender === Gender.Female) {
+            dexKey = "formF";
+        } else if (pokemon.formIdentifier) {
+            dexKey = "formM";
+        } else if (pokemon.isShiny && pokemon.gender === Gender.Female) {
+            dexKey = "seenFS";
+        } else if (pokemon.isShiny) {
+            dexKey = "seenMS";
+        } else if (pokemon.gender === Gender.Female) {
+            dexKey = "seenF";
+        } else {
+            dexKey = "seenM";
+        }
+
+        const dex = new BitArray(POKEDEX_MAX, this.pokedexHex[dexKey]);
+        if (pokemon.formIdentifier) {
+            const species = await pokemon.species();
+            dex.set(species.pokemonForme.id % 10000, true);
+        } else {
+            dex.set(pokemon.speciesNumber, true);
+        }
+        this.pokedexHex[dexKey] = dex.toHexString();
+
+        await this.save();
+    }
+
+    public async setPokedexCaught(pokemon: Pokemon) {
+        await this.setPokemonSeen(pokemon);
+        const caught = new BitArray(POKEDEX_MAX, this.pokedexHex.caught);
+        caught.set(pokemon.speciesNumber, true);
+        this.pokedexHex.caught = caught.toHexString();
+        this.pokedexCaughtNum = caught.count();
+        await this.save();
+    }
+
+    public hasCaught(speciesNumber: number) {
+        const caught = new BitArray(POKEDEX_MAX, this.pokedexHex.caught);
+        return caught.get(speciesNumber);
     }
 
     /**
@@ -200,6 +261,10 @@ Trainer.init({
             formM: "",
             formMS: "",
             seen: "",
+            seenF: "",
+            seenFS: "",
+            seenM: "",
+            seenMS: "",
         },
         type: DataTypes.JSONB,
     },

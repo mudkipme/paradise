@@ -7,6 +7,8 @@ interface ISpeciesOptions {
     pokemon: Pokemon;
 }
 
+export const POKEDEX_MAX = 1024;
+
 export default class Species {
     public static async find(speciesNumber: number, formIdentifier?: string | null) {
         const pokemonSpecies = await pokedex.getPokemonSpeciesByName(speciesNumber);
