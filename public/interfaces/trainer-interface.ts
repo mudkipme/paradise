@@ -32,7 +32,7 @@ export interface ITrainerPrivate extends ITrainerPublic {
         method: string;
         battleResult: BattleResult;
     } | null;
-    realworld: {
+    realWorld: {
         longitude: number;
         latitude: number;
         countryCode: string;

@@ -136,14 +136,14 @@ export default class Trainer extends Model {
             dexKey = "seenM";
         }
 
-        const dex = new BitArray(POKEDEX_MAX, this.pokedexHex[dexKey]);
+        const dex = new BitArray(POKEDEX_MAX, hex[dexKey]);
         if (pokemon.formIdentifier) {
             const species = await pokemon.species();
             dex.set(species.pokemonForme.id % 10000, true);
         } else {
             dex.set(pokemon.speciesNumber, true);
         }
-        this.pokedexHex[dexKey] = dex.toHexString();
+        hex[dexKey] = dex.toHexString();
 
         await this.save();
     }
