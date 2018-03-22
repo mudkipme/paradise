@@ -1,14 +1,24 @@
 import BitArray from "bit-array";
-import { random } from "lodash";
+import { random, range } from "lodash";
 import moment from "moment";
 import "moment-timezone";
-import { Item } from "pokedex-promise-v2";
-import { DataTypes, FindOptions, Model, ModelIndexesOptions, Sequelize } from "sequelize";
+import { Item, Location } from "pokedex-promise-v2";
+import {
+    BelongsToGetAssociationMixin,
+    BelongsToManyAddAssociationMixin,
+    BelongsToManyGetAssociationsMixin,
+    DataTypes,
+    FindOptions,
+    Model,
+    ModelIndexesOptions,
+    Sequelize,
+} from "sequelize";
 import SunCalc from "suncalc";
 import { promisify } from "util";
 import { BattleResult } from "../../public/interfaces/battle-interface";
-import { Gender } from "../../public/interfaces/pokemon-interface";
+import { Gender, IPokemon } from "../../public/interfaces/pokemon-interface";
 import { IProfile, ITrainerPrivate, ITrainerPublic, TimeOfDay } from "../../public/interfaces/trainer-interface";
+import nconf from "../lib/config";
 import { sequelize } from "../lib/database";
 import createError, { ErrorMessage } from "../lib/error";
 import { geode } from "../lib/geo";
@@ -25,6 +35,14 @@ interface ITrainerStoragePokemon {
     position: number;
     pokemon: Pokemon;
 }
+
+type IPokemonSlot = {
+    party: true;
+    position: number;
+} | {
+    boxId: number;
+    position: number;
+};
 
 export default class Trainer extends Model {
     public id: string;
@@ -43,13 +61,13 @@ export default class Trainer extends Model {
     };
     public pokedexCaughtNum: number;
     public pokedexSeenNum: number;
-    public getParty: () => Promise<ITrainerParty[]>;
+    public getParty: BelongsToManyGetAssociationsMixin<ITrainerParty>;
     public storage: Array<{
         name: string;
         wallpaper: string;
     }>;
     public currentBox: number;
-    public getStoragePokemon: (options?: FindOptions) => Promise<ITrainerStoragePokemon[]>;
+    public getStoragePokemon: BelongsToManyGetAssociationsMixin<ITrainerStoragePokemon>;
     public bag: Array<{
         itemId: number;
         number: number;
@@ -60,8 +78,8 @@ export default class Trainer extends Model {
         method: string;
         battleResult: BattleResult;
     } | null;
-    public getEncounterPokemon: () => Promise<Pokemon | null>;
-    public getBattlePokemon: () => Promise<Pokemon | null>;
+    public getEncounterPokemon: BelongsToGetAssociationMixin<Pokemon>;
+    public getBattlePokemon: BelongsToGetAssociationMixin<Pokemon>;
     public realWorld: {
         longitude: number;
         latitude: number;
@@ -84,8 +102,11 @@ export default class Trainer extends Model {
     public profile: IProfile;
     // Virtual attributes
     public readonly timeOfDay: TimeOfDay;
+    public readonly storageNum: number;
     // Private attributes
     private todayLuck: number | null;
+    private addParty: BelongsToManyAddAssociationMixin<ITrainerParty, string>;
+    private addStoragePokemon: BelongsToManyAddAssociationMixin<ITrainerStoragePokemon, string>;
 
     // Get current time of day
     public localTime() {
@@ -95,7 +116,7 @@ export default class Trainer extends Model {
     // Get today's lucky Pokémon
     public async luckSpecies() {
         const lastLogin = moment(this.lastLogin).tz(this.realWorld.timezoneId);
-        const now = moment().tz(this.realWorld.timezoneId);
+        const now = this.localTime();
 
         if (now.isSame(lastLogin, "day") && this.todayLuck) {
             return Species.find(this.todayLuck);
@@ -163,6 +184,89 @@ export default class Trainer extends Model {
     }
 
     /**
+     * Find an empty slot in storage
+     */
+    public async storageSlot() {
+        const storagePokemon = await this.getStoragePokemon();
+        let box: ITrainerStoragePokemon[] = [];
+
+        // the indexes of all boxes from currentBox
+        let boxId = range(this.currentBox, this.currentBox + this.storageNum)
+            .map((index) => (index % this.storageNum))
+            .find((id) => {
+                // find the box which has empty slot
+                const currentBox = storagePokemon.filter((sp) => sp.boxId === id);
+                if (currentBox.length >= 30) {
+                    return false;
+                }
+                box = currentBox;
+                return true;
+            });
+
+        // add a box when there's no empty slot
+        if (typeof boxId === "undefined") {
+            boxId = this.storageNum;
+            this.storage[boxId] = { name: "", wallpaper: "" };
+        }
+
+        // find an empty slot in the box
+        const position = range(0, 30).find((pos) => {
+            return typeof box.find((sp) => sp.position === pos) === "undefined";
+        })!;
+
+        this.currentBox = boxId;
+        await this.save();
+
+        return {
+            boxId,
+            position,
+        };
+    }
+
+    /**
+     * Catch a Pokémon
+     * @param  {Pokemon}   pokemon  The Pokémon to be caught
+     * @param  {Item}      pokeBall The Poké Ball to use
+     * @param  {Location}  location The location where the Pokémon was encountered
+     */
+    public async catchPokemon(pokemon: Pokemon, pokeBall: Item, location: Location) {
+        const [party, species, originalTrainer] = await Promise.all([
+            this.getParty(), pokemon.species(), pokemon.getOriginalTrainer(),
+        ]);
+        let slot: IPokemonSlot;
+        if (party.length < 6) {
+            slot = {
+                party: true,
+                position: Math.max(...party.map((tp) => tp.position)) + 1,
+            };
+            await this.addParty({
+                pokemon,
+                position: slot.position,
+            });
+        } else {
+            slot = await this.storageSlot();
+            await this.addStoragePokemon({
+                ...slot,
+                pokemon,
+            });
+        }
+
+        await pokemon.setTrainer(this);
+        if (!originalTrainer) {
+            await pokemon.setOriginalTrainer(this);
+        }
+        await this.setPokedexCaught(pokemon);
+        pokemon.happiness = species.pokemonSpecies.base_happiness;
+        pokemon.pokeBallId = pokeBall.id;
+        pokemon.meetDate = new Date();
+        pokemon.meetLevel = pokemon.level;
+        pokemon.meetPlaceIndex = location.name;
+        this.statistics.catchTime += 1;
+        await Promise.all([pokemon.save(), this.save()]);
+        return slot;
+    }
+
+    /**
      * Set real world location based on latitude and longitude
      * @param  {number}   latitude
      * @param  {number}   longitude
@@ -177,6 +281,28 @@ export default class Trainer extends Model {
         this.realWorld.timezoneId = tz.timezoneId;
         this.realWorld.countryCode = tz.countryCode;
         await this.save();
+    }
+
+    /**
+     * Get the position of given Pokémon
+     * @param  {Pokemon} pokemon
+     */
+    public async findPokemon(pokemon: Pokemon): Promise<IPokemonSlot | null> {
+        const party = await this.getParty({ where: { pokemon_id: pokemon.id }});
+        if (party.length > 0) {
+            return {
+                party: true,
+                position: party[0].position,
+            };
+        }
+        const sp = await this.getStoragePokemon({ where: { pokemon_id: pokemon.id }});
+        if (sp.length > 0) {
+            return {
+                boxId: sp[0].boxId,
+                position: sp[0].position,
+            };
+        }
+        return null;
     }
 
     /**
@@ -276,7 +402,7 @@ Trainer.init({
             countryCode: "",
             latitude: 0,
             longitude: 0,
-            timezoneId: "",
+            timezoneId: nconf.get("app:defaultTimezone"),
         },
         type: DataTypes.JSONB,
     },
@@ -294,6 +420,40 @@ Trainer.init({
         type: DataTypes.JSONB,
     },
     storage: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
+    storageNum: {
+        allowNull: false,
+        type: DataTypes.NUMBER,
+        get(this: Trainer) {
+            return Math.max(this.storage.length, 8);
+        },
+    },
+    timeOfDay: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        get(this: Trainer): TimeOfDay {
+            if (this.realWorld.longitude || this.realWorld.latitude) {
+                const times = SunCalc.getTimes(new Date(), this.realWorld.latitude, this.realWorld.longitude);
+                const now = Date.now();
+                if (now >= times.dawn.getTime() && now <= times.sunriseEnd.getTime()) {
+                    return "morning";
+                } else if (now > times.sunriseEnd.getTime() && now < times.sunsetStart.getTime()) {
+                    return "day";
+                } else if (now >= times.sunsetStart.getTime() && now <= times.nauticalDusk.getTime()) {
+                    return "evening";
+                }
+                return "night";
+            }
+            const hours = this.localTime().hours();
+            if (hours >= 6 && hours <= 9) {
+                return "morning";
+            } else if (hours >= 10 && hours <= 16) {
+                return "day";
+            } else if (hours === 17) {
+                return "evening";
+            }
+            return "night";
+        },
+    },
     todayLuck: { type: DataTypes.INTEGER },
 }, {
     indexes: [

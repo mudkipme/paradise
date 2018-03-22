@@ -16,6 +16,7 @@ if (nconf.get("config")) {
 nconf.defaults({
     app: {
         cookieSecret: "my little secret",
+        defaultTimezone: "UTC",
         url: "http://localhost:3000",
     },
     login: {

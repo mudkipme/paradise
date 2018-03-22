@@ -59,7 +59,13 @@ export async function findEvolution(pokemon: Pokemon, trigger: string, options: 
                     return;
                 }
             }
-            if (evolutionDetail.time_of_day && (!trainer || trainer.timeOfDay !== evolutionDetail.time_of_day)) {
+            if (evolutionDetail.time_of_day === "day" && (!trainer || trainer.timeOfDay === "night")) {
+                continue;
+            }
+            if (evolutionDetail.time_of_day === "night" && (!trainer || trainer.timeOfDay !== "night")) {
+                continue;
+            }
+            if (evolutionDetail.time_of_day === "evening" && (!trainer || trainer.timeOfDay !== "evening")) {
                 continue;
             }
             // TODO: min affection
