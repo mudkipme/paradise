@@ -1,0 +1,47 @@
+# import BattleResult from "../battle/schema.graphql"
+# import Date from "../common.graphql"
+
+type TrainerStatistics {
+    battleTime: Int!
+    battleWin: Int!
+    tradeTime: Int!
+    catchTime: Int!
+    hatchTime: Int!
+    evolveTime: Int!
+    cost: Int!
+}
+
+type TrainerEncounter {
+    location: String!
+    area: String!
+    method: String!
+    battleResult: BattleResult!
+}
+
+type TrainerRealWorld {
+    longitude: Float!
+    latitude: Float!
+    countryCode: String!
+    timezoneId: String!
+}
+
+type TrainerProfile {
+    provider: String!
+    id: String!
+    displayName: String!
+}
+
+type Trainer {
+    id: ID!
+    name: String!
+    pokedexCaughtNum: Int!
+    pokedexSeenNum: Int!
+    acceptBattle: Int!
+    statistics: TrainerStatistics!
+    lastLogin: Date!
+    battlePoint: Int!
+    encounter: TrainerEncounter
+    realWorld: TrainerRealWorld!
+    language: String!
+    profile: TrainerProfile!
+}

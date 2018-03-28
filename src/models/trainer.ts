@@ -17,7 +17,7 @@ import SunCalc from "suncalc";
 import { promisify } from "util";
 import { BattleResult } from "../../public/interfaces/battle-interface";
 import { Gender, IPokemon } from "../../public/interfaces/pokemon-interface";
-import { IProfile, ITrainerPrivate, ITrainerPublic, TimeOfDay } from "../../public/interfaces/trainer-interface";
+import { IProfile, TimeOfDay } from "../../public/interfaces/trainer-interface";
 import nconf from "../lib/config";
 import { sequelize } from "../lib/database";
 import createError, { ErrorMessage } from "../lib/error";
@@ -342,29 +342,6 @@ export default class Trainer extends Model {
         this.bag = this.bag.filter((bag) => bag.number > 0);
         await this.save();
     }
-
-    public serializePrivate() {
-        return {
-            ...this.serializePublic(),
-            encounter: this.encounter,
-            language: this.language,
-            profile: this.profile,
-            realWorld: this.realWorld,
-        };
-    }
-
-    public serializePublic() {
-        return {
-            acceptBattle: this.acceptBattle,
-            battlePoint: this.battlePoint,
-            id: this.id,
-            lastLogin: this.lastLogin,
-            name: this.name,
-            pokedexCaughtNum: this.pokedexCaughtNum,
-            pokedexSeenNum: this.pokedexSeenNum,
-            statistics: this.statistics,
-        };
-    }
 }
 
 Trainer.init({
@@ -422,7 +399,7 @@ Trainer.init({
     storage: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
     storageNum: {
         allowNull: false,
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         get(this: Trainer) {
             return Math.max(this.storage.length, 8);
         },

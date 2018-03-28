@@ -17,6 +17,7 @@ import { middleware as profileMiddleware } from "./middlewares/profile";
 import { middleware as renderMiddleware } from "./middlewares/render";
 import authRouter from "./routes/auth";
 import defaultRoute from "./routes/default";
+import graphqlRouter from "./routes/graphql";
 
 const app = new Koa();
 app.keys = [nconf.get("app:cookieSecret")];
@@ -32,6 +33,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(profileMiddleware());
 app.use(authRouter.routes());
+app.use(graphqlRouter.routes());
+app.use(graphqlRouter.allowedMethods());
 app.use(defaultRoute());
 
 export default app;

@@ -1,10 +1,10 @@
+import ApolloClient from "apollo-boost";
 import { createMuiTheme, MuiThemeProvider } from "material-ui/styles";
 import React from "react";
+import { ApolloProvider } from "react-apollo";
 import { hydrate } from "react-dom";
-import { Provider as ReduxProvider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import App from "./app";
-import store from "./store";
 
 class Main extends React.Component {
     public componentDidMount() {
@@ -22,13 +22,17 @@ class Main extends React.Component {
 }
 
 const theme = createMuiTheme();
+const client = new ApolloClient({ uri: "/graphql" });
+if ((window as any).__APOLLO_STATE__) {
+    client.restore((window as any).__APOLLO_STATE__);
+}
 
 hydrate((
-    <MuiThemeProvider theme={theme}>
-        <ReduxProvider store={store}>
+    <ApolloProvider client={client}>
+        <MuiThemeProvider theme={theme}>
             <Router>
                 <Main />
             </Router>
-        </ReduxProvider>
-    </MuiThemeProvider>
+        </MuiThemeProvider>
+    </ApolloProvider>
 ), document.getElementById("app"));

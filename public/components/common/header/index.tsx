@@ -1,3 +1,4 @@
+import { gql } from "apollo-boost";
 import ExitIcon from "material-ui-icons/ExitToApp";
 import MenuIcon from "material-ui-icons/Menu";
 import AppBar from "material-ui/AppBar";
@@ -11,16 +12,11 @@ import SvgIcon from "material-ui/SvgIcon";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import React, { PureComponent } from "react";
-import { connect } from "react-redux";
+import { graphql } from "react-apollo";
 import { Link } from "react-router-dom";
 import { compose } from "recompose";
-import { IAppState } from "../../../reducers";
-
-interface IStateProps {
-    hasLogin: boolean;
-    name: string | null;
-    loginStrategies: string[];
-}
+import { HeaderQuery } from "../../../interfaces/operation-result-types";
+import query from "../../../queries/header.graphql";
 
 const styles = {
     drawerPaper: {
@@ -37,13 +33,13 @@ const styles = {
     },
 };
 
-class Header extends PureComponent<IStateProps & WithStyles<keyof typeof styles>> {
+class Header extends PureComponent<HeaderQuery & WithStyles<keyof typeof styles>> {
     public state = {
         open: false,
     };
 
     public render() {
-        const { classes, hasLogin, name } = this.props;
+        const { classes, currentTrainer } = this.props;
         const { open } = this.state;
         return (
             <Grid container>
@@ -68,13 +64,13 @@ class Header extends PureComponent<IStateProps & WithStyles<keyof typeof styles>
                             </ListItem>
                         </List>
                         <Divider />
-                        {hasLogin ? (
+                        {currentTrainer ? (
                             <List component="nav">
                                 <ListItem
                                     button
                                     component={(props) => <Link {...props} to="/profile" />}
                                     onClick={this.handleDrawerClose}>
-                                    <ListItemText primary={name} />
+                                    <ListItemText primary={currentTrainer.name} />
                                 </ListItem>
                                 <ListItem button component="a" href="/auth/logout">
                                     <ListItemIcon>
@@ -100,7 +96,8 @@ class Header extends PureComponent<IStateProps & WithStyles<keyof typeof styles>
 
     private renderLogin = () => (
         <List component="nav">
-            {this.props.loginStrategies.map((strategy) => {
+            {this.props.config && this.props.config.loginStrategies
+            && this.props.config.loginStrategies.map((strategy) => {
                 switch (strategy) {
                     case "github":
                         return this.renderLoginGithub();
@@ -126,13 +123,7 @@ class Header extends PureComponent<IStateProps & WithStyles<keyof typeof styles>
     }
 }
 
-const mapStateToProps: (state: IAppState) => IStateProps = (state) => ({
-    hasLogin: state.profile.hasLogin,
-    loginStrategies: state.config.loginStrategies,
-    name: state.profile.me && state.profile.me.name,
-});
-
-export default compose<IStateProps & WithStyles<keyof typeof styles>, {}>(
+export default compose<HeaderQuery & WithStyles<keyof typeof styles>, {}>(
     withStyles(styles),
-    connect(mapStateToProps),
+    graphql(query),
 )(Header);

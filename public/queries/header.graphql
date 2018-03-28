@@ -1,0 +1,8 @@
+query Header {
+    config {
+        loginStrategies
+    }
+    currentTrainer {
+      name
+    }
+}

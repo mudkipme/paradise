@@ -1,0 +1,11 @@
+# import Config from "./config/schema.graphql"
+# import Trainer from "./trainer/schema.graphql"
+
+type Query {
+    config: Config!
+    currentTrainer: Trainer
+}
+
+schema {
+    query: Query
+}

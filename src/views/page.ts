@@ -1,11 +1,10 @@
 import serialize from "serialize-javascript";
-import { IAppState } from "../../public/reducers";
 
 export interface IPageData {
     html: string;
     css: string;
     stats: any;
-    finalState: IAppState;
+    initialState: any;
 }
 
 export default function renderFullPage(data: IPageData) {
@@ -24,7 +23,7 @@ export default function renderFullPage(data: IPageData) {
         <style id="jss-server-side">${data.css}</style>
         <div id="app">${data.html}</div>
         <script>
-            window.__PRELOADED_STATE__ = ${serialize(data.finalState)};
+            window.__APOLLO_STATE__ = ${serialize(data.initialState)};
         </script>
         <script src="/build/${Array.isArray(data.stats.main) ? data.stats.main[0] : data.stats.main}"></script>
     </body>

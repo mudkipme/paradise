@@ -35,7 +35,7 @@ enum Method {
     "timezone" = "timezone",
 }
 
-export const geode: Record<Method, (...args: any[]) => Promise<any>> = new Geode(nconf.get("thirdParty:geonames"), {});
+export const geode: Record<Method, (...args: any[]) => Promise<any>> = new Geode(nconf.get("thirdParty:geonames"));
 
 Object.keys(Method).forEach((method) => {
     (geode as any)[method] = promisify((geode as any)[method].bind(geode));
