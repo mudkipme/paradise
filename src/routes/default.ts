@@ -6,6 +6,6 @@ export default function() {
         if (ctx.status !== 404 || ctx.body) {
             return;
         }
-        ctx.render();
+        await ctx.render();
     };
 }

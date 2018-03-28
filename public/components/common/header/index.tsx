@@ -12,7 +12,7 @@ import SvgIcon from "material-ui/SvgIcon";
 import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import React, { PureComponent } from "react";
-import { graphql } from "react-apollo";
+import { ChildDataProps, graphql } from "react-apollo";
 import { Link } from "react-router-dom";
 import { compose } from "recompose";
 import { HeaderQuery } from "../../../interfaces/operation-result-types";
@@ -33,13 +33,13 @@ const styles = {
     },
 };
 
-class Header extends PureComponent<HeaderQuery & WithStyles<keyof typeof styles>> {
+class Header extends PureComponent<ChildDataProps<{}, HeaderQuery, {}> & WithStyles<keyof typeof styles>> {
     public state = {
         open: false,
     };
 
     public render() {
-        const { classes, currentTrainer } = this.props;
+        const { classes, data } = this.props;
         const { open } = this.state;
         return (
             <Grid container>
@@ -64,13 +64,13 @@ class Header extends PureComponent<HeaderQuery & WithStyles<keyof typeof styles>
                             </ListItem>
                         </List>
                         <Divider />
-                        {currentTrainer ? (
+                        {data.currentTrainer ? (
                             <List component="nav">
                                 <ListItem
                                     button
                                     component={(props) => <Link {...props} to="/profile" />}
                                     onClick={this.handleDrawerClose}>
-                                    <ListItemText primary={currentTrainer.name} />
+                                    <ListItemText primary={data.currentTrainer.name} />
                                 </ListItem>
                                 <ListItem button component="a" href="/auth/logout">
                                     <ListItemIcon>
@@ -96,8 +96,7 @@ class Header extends PureComponent<HeaderQuery & WithStyles<keyof typeof styles>
 
     private renderLogin = () => (
         <List component="nav">
-            {this.props.config && this.props.config.loginStrategies
-            && this.props.config.loginStrategies.map((strategy) => {
+            {this.props.data.config && this.props.data.config.loginStrategies.map((strategy) => {
                 switch (strategy) {
                     case "github":
                         return this.renderLoginGithub();
@@ -123,7 +122,7 @@ class Header extends PureComponent<HeaderQuery & WithStyles<keyof typeof styles>
     }
 }
 
-export default compose<HeaderQuery & WithStyles<keyof typeof styles>, {}>(
+export default compose<ChildDataProps<{}, HeaderQuery, {}> & WithStyles<keyof typeof styles>, {}>(
     withStyles(styles),
     graphql(query),
 )(Header);

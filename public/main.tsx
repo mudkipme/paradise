@@ -28,11 +28,11 @@ if ((window as any).__APOLLO_STATE__) {
 }
 
 hydrate((
-    <ApolloProvider client={client}>
-        <MuiThemeProvider theme={theme}>
+    <MuiThemeProvider theme={theme}>
+        <ApolloProvider client={client}>
             <Router>
                 <Main />
             </Router>
-        </MuiThemeProvider>
-    </ApolloProvider>
+        </ApolloProvider>
+    </MuiThemeProvider>
 ), document.getElementById("app"));

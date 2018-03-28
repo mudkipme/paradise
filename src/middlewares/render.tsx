@@ -29,24 +29,26 @@ function createRenderer() {
         const context: IRouterContext = {};
         const client = new ApolloClient({
             cache: new InMemoryCache(),
-            link: new SchemaLink({ schema }),
+            link: new SchemaLink({ schema, context: this }),
             ssrMode: true,
         });
 
         const Main = (
             <ApolloProvider client={client}>
-                <JssProvider registry={sheetsRegistry} jss={jss} generateClassName={generateClassName}>
-                    <MuiThemeProvider theme={theme} sheetsManager={new Map()}>
-                        <StaticRouter location={this.url} context={context}>
-                            <App />
-                        </StaticRouter>
-                    </MuiThemeProvider>
-                </JssProvider>
+                <StaticRouter location={this.url} context={context}>
+                    <App />
+                </StaticRouter>
             </ApolloProvider>
         );
 
         await getDataFromTree(Main);
-        const html = renderToString(Main);
+        const html = renderToString(
+            <JssProvider registry={sheetsRegistry} jss={jss} generateClassName={generateClassName}>
+                <MuiThemeProvider theme={theme} sheetsManager={new Map()}>
+                    {Main}
+                </MuiThemeProvider>
+            </JssProvider>,
+        );
         const initialState = client.extract();
 
         if (context.notFound) {
@@ -63,7 +65,6 @@ export function middleware() {
 
     return async (ctx: Context, next: () => Promise<void>) => {
         ctx.render = renderer;
-        ctx.preloadedState = {};
         await next();
     };
 }
