@@ -117,11 +117,14 @@ export default class Pokemon extends Model {
     public tradable: boolean;
     public pokemonCenter: Date | null | undefined;
     public pokeBallId: number | null;
-    // Virtual attributes
-    public readonly displayId: string;
     // Private attributes
     private readonly natureId: number;
     private holdItemId: number | null;
+
+    // Shorter ID String
+    public get displayId() {
+        return this.getDataValue("id").substr(-6);
+    }
 
     // Get the Species of this Pokémon
     public species() {
@@ -411,14 +414,6 @@ export default class Pokemon extends Model {
 }
 
 Pokemon.init({
-    // Shorter ID String
-    displayId: {
-        allowNull: false,
-        type: DataTypes.STRING,
-        get(this: Pokemon) {
-            return this.getDataValue("id").substr(-6);
-        },
-    },
     displayOT: { type: DataTypes.STRING },
     effort: { type: DataTypes.JSONB, allowNull: false },
     experience: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },

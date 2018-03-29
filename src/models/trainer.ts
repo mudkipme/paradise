@@ -1,7 +1,6 @@
 import BitArray from "bit-array";
 import { random, range } from "lodash";
-import moment from "moment";
-import "moment-timezone";
+import moment from "moment-timezone";
 import { Item, Location } from "pokedex-promise-v2";
 import {
     BelongsToGetAssociationMixin,
@@ -100,13 +99,38 @@ export default class Trainer extends Model {
     public lastLogin: Date;
     public battlePoint: number;
     public profile: IProfile;
-    // Virtual attributes
-    public readonly timeOfDay: TimeOfDay;
-    public readonly storageNum: number;
     // Private attributes
     private todayLuck: number | null;
     private addParty: BelongsToManyAddAssociationMixin<ITrainerParty, string>;
     private addStoragePokemon: BelongsToManyAddAssociationMixin<ITrainerStoragePokemon, string>;
+
+    public get storageNum() {
+        return Math.max(this.storage.length, 8);
+    }
+
+    public get timeOfDay() {
+        if (this.realWorld.longitude || this.realWorld.latitude) {
+            const times = SunCalc.getTimes(new Date(), this.realWorld.latitude, this.realWorld.longitude);
+            const now = Date.now();
+            if (now >= times.dawn.getTime() && now <= times.sunriseEnd.getTime()) {
+                return "morning";
+            } else if (now > times.sunriseEnd.getTime() && now < times.sunsetStart.getTime()) {
+                return "day";
+            } else if (now >= times.sunsetStart.getTime() && now <= times.nauticalDusk.getTime()) {
+                return "evening";
+            }
+            return "night";
+        }
+        const hours = this.localTime().hours();
+        if (hours >= 6 && hours <= 9) {
+            return "morning";
+        } else if (hours >= 10 && hours <= 16) {
+            return "day";
+        } else if (hours === 17) {
+            return "evening";
+        }
+        return "night";
+    }
 
     // Get current time of day
     public localTime() {
@@ -397,40 +421,6 @@ Trainer.init({
         type: DataTypes.JSONB,
     },
     storage: { type: DataTypes.JSONB, allowNull: false, defaultValue: [] },
-    storageNum: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-        get(this: Trainer) {
-            return Math.max(this.storage.length, 8);
-        },
-    },
-    timeOfDay: {
-        allowNull: false,
-        type: DataTypes.STRING,
-        get(this: Trainer): TimeOfDay {
-            if (this.realWorld.longitude || this.realWorld.latitude) {
-                const times = SunCalc.getTimes(new Date(), this.realWorld.latitude, this.realWorld.longitude);
-                const now = Date.now();
-                if (now >= times.dawn.getTime() && now <= times.sunriseEnd.getTime()) {
-                    return "morning";
-                } else if (now > times.sunriseEnd.getTime() && now < times.sunsetStart.getTime()) {
-                    return "day";
-                } else if (now >= times.sunsetStart.getTime() && now <= times.nauticalDusk.getTime()) {
-                    return "evening";
-                }
-                return "night";
-            }
-            const hours = this.localTime().hours();
-            if (hours >= 6 && hours <= 9) {
-                return "morning";
-            } else if (hours >= 10 && hours <= 16) {
-                return "day";
-            } else if (hours === 17) {
-                return "evening";
-            }
-            return "night";
-        },
-    },
     todayLuck: { type: DataTypes.INTEGER },
 }, {
     indexes: [
