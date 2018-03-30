@@ -25,7 +25,7 @@ module.exports = {
         extensions: [".ts", ".tsx", ".jsx", ".js"]
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.(ts|tsx)$/,
                 loader: "ts-loader"
@@ -44,7 +44,7 @@ module.exports = {
             raw: true
         }),
         function () {
-            this.plugin("done", () => {
+            this.hooks.done.tap("Executable", () => {
                 fs.chmodSync("./build/app.js", "755");
             });
         },

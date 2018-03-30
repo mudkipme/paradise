@@ -21,7 +21,7 @@ module.exports = {
         extensions: [".ts", ".tsx", ".jsx", ".css", ".js", ".json"]
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.(ts|tsx)$/,
                 loader: "ts-loader",
@@ -37,7 +37,7 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin([path.join(__dirname, "public", "build")]),
         function () {
-            this.plugin("done", function (stats) {
+            this.hooks.done.tap("Stats", function (stats) {
                 if (!fs.existsSync(path.join(__dirname, "data"))) {
                     fs.mkdirSync(path.join(__dirname, "data"));
                 }

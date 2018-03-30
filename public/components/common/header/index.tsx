@@ -42,7 +42,7 @@ class Header extends PureComponent<ChildDataProps<{}, HeaderQuery, {}> & WithSty
         const { classes, data } = this.props;
         const { open } = this.state;
         return (
-            <Grid container>
+            <Grid container spacing={16}>
                 <AppBar position="static" className={classes.root}>
                     <Toolbar>
                         <IconButton color="inherit" onClick={this.handleDrawerOpen} className={classes.menuButton}>
@@ -58,7 +58,7 @@ class Header extends PureComponent<ChildDataProps<{}, HeaderQuery, {}> & WithSty
                         <List component="nav">
                             <ListItem
                                 button
-                                component={(props) => <Link {...props} to="/" />}
+                                component={(props) => <Link {...(props as any)} to="/" />}
                                 onClick={this.handleDrawerClose}>
                                 <ListItemText primary="Home" />
                             </ListItem>
@@ -68,7 +68,7 @@ class Header extends PureComponent<ChildDataProps<{}, HeaderQuery, {}> & WithSty
                             <List component="nav">
                                 <ListItem
                                     button
-                                    component={(props) => <Link {...props} to="/profile" />}
+                                    component={(props) => <Link {...(props as any)} to="/profile" />}
                                     onClick={this.handleDrawerClose}>
                                     <ListItemText primary={data.currentTrainer.name} />
                                 </ListItem>
