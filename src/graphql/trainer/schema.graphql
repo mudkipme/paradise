@@ -1,5 +1,6 @@
 # import BattleResult from "../battle/schema.graphql"
 # import Date from "../common.graphql"
+# import Pokemon from "../pokemon/schema.graphql"
 
 type TrainerStatistics {
     battleTime: Int!
@@ -44,4 +45,5 @@ type Trainer {
     realWorld: TrainerRealWorld!
     language: String!
     profile: TrainerProfile!
+    party: [Pokemon!]!
 }

@@ -15,7 +15,7 @@ import {
 import SunCalc from "suncalc";
 import { promisify } from "util";
 import { BattleResult } from "../../public/interfaces/battle-interface";
-import { Gender, IPokemon } from "../../public/interfaces/pokemon-interface";
+import { Gender } from "../../public/interfaces/pokemon-interface";
 import { IProfile, TimeOfDay } from "../../public/interfaces/trainer-interface";
 import nconf from "../lib/config";
 import { sequelize } from "../lib/database";
