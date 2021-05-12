@@ -1,0 +1,102 @@
+scalar Date
+
+enum BattleResult {
+    Win
+    Lose
+    Draw
+}
+
+type TrainerStatistics {
+    battleTime: Int!
+    battleWin: Int!
+    tradeTime: Int!
+    catchTime: Int!
+    hatchTime: Int!
+    evolveTime: Int!
+    cost: Int!
+}
+
+type TrainerEncounter {
+    location: String!
+    area: String!
+    method: String!
+}
+
+type TrainerRealWorld {
+    longitude: Float!
+    latitude: Float!
+    countryCode: String!
+    timezoneId: String!
+}
+
+type TrainerProfile {
+    provider: String!
+    id: String!
+    displayName: String!
+}
+
+type Trainer {
+    id: ID!
+    name: String!
+    pokedexCaughtNum: Int!
+    pokedexSeenNum: Int!
+    acceptBattle: Boolean!
+    statistics: TrainerStatistics!
+    lastLogin: Date!
+    battlePoint: Int!
+    encounter: TrainerEncounter
+    realWorld: TrainerRealWorld
+    language: String
+    party: [Pokemon!]!
+}
+
+enum Gender {
+    Female
+    Male
+    Genderless
+}
+
+enum HatchRate {
+    Hatched
+    Soon
+    Close
+    Wait
+}
+
+type PokemonStats {
+    hp: Int
+    attack: Int
+    defense: Int
+    specialAttack: Int
+    specialDefense: Int
+    speed: Int
+    maxHp: Int
+}
+
+type Pokemon {
+    id: ID!
+    gender: Gender!
+    stats: PokemonStats
+    experience: Int!
+    level: Int!
+    isEgg: Boolean!
+    isShiny: Boolean!
+    trainer: Trainer
+    nickname: String
+    originalTrainer: Trainer
+    displayOT: String
+    meetLevel: Int
+    meetPlaceIndex: String
+    meetDate: Date
+    birthDate: Date
+    mother: Pokemon
+    father: Pokemon
+    tradable: Boolean!
+    pokemonCenter: Date
+    speciesNumber: Int!
+    hatchRate: HatchRate
+}
+
+type Query {
+    currentTrainer: Trainer
+}

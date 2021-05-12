@@ -1,0 +1,5 @@
+query CurrentTrainer {
+    currentTrainer {
+        name
+    }
+}

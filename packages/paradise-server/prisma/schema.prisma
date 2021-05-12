@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../paradise-prisma"
+}
+
+enum Gender {
+  Female
+  Male
+  Genderless
+}
+
+model Pokemon {
+  id String @id @db.Uuid @default(uuid())
+  birthDate DateTime @default(now())
+  displayOT String?
+  effort Json
+  experience Int
+  formIdentifier String
+  gender Gender
+  happiness Int
+  holdItemId Int?
+  individual Json
+  isEgg Boolean
+  isShiny Boolean
+  level Int
+  lostHp Int @default(0)
+  meetDate DateTime @default(now())
+  meetLevel Int?
+  meetPlaceIndex String?
+  natureId Int
+  nickname String?
+  pokeBallId Int?
+  pokemonCenter DateTime?
+  speciesNumber Int
+  tradable Boolean @default(false)
+  mother Pokemon? @relation("motherChildren", fields: [motherId], references: [id])
+  father Pokemon? @relation("fatherChildren", fields: [fatherId], references: [id])
+  motherOf Pokemon[] @relation("motherChildren")
+  fatherOf Pokemon[] @relation("fatherChildren")
+  motherId String? @db.Uuid
+  fatherId String? @db.Uuid
+  trainerPokemon TrainerPokemon?
+  originalTrainer Trainer? @relation(fields: [originalTrainerId], references: [id])
+  originalTrainerId String? @db.Uuid
+}
+
+model Trainer {
+  id String @id @db.Uuid @default(uuid())
+  acceptBattle Boolean @default(false)
+  bag Json?
+  battlePoint Int @default(0)
+  currentBox Int @default(0)
+  encounter Json?
+  language String?
+  lastLogin DateTime @default(now())
+  name String
+  pokedexCaughtNum Int @default(0)
+  pokedexHex Json?
+  pokedexSeenNum Int @default(0)
+  realWorld Json?
+  providers TrainerProvider[]
+  statistics Json?
+  todayLuck Int?
+  trainerPokemon TrainerPokemon[]
+  originalTrainerPokemon Pokemon[]
+
+  @@index([name])
+  @@index([statistics])
+}
+
+model TrainerProvider {
+  trainer Trainer @relation(fields: [trainerId], references: [id])
+  trainerId String @db.Uuid
+  provider String
+  id String
+  user Json?
+
+  @@id([trainerId, provider])
+  @@unique([provider, id])
+}
+
+model TrainerPokemon {
+  trainer Trainer @relation(fields: [trainerId], references: [id])
+  trainerId String @db.Uuid
+  pokemon Pokemon @relation(fields: [pokemonId], references: [id])
+  pokemonId String @db.Uuid
+  boxId Int
+  slot Int
+
+  @@id([pokemonId])
+  @@unique([trainerId, boxId, slot])
+}

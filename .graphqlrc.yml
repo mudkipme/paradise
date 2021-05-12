@@ -1,0 +1,25 @@
+schema: ./packages/paradise-server/src/**/*.graphql
+documents: ./packages/paradise-client/src/**/*.graphql
+extensions:
+  codegen:
+    generates:
+      ./packages/paradise-server/src/generated/graphql.ts:
+        plugins:
+        - typescript
+        - typescript-resolvers
+        config:
+          enumsAsTypes: true
+          scalars:
+            Date: Date
+          defaultMapper: Partial<{T}>
+          useIndexSignature: true
+      ./packages/paradise-client/src/generated/graphql.ts:
+        plugins:
+        - typescript
+        - typescript-operations
+        - typescript-urql
+        config:
+          enumsAsTypes: true
+          scalars:
+            Date: Date
+          documentMode: documentNode
